@@ -1,7 +1,7 @@
 {
     "name": "reliqarts/doc-weaver",
     "description": "Highly configurable, yet simple Laravel 5 documentation package. Suitable for product documentation and/or knowledge bases. Converts folder(s) of .md files into full-bread complete documentation. DocWeaver is inspired by Laravel's very own documentation mechanism.",
-    "keywords": ["doc", "package", "generation", "documentation", "laravel5", "seek", "content", "data" , ""],
+    "keywords": ["doc", "package", "generation", "documentation", "laravel5", "content"],
     "type": "library",
     "license": "MIT",
     "authors": [

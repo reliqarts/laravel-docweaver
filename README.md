@@ -4,7 +4,7 @@ Highly configurable, yet simple Laravel 5 documentation package. DocWeaver is su
 
 [![Built For Laravel](https://img.shields.io/badge/built%20for-laravel-red.svg?style=flat-square)](http://laravel.com)
 ![Build Status](https://img.shields.io/circleci/project/reliqarts/doc-weaver.svg?style=flat-square)
-[![StyleCI](https://styleci.io/repos/71434979/shield?branch=master)](https://styleci.io/repos/71434979)
+[![StyleCI](https://styleci.io/repos/105720440/shield?branch=master)](https://styleci.io/repos/105720440)
 [![Scrutinizer](https://img.shields.io/scrutinizer/g/reliqarts/doc-weaver.svg?style=flat-square)](https://scrutinizer-ci.com/g/reliqarts/doc-weaver/)
 [![License](https://poser.pugx.org/reliqarts/doc-weaver/license?format=flat-square)](https://packagist.org/packages/reliqarts/doc-weaver)
 [![Latest Stable Version](https://poser.pugx.org/reliqarts/doc-weaver/version?format=flat-square)](https://packagist.org/packages/reliqarts/doc-weaver)
