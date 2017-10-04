@@ -25,7 +25,7 @@ interface ProductDocumentor
 
     /**
      * Get the publicly available versions of the documentation.
-     * 
+     *
      * @param  string  $product Name of product
      * @return array
      */

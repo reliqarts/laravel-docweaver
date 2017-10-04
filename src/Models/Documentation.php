@@ -11,7 +11,6 @@ use ReliQArts\DocWeaver\Exceptions\ImplementationException;
 
 class Documentation implements ProductDocumentor
 {
-
     /**
      * The filesystem implementation.
      *
@@ -55,8 +54,8 @@ class Documentation implements ProductDocumentor
     protected $sep;
 
     /**
-     * Format path correctly based on OS. 
-     * i.e. using DIRECTORY_SEPARATOR
+     * Format path correctly based on OS.
+     * i.e. using DIRECTORY_SEPARATOR.
      *
      * @param string $path
      * @return string
@@ -81,9 +80,9 @@ class Documentation implements ProductDocumentor
         $this->config = Helper::getConfig();
         $this->docsDir = Helper::getDocsDir();
         $this->sep = DIRECTORY_SEPARATOR;
-        
+
         $docsDirAbsPath = base_path($this->docsDir);
-        if (!$this->files->isDirectory($docsDirAbsPath)) {
+        if (! $this->files->isDirectory($docsDirAbsPath)) {
             throw new ImplementationException("Documentation resource directory ({$this->docsDir}) does not exist. [{$docsDirAbsPath}]");
         }
     }
@@ -106,8 +105,6 @@ class Documentation implements ProductDocumentor
             if ($this->files->exists($path)) {
                 return $this->replaceLinks($version, Helper::markdown($this->files->get($path)));
             }
-
-            return null;
         });
     }
 
@@ -129,8 +126,6 @@ class Documentation implements ProductDocumentor
             if ($this->files->exists($path)) {
                 return $this->replaceLinks($version, Helper::markdown($this->files->get($path)));
             }
-
-            return null;
         });
     }
 
@@ -145,9 +140,10 @@ class Documentation implements ProductDocumentor
     {
         $routePrefix = Helper::getRoutePrefix();
         // ensure product name exists in url
-        if (!empty($this->currentProduct)) {
+        if (! empty($this->currentProduct)) {
             $content = str_replace('docs/{{version}}', "$routePrefix/{$this->currentProduct}/$version", $content);
         }
+
         return str_replace('{{version}}', $version, $content);
     }
 
@@ -157,19 +153,20 @@ class Documentation implements ProductDocumentor
      * @param  string  $product
      * @param  string  $version
      * @param  string  $page
-     * @return boolean
+     * @return bool
      */
     public function sectionExists($product, $version, $page)
     {
         $this->currentProduct = $product;
+
         return $this->files->exists(
             base_path("{$this->docsDir}/{$product}/{$version}/{$page}.md")
         );
     }
 
     /**
-     * Get the publicly available versions of the documentation
-     * 
+     * Get the publicly available versions of the documentation.
+     *
      * @param string $product Name of product.
      * @return array
      */
@@ -190,7 +187,7 @@ class Documentation implements ProductDocumentor
                     $versions[$versionTag] = $versionName;
                 }
             }
-            
+
             // sort versions
             krsort($versions);
         }
@@ -213,7 +210,7 @@ class Documentation implements ProductDocumentor
         $defaultVersion = 1.0;
 
         foreach ($versions as $tag => $ver) {
-            if (!$allowWordedDefault) {
+            if (! $allowWordedDefault) {
                 if (is_numeric($tag)) {
                     $defaultVersion = $tag;
                     break;
@@ -236,7 +233,7 @@ class Documentation implements ProductDocumentor
     {
         $products = [];
         $productDirectories = $this->files->directories(base_path($this->docsDir));
-        
+
         foreach ($productDirectories as $prod) {
             $productName = title_case(basename($prod));
             $product = [
@@ -259,7 +256,7 @@ class Documentation implements ProductDocumentor
      * @param string $product
      * @return bool
      */
-    public function productExists($product) 
+    public function productExists($product)
     {
         $products = $this->listProducts();
 
@@ -272,7 +269,7 @@ class Documentation implements ProductDocumentor
      * @param string $product
      * @return bool
      */
-    public function getProduct($product) 
+    public function getProduct($product)
     {
         $products = $this->listProducts();
 
