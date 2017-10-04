@@ -18,7 +18,7 @@ class DocsController
     /**
      * Doc home path.
      *
-     * @var 
+     * @var
      */
     protected $docsHome;
 
@@ -52,7 +52,7 @@ class DocsController
         $title = 'Documentation';
         $products = $this->docs->listProducts();
 
-        if (!empty($this->viewTemplateInfo['docs_title'])) {
+        if (! empty($this->viewTemplateInfo['docs_title'])) {
             $title = $this->viewTemplateInfo['docs_title'];
         }
 
@@ -60,7 +60,7 @@ class DocsController
             'title' => $title,
             'products' => $products,
             'viewTemplateInfo' => $this->viewTemplateInfo,
-            'routeConfig' => Helper::getRouteConfig()
+            'routeConfig' => Helper::getRouteConfig(),
         ]);
     }
 
@@ -72,12 +72,12 @@ class DocsController
      */
     public function productIndex($product)
     {
-        if (!$this->docs->productExists($product)) {
+        if (! $this->docs->productExists($product)) {
             abort(404);
         }
 
         $defaultVersion = $this->docs->getDefaultVersion($product);
-        
+
         return redirect("{$this->docsHome}/$product/$defaultVersion");
     }
 
@@ -90,13 +90,13 @@ class DocsController
      * @return Response
      */
     public function show($product, $version, $page = null)
-    {       
-        if (!$this->docs->productExists($product)) {
+    {
+        if (! $this->docs->productExists($product)) {
             abort(404);
         }
-        
-        $defaultVersion = $this->docs->getDefaultVersion($product); 
-        if (!$this->isVersion($product, $version)) {
+
+        $defaultVersion = $this->docs->getDefaultVersion($product);
+        if (! $this->isVersion($product, $version)) {
             return redirect("{$this->docsHome}/$product/$defaultVersion", 301);
         }
 
@@ -136,7 +136,7 @@ class DocsController
             'currentSection' => $section,
             'canonical' => $canonical,
             'viewTemplateInfo' => $this->viewTemplateInfo,
-            'routeConfig' => Helper::getRouteConfig()
+            'routeConfig' => Helper::getRouteConfig(),
         ]);
     }
 
