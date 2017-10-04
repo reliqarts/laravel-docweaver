@@ -1,0 +1,133 @@
+// DocWeaver - Products
+
+// common
+
+a {
+    @include transition(all 200ms);
+}
+
+// Product Bar
+#doc-weaver-product-bar, #doc-weaver-product-line {
+    background-color: lighten($color-primary, 2%);
+    margin-bottom: 20px;
+    min-height: 2px;
+
+    #doc-weaver-navbar-collapse-replacement {
+        @include display-flex;
+        margin-left: auto;
+    }
+    
+    .navbar-brand {
+        color: #fff;
+    }
+
+    .version-switcher {
+        .current-version {
+            @include opacity(1);
+        }
+
+        .version-menu {
+            position: absolute;
+            right: 0;
+            left: auto;
+        }
+
+        .version-menu-btn {
+            cursor: pointer;
+        }
+    }
+
+    &#doc-weaver-product-line {
+        display: block;
+    }
+}
+
+// Product Showcase
+#doc-weaver-product-showcase {
+    > .empty {
+        padding: 1rem 0;
+
+        p {
+            line-height: inherit;
+        }
+    }
+    .product-list {
+        @include display-flex;
+        margin-bottom: 2rem;
+        margin-top: 2rem;
+
+        .product {
+            background: rgba(#fff, 0.7);
+            border: 1px solid rgba($color-lighter-gray, 0.6);
+            @include border-radius(3px);
+            margin: 1rem 0;
+            overflow: hidden;
+            @include transition(all 200ms);
+
+            * {
+                @include transition(all 200ms);
+            }
+
+            a {
+                display: block;
+                text-decoration: none;
+            }
+
+            .product-title, .product-info {
+                padding: 0.8rem 1rem;
+            }
+
+            .product-title {
+                background: rgba(#fff, 0.3);
+                border-bottom: 1px solid rgba($color-lighter-gray, 0.46);
+                font-size: 21px;
+                margin-bottom: 0;
+            }
+
+            .product-info {
+                color: $color-gray;
+
+                ul {
+                    list-style-type: none;
+                    margin: 0;
+                    padding: 0;
+    
+                    li {
+                        margin: 0;
+                        padding: 0;
+                    }
+                }
+            }
+
+            &:hover, &:focus {
+                border-color: rgba($color-primary, 0.6);
+
+                .product-title {
+                    color: $color-primary;
+                }
+            }
+        }
+    }
+}
+
+#doc-weaver-footnotes {
+    display: block;
+    color: rgba($color-gray, 0.83);
+    font-size: 9px;
+    margin: 1rem 0;
+    padding: 0 1rem;
+    line-height: 1.6;
+    text-align: center;
+
+    .by-line {
+       color: inherit;
+    }
+
+    a {
+        color: inherit;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

@@ -1,0 +1,84 @@
+# Laravel DocWeaver
+
+Highly configurable, yet simple Laravel 5 documentation package. DocWeaver is suitable for product documentation and/or knowledge bases. Converts folder(s) of .md files into full-bread complete documentation. DocWeaver is inspired by Laravel's very own documentation.
+
+[![Built For Laravel](https://img.shields.io/badge/built%20for-laravel-red.svg?style=flat-square)](http://laravel.com)
+![Build Status](https://img.shields.io/circleci/project/reliqarts/doc-weaver.svg?style=flat-square)
+[![StyleCI](https://styleci.io/repos/71434979/shield?branch=master)](https://styleci.io/repos/71434979)
+[![Scrutinizer](https://img.shields.io/scrutinizer/g/reliqarts/doc-weaver.svg?style=flat-square)](https://scrutinizer-ci.com/g/reliqarts/doc-weaver/)
+[![License](https://poser.pugx.org/reliqarts/doc-weaver/license?format=flat-square)](https://packagist.org/packages/reliqarts/doc-weaver)
+[![Latest Stable Version](https://poser.pugx.org/reliqarts/doc-weaver/version?format=flat-square)](https://packagist.org/packages/reliqarts/doc-weaver)
+[![Latest Unstable Version](https://poser.pugx.org/reliqarts/doc-weaver/v/unstable?format=flat-square)](//packagist.org/packages/reliqarts/doc-weaver)
+
+&nbsp;
+
+## Key Features
+
+DocWeaver provides the following features and more out of the box.
+
+- Multi-product support
+    - DocWeaver supports multiple products out-the-box. Just create your product folders and drop in your documentation version directories.
+- Plug and play
+    - Just install and configure and you're golden! *(approx. 2min)*
+
+## Installation & Usage
+
+### Installation
+
+Install via composer; in console: 
+```
+composer require reliqarts/doc-weaver
+``` 
+or require in *composer.json*:
+```js
+{
+    "require": {
+        "reliqarts/doc-weaver": "^1.0"
+    }
+}
+```
+then run `composer update` in your terminal to pull it in.
+
+Once this has finished, you will need to add the service provider to the providers array in your app.php config as follows:
+*(n.b. This package supports Laravel's package auto-discovery; if you are using Laravel 5.5 or above you can skip this step.)*
+
+```php
+ReliQArts\DocWeaver\DocWeaverServiceProvider::class,
+```
+
+Finally, publish package resources and configuration:
+
+```
+php artisan vendor:publish --provider="ReliQArts\DocWeaver\DocWeaverServiceProvider"
+``` 
+
+You may opt to publish only configuration by using the `doc-weaver:config` tag:
+
+```
+php artisan vendor:publish --provider="ReliQArts\DocWeaver\DocWeaverServiceProvider" --tag="doc-weaver:config"
+``` 
+You may publish migrations in a similar manner using the tag `migrations`.
+
+### Setup
+
+Set the desired environment variables so the package knows your image model, controller(s), etc. 
+
+Example environment config:
+```
+DOC_WEAVER_ROUTE_PREFIX=docs
+DOC_WEAVER_DIR=resources/docs
+```
+
+These variables, and more are explained within the [config](https://github.com/ReliQArts/laravel-doc-weaver/blob/master/src/config/config.php) file.
+
+And... it's ready! :ok_hand:
+
+## Author
+
+Patrick Reid (ReliQ) - <reliq@reliqarts.com> - <http://twitter.com/iamreliq>
+
+----
+
+### Acknowledgements
+
+This package was inspired by Laravel's [documentation](https://github.com/laravel/laravel) and uses its underlying mechanism as a base.

@@ -1,0 +1,7 @@
+/node_modules
+/public/mix-manifest.json
+/storage
+/vendor
+npm-debug.log
+yarn-error.log
+*cache
