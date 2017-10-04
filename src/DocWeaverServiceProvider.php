@@ -3,9 +3,6 @@
 namespace ReliQArts\DocWeaver;
 
 use Illuminate\Routing\Router;
-use ReliQArts\DocWeaver\Models;
-use ReliQArts\DocWeaver\Helpers;
-use ReliQArts\DocWeaver\Contracts;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 
@@ -53,7 +50,7 @@ class DocWeaverServiceProvider extends ServiceProvider
     private function handleCommands()
     {
         // Register the commands...
-        if ($this->app->runningInConsole() && !empty($this->commands)) {
+        if ($this->app->runningInConsole() && ! empty($this->commands)) {
             $this->commands($this->commands);
         }
     }

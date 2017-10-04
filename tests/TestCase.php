@@ -18,7 +18,7 @@ abstract class TestCase extends BaseTestCase
     protected function getEnvironmentSetUp($app)
     {
         // set base path
-        $app->setBasePath(__DIR__ . '/..');
+        $app->setBasePath(__DIR__.'/..');
 
         // set app config
         $app['config']->set('database.default', 'testing');
@@ -36,7 +36,7 @@ abstract class TestCase extends BaseTestCase
                 'product_page' => 'docs.prod.page',
             ],
         ]);
-        
+
         // setup routes
         $this->setupRoutes($app);
 
@@ -82,12 +82,12 @@ abstract class TestCase extends BaseTestCase
      * Set up routes for testing.
      *
      * @param  Illuminate\Foundation\Application  $app
-     * 
+     *
      * @return void
      */
     private function setupRoutes($app)
     {
         // require routes
-        require_once(realpath($app->basePath('routes/web.php')));
+        require_once realpath($app->basePath('routes/web.php'));
     }
 }
