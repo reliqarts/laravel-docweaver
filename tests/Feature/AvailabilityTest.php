@@ -7,7 +7,6 @@ use ReliQArts\DocWeaver\Tests\TestCase as TestCase;
 
 class AvailabilityTest extends TestCase
 {
-
     /**
      * Ensure views have required data.
      */
@@ -16,10 +15,10 @@ class AvailabilityTest extends TestCase
         $routeConfig = DocWeaverHelper::getRouteConfig();
         $docIndex = $routeConfig['prefix'];
 
-        $this->visit($docIndex) 
+        $this->visit($docIndex)
             ->assertViewHas('viewTemplateInfo');
 
-        $this->visit($docIndex) 
+        $this->visit($docIndex)
             ->assertViewHas('viewTemplateInfo');
     }
 

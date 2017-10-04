@@ -15,7 +15,7 @@ trait RouteHelper
     {
         return Config::get('doc-weaver.route', []);
     }
-    
+
     /**
      * Get route prefix for docs.
      *
