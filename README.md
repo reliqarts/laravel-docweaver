@@ -90,12 +90,6 @@ Each project directory should contain seperate folders for each documented versi
     └─── Project Two
 ```
 
-And... it's ready! :ok_hand:
-
-## Author
-
-Patrick Reid (ReliQ) - <reliq@reliqarts.com> - <http://twitter.com/iamreliq>
-
 ----
 
 ### Acknowledgements
