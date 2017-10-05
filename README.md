@@ -70,6 +70,26 @@ DOC_WEAVER_DIR=resources/docs
 
 These variables, and more are explained within the [config](https://github.com/ReliQArts/laravel-doc-weaver/blob/master/src/config/config.php) file.
 
+### Documentation Directory
+
+The documentation directory is the place where you put your project documentation directories. It may be changed with the config key `doc-weaver.storage.dir` or the environment variable `DOC_WEAVER_DIR`. The default documentation directory is `resources/docs`.
+
+#### Structure
+
+Each project directory should contain seperate folders for each documented version. Each version must have at least two (2) markdown files, namely `documentation.md` and `installation.md`, which serve as the sidebar and initial documentation pages respectively.
+
+```
+[doc dir]
+    │
+    └─── Project One
+    │       └───── 1.0
+    │       └───── 2.1
+    │           └───── documentation.md     # sidebar nav
+    │           └───── installation.md      # initial page
+    │
+    └─── Project Two
+```
+
 And... it's ready! :ok_hand:
 
 ## Author
