@@ -1,6 +1,6 @@
 {
     "name": "reliqarts/doc-weaver",
-    "description": "A highly configurable, yet simple Laravel 5 package documentation package.",
+    "description": "Highly configurable Laravel 5.x package for product documentation.",
     "keywords": ["doc", "package", "generation", "documentation", "laravel5", "content"],
     "type": "library",
     "license": "MIT",
