@@ -82,10 +82,10 @@ Each project directory should contain seperate folders for each documented versi
 [doc dir]
     │
     └─── Project One
-    │       └───── 1.0
-    │       └───── 2.1
-    │           └───── documentation.md     # sidebar nav
-    │           └───── installation.md      # initial page
+    │       └── 1.0
+    │       └── 2.1
+    │            └── documentation.md     # sidebar nav
+    │            └── installation.md      # initial page
     │
     └─── Project Two
 ```
