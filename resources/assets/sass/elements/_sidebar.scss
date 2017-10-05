@@ -37,24 +37,25 @@
 			border-top: 4px solid transparent;
     		border-right: 4px solid transparent;
     		border-left: 4px solid $color-lighter-gray;
-    		border-bottom: 4px solid transparent;
+			border-bottom: 4px solid transparent;
+			@include transition(all 180ms);
 		}
 
 		& + ul {
 			display: none;
 		}
 
-		&.is-active {
+		&.is-active, &.is-expanded {
 			// color: $color-darker-primary;
 			// border-bottom-style: solid;
 
 			&:after {
 				transform: rotate(90deg);
 			}
-		}
 
-		&.is-active + ul {
-			display: block;
+			& + ul {
+				display: block;
+			}
 		}
 	}
 
@@ -78,12 +79,46 @@
 				padding-left: 0.75rem;
 			}
 		}
+
+		li {
+			&.is-active, &.active {
+				font-weight: bold;
+			}
+		}
 	}
 
 	a {
 		line-height: 1.5;
+
 		&:hover {
 			color: $color-darker-primary;
+		}
+
+		&#doc-expand {
+			color: transparent;
+			display: block;
+			position: relative;
+
+			&:after {
+				content: "";
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 0;
+				height: 0;
+				border-top: 6px solid transparent;
+				border-right: 6px solid transparent;
+				border-left: 6px solid $color-lighter-gray;
+				border-bottom: 6px solid transparent;
+				@include transition(all 180ms);
+			}
+
+			&.is-active, &.is-expanded {
+				&:after {
+					border-left-color: $color-primary;
+					transform: rotate(90deg);
+				}
+			}
 		}
     }
     
@@ -91,7 +126,7 @@
     #carbonads span {
         display: block;
         overflow: hidden;
-    }
+	}
 
     .carbon-img {
         display: block;
