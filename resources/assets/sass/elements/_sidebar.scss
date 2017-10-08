@@ -211,6 +211,7 @@
 			@media all and (min-width: $sidebar-min-width + 40) {
 				left: $sidebar-min-width + 10;
 				right: auto;
+				top: 50vh;
 
 				span {
 					background: #fff;
