@@ -40,7 +40,7 @@ class DocsController
      * Create a new controller instance.
      *
      * @param  Documentation  $docs
-     * 
+     *
      * @return void
      */
     public function __construct(Documentation $docs)
@@ -77,7 +77,7 @@ class DocsController
      * Show the index page for a product (docs/foo).
      *
      * @param string $product
-     * 
+     *
      * @return Response
      */
     public function productIndex($product)
@@ -98,7 +98,7 @@ class DocsController
      * @param  string $product
      * @param  string $version
      * @param  string|null $page
-     * 
+     *
      * @return Response
      */
     public function show($product, $version, $page = null)
@@ -159,7 +159,7 @@ class DocsController
      *
      * @param  string  $product
      * @param  string  $version
-     * 
+     *
      * @return bool
      */
     protected function isVersion($product, $version)
