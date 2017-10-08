@@ -2,7 +2,6 @@
  * DocWeaver - Core 
  * */
 
-
 export default class Core {
 
     /**
@@ -93,33 +92,49 @@ export default class Core {
      */
     initSidebar() {
         let _self = this,
-            $sidebar = this.$wrapper.find('section.sidebar'),
+            $sidebar = this.$wrapper.find('#doc-weaver-sidebar'),
+            $sidebarPopper = $sidebar.find('#doc-weaver-sidebar-popper'),
+            $article = this.$wrapper.find('#doc-weaver-article'),
             $activeLink = $sidebar.find('li a[href="' + window.location.pathname + '"]');
 
+        if ($sidebar.length)
         // highlight active link
         $activeLink.parent('li').addClass('is-active')
             .parent('ul').prev('h2').addClass('is-active');
 
         console.log($activeLink.parent('li').parent('ul').prev('h2').addClass('is-active').text());
 
+        // toggle/pop entire sidebar - small screens
+        $sidebarPopper.off('click').on('click', function(ev) {
+            ev.preventDefault();
+            $sidebar.toggleClass('popped');
+        });
+
+        // allow clicking empty space to close
+        $sidebarPopper.parent().off('click').on('click', function(ev) {
+            if ($(ev.target).is($sidebar) && $sidebar.hasClass('popped')) {
+                $sidebar.removeClass('popped');
+            }
+        });
+
         // expand/collapse single section
         $sidebar.find('h2').off('click').on('click', function(ev) {
             ev.preventDefault();
             $(this).toggleClass('is-expanded');
         });
-
-        // expand/collapse all
+        
+        // expand/collapse all sidebar sections
         $sidebar.find('a#doc-expand').off('click').on('click', function(ev) {
             ev.preventDefault();
             _self.expandSidebarSections(!$(ev.target).hasClass('is-expanded'));
         });
 
-        // sidebar status storage key
-        _self.sidebarExpandedKey = 'dw-sbexp';
+        // sidebar all-section status storage key
+        _self.sidebarSectionsExpandedKey = 'dw-sbexp';
 
         // restore sidebar state if persisted
         try {
-            let s = localStorage.getItem(this.sidebarExpandedKey) == 'true';
+            let s = localStorage.getItem(this.sidebarSectionsExpandedKey) == 'true';
             console.log('retrieved state', s);
             _self.expandSidebarSections(s);
         } catch(e) {}
@@ -148,7 +163,7 @@ export default class Core {
 
         // persist in local storage
         try {
-            localStorage.setItem(this.sidebarExpandedKey, expand);
+            localStorage.setItem(this.sidebarSectionsExpandedKey, expand);
         } catch(e) {}
 
         return this;

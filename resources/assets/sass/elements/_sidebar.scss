@@ -1,158 +1,261 @@
 // DocWeaver - Sidebar
 
-.sidebar {
-	border-right: 1px solid $color-faint;
-	width: 250px;
-	float: left;
-	padding: 35px;
-
-	h2 {
-		position: relative;
-		font-size: 14px;
-		font-weight: 400;
-		padding: 0.75rem 0.75rem 0.75rem 0;
-		margin: 0;
-		font-weight: 600;
+#doc-weaver-sidebar, .docs .sidebar {
+	display: block;
+	height: 100%;
+	left: -2px;
+	top: 0;
+	width: 2px;
+	position: fixed;
+	
+	> .sidebar-popper, > .sidebar-toggle {
+		background: rgba(#fff, 0.8);
 		cursor: pointer;
-		transition: color 0.1s linear;
-		border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+		position: absolute;
+		top: 50vh;
+		right: rem-calc(-23px);
+		z-index: 3;
 
-		&:focus {
-			outline: 0;
-		}
-
-		&:hover,
-		{
-			color: $color-darker-primary;
-			// border-color: currentColor;
-		}
-
-		&:after {
-			content: "";
-			position: absolute;
-			right: 0;
-			top: 1.15rem;
-			width: 0;
-			height: 0;
-			border-top: 4px solid transparent;
-    		border-right: 4px solid transparent;
-    		border-left: 4px solid $color-lighter-gray;
-			border-bottom: 4px solid transparent;
-			@include transition(all 180ms);
-		}
-
-		& + ul {
-			display: none;
-		}
-
-		&.is-active, &.is-expanded {
-			// color: $color-darker-primary;
-			// border-bottom-style: solid;
-
-			&:after {
-				transform: rotate(90deg);
-			}
-
-			& + ul {
-				display: block;
-			}
-		}
-	}
-
-	> ul {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-
-		> li {
-			font-size: 14px;
-			font-weight: 400;
-			padding: 0;
-			margin: 0;
-			line-height: 25px;
-
-			> ul {
-				list-style: none;
-				margin: 0.5rem 0 0;
-				padding: 0;
-				font-size: 14px;
-				padding-left: 0.75rem;
-			}
-		}
-
-		li {
-			&.is-active, &.active {
-				font-weight: bold;
-			}
-		}
-	}
-
-	a {
-		line-height: 1.5;
-
-		&:hover {
-			color: $color-darker-primary;
-		}
-
-		&#doc-expand {
-			color: transparent;
+		span {
+			@include backface-visibility(hidden);
+			@include transition(all 300ms);
+			background: $color-light-gray;
 			display: block;
-			position: relative;
+			height: 3px;
+			margin: 0 0 5px;
+			width: rem-calc(12px);
+			@include transition(all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55));
 
-			&:after {
-				content: "";
-				position: absolute;
-				left: 0;
-				top: 0;
-				width: 0;
-				height: 0;
-				border-top: 6px solid transparent;
-				border-right: 6px solid transparent;
-				border-left: 6px solid $color-lighter-gray;
-				border-bottom: 6px solid transparent;
-				@include transition(all 180ms);
+			&:first-child, &:last-child {
+				width: rem-calc(15px);
 			}
 
-			&.is-active, &.is-expanded {
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	> .sidebar-content {
+		height: 0;
+		overflow: hidden;
+		@include opacity(0);
+
+		@include transition(
+			height 200ms, 
+			padding 300ms,
+			width 300ms
+		);
+
+		a {
+			line-height: 1.5;
+	
+			&:hover {
+				color: $color-darker-primary;
+			}
+	
+			&#doc-expand {
+				color: transparent;
+				display: block;
+				position: relative;
+	
 				&:after {
-					border-left-color: $color-primary;
-					transform: rotate(90deg);
+					content: "";
+					position: absolute;
+					left: 0;
+					top: 0;
+					width: 0;
+					height: 0;
+					border-top: 6px solid transparent;
+					border-right: 6px solid transparent;
+					border-left: 6px solid $color-lighter-gray;
+					border-bottom: 6px solid transparent;
+					@include transition(all 180ms);
+				}
+	
+				&.is-active, &.is-expanded {
+					&:after {
+						border-left-color: $color-primary;
+						transform: rotate(90deg);
+					}
 				}
 			}
 		}
-    }
-    
-    // carbon ads
-    #carbonads span {
-        display: block;
-        overflow: hidden;
+
+		h2 {
+			position: relative;
+			font-size: 14px;
+			font-weight: 400;
+			padding: 0.75rem 0.75rem 0.75rem 0;
+			margin: 0;
+			font-weight: 600;
+			cursor: pointer;
+			transition: color 0.1s linear;
+			border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+	
+			&:focus {
+				outline: 0;
+			}
+	
+			&:hover,
+			{
+				color: $color-darker-primary;
+				// border-color: currentColor;
+			}
+	
+			&:after {
+				content: "";
+				position: absolute;
+				right: 0;
+				top: 1.15rem;
+				width: 0;
+				height: 0;
+				border-top: 4px solid transparent;
+				border-right: 4px solid transparent;
+				border-left: 4px solid $color-lighter-gray;
+				border-bottom: 4px solid transparent;
+				@include transition(all 180ms);
+			}
+	
+			& + ul {
+				display: none;
+			}
+	
+			&.is-active, &.is-expanded {
+				// color: $color-darker-primary;
+				// border-bottom-style: solid;
+	
+				&:after {
+					transform: rotate(90deg);
+				}
+	
+				& + ul {
+					display: block;
+				}
+			}
+		}
+	
+		> ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+	
+			> li {
+				font-size: 14px;
+				font-weight: 400;
+				padding: 0;
+				margin: 0;
+				line-height: 25px;
+	
+				> ul {
+					list-style: none;
+					margin: 0.5rem 0 0;
+					padding: 0;
+					font-size: 14px;
+					padding-left: 0.75rem;
+				}
+			}
+	
+			li {
+				&.is-active, &.active {
+					font-weight: bold;
+				}
+			}
+		}
 	}
+	
+	&.popped {
+		background: $color-shadow;
+		position: fixed;
+		@include zero-corners;
+		width: 100%;
+		z-index: 2;
 
-    .carbon-img {
-        display: block;
-        margin: 0 auto 1em;
-    }
+		> .sidebar-content {
+			background: #fff;
+			@include border-radius(0 rem-calc(3px) rem-calc(3px) 0);
+			@include box-shadow(0 0 3px $color-shadow);
+			height: 100%;
+			min-width: $sidebar-min-width;
+			@include opacity(1);
+			overflow-y: auto;
+			padding: rem-calc(25px);
+			width: 50%;
+		}
 
-    .carbon-text {
-        display: block;
-        margin-bottom: .5em;
-    }
+		> .sidebar-popper, > .sidebar-toggle {
+			background: transparent;
+			left: auto;
+			top: 2rem;
+			right: 1rem;
 
-    .carbon-poweredby {
-        display: block;
-        font-size: 11px;
-    }
+			span {
+				@include opacity(0);
+				
+				&:first-child, &:last-child {
+					width: rem-calc(20px);
+				}
+				
+				&:first-child {
+					@include opacity(1);
+					@include transform(rotate(45deg));
+				}
+
+				&:last-child {
+					margin-top: -16px;
+					@include opacity(1);
+					@include transform(rotate(-45deg));
+				}
+			}
+
+			@media all and (min-width: $sidebar-min-width + 40) {
+				left: $sidebar-min-width + 10;
+				right: auto;
+
+				span {
+					background: #fff;
+				}
+			}
+
+			@media all and (min-width: $sidebar-min-width * 2) {
+				left: 53%;
+			}
+		}
+	}
+	
+	// override "popped" state for medium and larger screens
+	&.sidebar {
+		@media (min-width: $bp-medium + 1) {
+			background: transparent;
+			border-right: 1px solid $color-faint;
+			display: block;
+			float: left;
+			padding: rem-calc(25px);
+			overflow: hidden;
+			position: relative;
+			width: 200px;
+			@include zero-corners;
+			
+			> .sidebar-popper, > .sidebar-toggle {
+				display: none;
+			}
+			
+			> .sidebar-content {
+				background: transparent;
+				@include border-radius(0);
+				@include box-shadow(none);
+				height: auto;
+				min-width: auto;
+				@include opacity(1);
+				overflow-y: hidden;
+				padding: 0;
+				width: auto;
+			}
+		}
+
+		@media (min-width: $bp-large + 1) {
+			width: 250px;
+		}
+	}
 }
 
-@media (max-width:1080px) {
-	.sidebar {
-		padding: 25px;
-		width: 200px;
-	}
-}
-
-@media (max-width:780px) {
-	.sidebar {
-		display: none;
-	}
-}

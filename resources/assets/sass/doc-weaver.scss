@@ -2,8 +2,9 @@
 // @author: ReliQ (@IAmReliQ)
 
 // import variables and pre-requisites
-@import '~compass-sass-mixins/lib/compass/css3'; 
 @import 'variables';
+@import '~compass-sass-mixins/lib/compass/css3'; 
+@import '~foundation-sites/scss/util/util'; 
 
 // import elements
 .doc-weaver-wrapper {

@@ -8,8 +8,16 @@ $color-gray:            #525252;
 $color-light-gray:      #aeaeae;
 $color-lighter-gray:    #dee0df;
 $color-teal:            #27b4a8;
+$color-shadow:          rgba(#111, 0.4);
 
 // Fonts
 $font:         'Source Sans Pro', sans-serif;
 $font-alt:     'Miriam Libre', 'Source Sans Pro', sans-serif;
 $font-code:    'Operator Mono', 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+
+// Breakpoints
+$bp-medium: 780px;
+$bp-large: 1080px;
+
+// sidebar
+$sidebar-min-width: 260px;

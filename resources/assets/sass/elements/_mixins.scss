@@ -15,12 +15,6 @@
     }
 }
 
-// font size
-@mixin font-size($size, $important: false) {
-    font-size: $size if($important, !important, null);
-    font-size: rem-calc($size) if($important, !important, null);
-}
-
 @mixin smooth {
     -webkit-font-smoothing: antialiased;
 }
@@ -29,4 +23,12 @@
     @include clearfix;
     margin: 0 -15px 30px -15px;
     display: flex;
+}
+
+// zero corners
+@mixin zero-corners($zero: 0) {
+    bottom: $zero;
+    left: $zero;
+    right: $zero;
+    top: $zero;
 }
