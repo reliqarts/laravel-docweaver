@@ -54,6 +54,13 @@ class Documentation implements ProductDocumentor
     protected $sep;
 
     /**
+     * Unknown version identifier.
+     * 
+     * @var UNKNOWN_VERSION
+     */
+    public const UNKNOWN_VERSION = 'unknown';
+
+    /**
      * Format path correctly based on OS.
      * i.e. using DIRECTORY_SEPARATOR.
      *
@@ -71,6 +78,7 @@ class Documentation implements ProductDocumentor
      * @param  Filesystem  $files
      * @param  Cache  $cache
      * @throws ReliQArts\DocWeaver\Exceptions\ImplementationException
+     * 
      * @return void
      */
     public function __construct(Filesystem $files, Cache $cache)
@@ -92,6 +100,7 @@ class Documentation implements ProductDocumentor
      *
      * @param  string  $product
      * @param  string  $version
+     * 
      * @return string
      */
     public function getIndex($product, $version)
@@ -114,6 +123,7 @@ class Documentation implements ProductDocumentor
      * @param  string  $product
      * @param  string  $version
      * @param  string  $page
+     * 
      * @return string
      */
     public function get($product, $version, $page)
@@ -153,6 +163,7 @@ class Documentation implements ProductDocumentor
      * @param  string  $product
      * @param  string  $version
      * @param  string  $page
+     * 
      * @return bool
      */
     public function sectionExists($product, $version, $page)
@@ -168,6 +179,7 @@ class Documentation implements ProductDocumentor
      * Get the publicly available versions of the documentation.
      *
      * @param string $product Name of product.
+     * 
      * @return array
      */
     public function getDocVersions($product = null)
@@ -200,6 +212,7 @@ class Documentation implements ProductDocumentor
      *
      * @param string $product
      * @param bool $allowWordedDefault Whether a worded version should be accepted as default.
+     * 
      * @return string
      */
     public function getDefaultVersion($product, $allowWordedDefault = false)
@@ -207,7 +220,7 @@ class Documentation implements ProductDocumentor
         $versions = $this->getDocVersions($product);
         $this->currentProduct = $product;
         $allowWordedDefault = $allowWordedDefault || $this->config['versions']['allow_worded_default'];
-        $defaultVersion = 1.0;
+        $defaultVersion = self::UNKNOWN_VERSION;
 
         foreach ($versions as $tag => $ver) {
             if (! $allowWordedDefault) {
@@ -227,9 +240,11 @@ class Documentation implements ProductDocumentor
     /**
      * List available products.
      *
+     * @param bool $includeUnkowns Whether to include products with unkown version.
+     * 
      * @return void
      */
-    public function listProducts()
+    public function listProducts($includeUnknowns = false)
     {
         $products = [];
         $productDirectories = $this->files->directories(base_path($this->docsDir));
@@ -244,7 +259,9 @@ class Documentation implements ProductDocumentor
                 'defaultVersion' => $this->getDefaultVersion($productName),
                 'lastModified' => Carbon::createFromTimestamp($this->files->lastModified($prod)),
             ];
-            $products[strtolower($productName)] = $product;
+            if ($includeUnknowns || $product['defaultVersion'] != self::UNKNOWN_VERSION) {
+                $products[strtolower($productName)] = $product;
+            }
         }
 
         return $products;
@@ -254,6 +271,7 @@ class Documentation implements ProductDocumentor
      * Check whether product exists.
      *
      * @param string $product
+     * 
      * @return bool
      */
     public function productExists($product)
@@ -267,6 +285,7 @@ class Documentation implements ProductDocumentor
      * Get product info.
      *
      * @param string $product
+     * 
      * @return bool
      */
     public function getProduct($product)

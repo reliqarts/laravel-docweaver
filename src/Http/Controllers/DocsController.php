@@ -9,6 +9,13 @@ use ReliQArts\DocWeaver\Helpers\CoreHelper as Helper;
 class DocsController
 {
     /**
+     * Documentation configuration array.
+     *
+     * @var Cache
+     */
+    protected $config;
+
+    /**
      * The documentation repository.
      *
      * @var Documentation
@@ -33,6 +40,7 @@ class DocsController
      * Create a new controller instance.
      *
      * @param  Documentation  $docs
+     * 
      * @return void
      */
     public function __construct(Documentation $docs)
@@ -40,6 +48,7 @@ class DocsController
         $this->docs = $docs;
         $this->docsHome = Helper::getRoutePrefix();
         $this->viewTemplateInfo = Helper::getViewTemplateInfo();
+        $this->config = Helper::getConfig();
     }
 
     /**
@@ -60,7 +69,7 @@ class DocsController
             'title' => $title,
             'products' => $products,
             'viewTemplateInfo' => $this->viewTemplateInfo,
-            'routeConfig' => Helper::getRouteConfig(),
+            'routeConfig' => $this->config['route'],
         ]);
     }
 
@@ -68,17 +77,19 @@ class DocsController
      * Show the index page for a product (docs/foo).
      *
      * @param string $product
+     * 
      * @return Response
      */
     public function productIndex($product)
     {
-        if (! $this->docs->productExists($product)) {
+        $routeNames = $this->config['route']['names'];
+        $defaultVersion = $this->docs->getDefaultVersion($product);
+        
+        if (!$this->docs->productExists($product) || $defaultVersion == Documentation::UNKNOWN_VERSION) {
             abort(404);
         }
 
-        $defaultVersion = $this->docs->getDefaultVersion($product);
-
-        return redirect("{$this->docsHome}/$product/$defaultVersion");
+        return redirect()->route($routeNames['product_page'], [$product, $defaultVersion]);
     }
 
     /**
@@ -87,26 +98,30 @@ class DocsController
      * @param  string $product
      * @param  string $version
      * @param  string|null $page
+     * 
      * @return Response
      */
     public function show($product, $version, $page = null)
     {
+        $routeConfig = $this->config['route'];
+        $routeNames = $routeConfig['names'];
+        
+        // ensure product exists
         if (! $this->docs->productExists($product)) {
             abort(404);
         }
-
+        
+        // get default version for product
         $defaultVersion = $this->docs->getDefaultVersion($product);
-        if (! $this->isVersion($product, $version)) {
-            return redirect("{$this->docsHome}/$product/$defaultVersion", 301);
+        if (!$this->isVersion($product, $version)) {
+            return redirect(route($routeNames['product_page'], [$product, $defaultVersion]), 301);
         }
 
-        if (! defined('CURRENT_VERSION')) {
-            define('CURRENT_VERSION', $version);
-        }
-
+        // get page content
         $sectionPage = $page ?: 'installation';
         $content = $this->docs->get($product, $version, $sectionPage);
 
+        // ensure page has content
         if (is_null($content)) {
             abort(404);
         }
@@ -116,14 +131,13 @@ class DocsController
 
         if ($this->docs->sectionExists($product, $version, $page)) {
             $section .= '/'.$page;
-        } elseif (! is_null($page)) {
-            return redirect("/{$this->docsHome}/$product/$version");
+        } elseif (!is_null($page)) {
+            return redirect()->route($routeNames['product_page'], [$product, $version]);
         }
 
         $canonical = null;
-
         if ($this->docs->sectionExists($product, $defaultVersion, $sectionPage)) {
-            $canonical = "{$this->docsHome}/$product/$defaultVersion/$sectionPage";
+            $canonical = route($routeNames['product_page'], [$product, $defaultVersion, $sectionPage]);
         }
 
         return view('doc-weaver::page', [
@@ -136,7 +150,7 @@ class DocsController
             'currentSection' => $section,
             'canonical' => $canonical,
             'viewTemplateInfo' => $this->viewTemplateInfo,
-            'routeConfig' => Helper::getRouteConfig(),
+            'routeConfig' => $routeConfig,
         ]);
     }
 
@@ -145,6 +159,7 @@ class DocsController
      *
      * @param  string  $product
      * @param  string  $version
+     * 
      * @return bool
      */
     protected function isVersion($product, $version)
