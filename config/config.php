@@ -4,7 +4,7 @@ return [
     // debug mode?
     'debug' => false,
 
-    // Doc specific settings; for each product documentation
+    // doc specific settings
     'doc' => [
         'index' => env('DOC_WEAVER_DOC_INDEX', 'documentation'),
     ],

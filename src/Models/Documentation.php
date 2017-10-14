@@ -185,6 +185,7 @@ class Documentation implements ProductDocumentor
     public function getDocVersions($product = null)
     {
         $versions = [];
+        $product = strtolower($product);
 
         if ($product) {
             $this->currentProduct = $product;
@@ -217,6 +218,7 @@ class Documentation implements ProductDocumentor
      */
     public function getDefaultVersion($product, $allowWordedDefault = false)
     {
+        $product = strtolower($product);
         $versions = $this->getDocVersions($product);
         $this->currentProduct = $product;
         $allowWordedDefault = $allowWordedDefault || $this->config['versions']['allow_worded_default'];
@@ -271,14 +273,21 @@ class Documentation implements ProductDocumentor
      * Check whether product exists.
      *
      * @param string $product
+     * @param bool $returnProduct
      *
-     * @return bool
+     * @return bool|array
      */
-    public function productExists($product)
+    public function productExists($product, $returnProduct = false)
     {
-        $products = $this->listProducts();
+        $product    = strtolower($product);
+        $products   = $this->listProducts();
+        $exists     = array_key_exists($product, $products);
 
-        return array_key_exists($product, $products);
+        if ($exists && $returnProduct) {
+            $exists = $products[$product];
+        }
+
+        return $exists;
     }
 
     /**
@@ -290,8 +299,6 @@ class Documentation implements ProductDocumentor
      */
     public function getProduct($product)
     {
-        $products = $this->listProducts();
-
-        return array_key_exists($product, $products) ? $products[$product] : null;
+        return $this->productExists($product, true);
     }
 }
