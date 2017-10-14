@@ -46,7 +46,7 @@ class CoreHelper
      *
      * @param bool $abs Whether to return full .
      * @throws \ReliQArts\DocWeaver\Exceptions\ImplementationException
-     * 
+     *
      * @return void
      */
     public static function getViewTemplateInfo()
