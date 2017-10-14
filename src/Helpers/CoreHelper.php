@@ -5,6 +5,7 @@ namespace ReliQArts\DocWeaver\Helpers;
 use Config;
 use ParsedownExtra;
 use ReliQArts\DocWeaver\Traits\RouteHelper;
+use ReliQArts\DocWeaver\Exceptions\ImplementationException;
 
 /**
  * DocWeaver main helper class.
@@ -44,12 +45,17 @@ class CoreHelper
      * Get directory path to where documentation are stored.
      *
      * @param bool $abs Whether to return full .
-     *
+     * @throws \ReliQArts\DocWeaver\Exceptions\ImplementationException
+     * 
      * @return void
      */
     public static function getViewTemplateInfo()
     {
         $viewInfo = Config::get('doc-weaver.view');
+        
+        if (!view()->exists($viewInfo['master_template'])) {
+            throw new ImplementationException("Master template view ${$viewInfo['master_template']} does not exist.");
+        }
 
         return $viewInfo;
     }
