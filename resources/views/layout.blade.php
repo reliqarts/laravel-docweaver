@@ -42,7 +42,7 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/doc-
     </div>
     @if(empty($accents['footnotes']) ? true : $accents['product_line'])
     <aside id="doc-weaver-footnotes">
-        <p class="by-line">Docs by <a href="http://docweaver.reliqarts.com" target="doc-weaver.rqa">DocWeaver</a>.</p>
+        <p class="by-line">Docs by <a href="http://docweaver.reliqarts.com" target="doc-weaver.rqa">Doc Weaver</a>.</p>
     </aside>
     @endif  
 </div>
