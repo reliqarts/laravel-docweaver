@@ -10,6 +10,11 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/doc-
 <div id="doc-weaver-wrapper" class="doc-weaver-wrapper docs-wrapper">
     @isset($currentProduct)
     <nav id="doc-weaver-product-bar" class="navbar navbar-expand-sm navbar-light">
+        <a id="doc-weaver-docs-home-link" class="docs-home" href="{!! route($routeConfig['names']['index']) !!}">
+            <span></span>
+            <span></span>
+            <span></span>
+        </a>
         <a class="navbar-brand" href="{!! route($routeConfig['names']['product_index'], $currentProduct['key']) !!}">{{ $currentProduct['name'] }}</a>
         <div class="doc-weaver-navbar-collapse-replacement navbar-fake-collapse" id="doc-weaver-navbar-collapse-replacement">
             <ul class="navbar-nav ml-auto">
@@ -42,7 +47,7 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/doc-
     </div>
     @if(empty($accents['footnotes']) ? true : $accents['product_line'])
     <aside id="doc-weaver-footnotes">
-        <p class="by-line">Docs by <a href="http://docweaver.reliqarts.com" target="doc-weaver.rqa">DocWeaver</a>.</p>
+        <p class="by-line">Docs by <a href="http://docweaver.reliqarts.com" target="doc-weaver.rqa">Doc Weaver</a>.</p>
     </aside>
     @endif  
 </div>

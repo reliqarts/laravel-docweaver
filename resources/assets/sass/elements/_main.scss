@@ -12,6 +12,59 @@ a {
     margin-bottom: 20px;
     min-height: 2px;
 
+    #doc-weaver-docs-home-link {
+        display: inline-block;
+        padding-right: 0.68em;
+        position: relative;
+        @include transition(margin 1800ms);
+
+        > span {
+			@include backface-visibility(hidden);
+			@include transition(all 300ms);
+			background: #fff;
+			display: block;
+			height: 2px;
+            margin: 0 0 5px auto;
+            position: relative;
+            @include opacity(0.68);
+			width: rem-calc(15px);
+			@include transition(all 800ms);
+
+			&:first-child, &:last-child {
+				width: rem-calc(12px);
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+        }
+        
+        &:hover {
+            > span {
+                margin-left: 0;
+                margin-top: -3px;
+                @include opacity(1);
+
+                &:first-child {
+                    margin-top: 0;
+                    @include transform(rotate(-45deg));
+                }
+
+                &:last-child {
+                    @include transform(rotate(45deg));
+                }
+            }
+        }
+
+        &:active, &.active {
+            margin-right: 20%;
+
+            & + a {
+                @include opacity(0.3);
+            }
+        }
+    }
+
     #doc-weaver-navbar-collapse-replacement {
         @include display-flex;
         margin-left: auto;
