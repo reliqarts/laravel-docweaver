@@ -14,6 +14,7 @@ export default class Core {
         // init parts
         this.initAnchors()
             .initBlockquotes()
+            .initNavbar()
             .initSidebar();
     };
 
@@ -88,6 +89,27 @@ export default class Core {
     };
 
     /**
+     * Setup navbar
+     */
+    initNavbar() {
+        let _self = this,
+            $navbar = this.$wrapper.find('#doc-weaver-product-bar'),
+            $docsHomeLink = $navbar.find('#doc-weaver-docs-home-link');
+
+        if ($navbar.length) {
+            // docs home link
+            $docsHomeLink.off('click').on('click', function(ev) {
+                $docsHomeLink.addClass('active');
+            });
+
+            // add leaving class to wrapper
+            _self.$wrapper.addClass('leaving');
+        }
+
+        return _self;
+    };
+
+    /**
      * Setup sidebar
      */
     initSidebar() {
@@ -97,47 +119,45 @@ export default class Core {
             $article = this.$wrapper.find('#doc-weaver-article'),
             $activeLink = $sidebar.find('li a[href="' + window.location.pathname + '"]');
 
-        if ($sidebar.length)
-        // highlight active link
-        $activeLink.parent('li').addClass('is-active')
-            .parent('ul').prev('h2').addClass('is-active');
+        if ($sidebar.length) {
+            // highlight active link
+            $activeLink.parent('li').addClass('is-active')
+                .parent('ul').prev('h2').addClass('is-active');
 
-        console.log($activeLink.parent('li').parent('ul').prev('h2').addClass('is-active').text());
+            // toggle/pop entire sidebar - small screens
+            $sidebarPopper.off('click').on('click', function(ev) {
+                ev.preventDefault();
+                $sidebar.toggleClass('popped');
+            });
 
-        // toggle/pop entire sidebar - small screens
-        $sidebarPopper.off('click').on('click', function(ev) {
-            ev.preventDefault();
-            $sidebar.toggleClass('popped');
-        });
+            // allow clicking empty space to close
+            $sidebarPopper.parent().off('click').on('click', function(ev) {
+                if ($(ev.target).is($sidebar) && $sidebar.hasClass('popped')) {
+                    $sidebar.removeClass('popped');
+                }
+            });
 
-        // allow clicking empty space to close
-        $sidebarPopper.parent().off('click').on('click', function(ev) {
-            if ($(ev.target).is($sidebar) && $sidebar.hasClass('popped')) {
-                $sidebar.removeClass('popped');
-            }
-        });
+            // expand/collapse single section
+            $sidebar.find('h2').off('click').on('click', function(ev) {
+                ev.preventDefault();
+                $(this).toggleClass('is-expanded');
+            });
+            
+            // expand/collapse all sidebar sections
+            $sidebar.find('a#doc-expand').off('click').on('click', function(ev) {
+                ev.preventDefault();
+                _self.expandSidebarSections(!$(ev.target).hasClass('is-expanded'));
+            });
 
-        // expand/collapse single section
-        $sidebar.find('h2').off('click').on('click', function(ev) {
-            ev.preventDefault();
-            $(this).toggleClass('is-expanded');
-        });
-        
-        // expand/collapse all sidebar sections
-        $sidebar.find('a#doc-expand').off('click').on('click', function(ev) {
-            ev.preventDefault();
-            _self.expandSidebarSections(!$(ev.target).hasClass('is-expanded'));
-        });
+            // sidebar all-section status storage key
+            _self.sidebarSectionsExpandedKey = 'dw-sbexp';
 
-        // sidebar all-section status storage key
-        _self.sidebarSectionsExpandedKey = 'dw-sbexp';
-
-        // restore sidebar state if persisted
-        try {
-            let s = localStorage.getItem(this.sidebarSectionsExpandedKey) == 'true';
-            console.log('retrieved state', s);
-            _self.expandSidebarSections(s);
-        } catch(e) {}
+            // restore sidebar state if persisted
+            try {
+                let s = localStorage.getItem(this.sidebarSectionsExpandedKey) == 'true';
+                _self.expandSidebarSections(s);
+            } catch(e) {}
+        }
 
         return _self;
     };
