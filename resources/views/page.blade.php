@@ -1,19 +1,19 @@
-@extends('doc-weaver::layout')
+@extends('docweaver::layout')
 
-@section('doc-weaver-content')
-<section id="doc-weaver-sidebar" class="sidebar">
-	<aside id="doc-weaver-sidebar-popper" class="sidebar-toggle sidebar-popper">
+@section('docweaver-content')
+<section id="docweaver-sidebar" class="sidebar">
+	<aside id="docweaver-sidebar-popper" class="sidebar-toggle sidebar-popper">
 		<span></span>
 		<span></span>
 		<span></span>
 	</aside>
 	<div class="sidebar-content">
-		<small><a href="#" id="doc-expand" class="doc-weaver-doc-expand">▶</a></small>
+		<small><a href="#" id="doc-expand" class="docweaver-doc-expand">▶</a></small>
 		{!! $index !!}
 	</div>
 </section>
 
-<article id="doc-weaver-article">
+<article id="docweaver-article">
 	<div class="article-content">
 		{!! $content !!}
 	</div>

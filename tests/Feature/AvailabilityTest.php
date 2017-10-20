@@ -1,9 +1,9 @@
 <?php
 
-namespace ReliQArts\DocWeaver\Tests\Feature;
+namespace ReliQArts\Docweaver\Tests\Feature;
 
-use DocWeaverHelper;
-use ReliQArts\DocWeaver\Tests\TestCase as TestCase;
+use DocweaverHelper;
+use ReliQArts\Docweaver\Tests\TestCase as TestCase;
 
 class AvailabilityTest extends TestCase
 {
@@ -12,7 +12,7 @@ class AvailabilityTest extends TestCase
      */
     public function testViewData()
     {
-        $routeConfig = DocWeaverHelper::getRouteConfig();
+        $routeConfig = DocweaverHelper::getRouteConfig();
         $docIndex = $routeConfig['prefix'];
 
         $this->visit($docIndex)
@@ -27,7 +27,7 @@ class AvailabilityTest extends TestCase
      */
     public function testProjectAvailability()
     {
-        $routeConfig = DocWeaverHelper::getRouteConfig();
+        $routeConfig = DocweaverHelper::getRouteConfig();
         $docIndex = $routeConfig['prefix'];
 
         $this->visit($docIndex)

@@ -9,11 +9,11 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="DocWeaver Feature Tests">
+        <testsuite name="Docweaver Feature Tests">
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
 
-        <testsuite name="DocWeaver Unit Tests">
+        <testsuite name="Docweaver Unit Tests">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
     </testsuites>

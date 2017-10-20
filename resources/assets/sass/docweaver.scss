@@ -1,4 +1,4 @@
-// DocWeaver
+// Docweaver
 // @author: ReliQ (@IAmReliQ)
 
 // import variables and pre-requisites
@@ -7,8 +7,8 @@
 @import '~foundation-sites/scss/util/util'; 
 
 // import elements
-.doc-weaver-wrapper {
-    @import 
+.docweaver-wrapper {
+    @import
         'elements/mixins',
         'elements/prism',
         'elements/callouts',

@@ -1,10 +1,10 @@
 <?php
 
-namespace ReliQArts\DocWeaver\Http\Controllers;
+namespace ReliQArts\Docweaver\Http\Controllers;
 
 use Symfony\Component\DomCrawler\Crawler;
-use ReliQArts\DocWeaver\Models\Documentation;
-use ReliQArts\DocWeaver\Helpers\CoreHelper as Helper;
+use ReliQArts\Docweaver\Models\Documentation;
+use ReliQArts\Docweaver\Helpers\CoreHelper as Helper;
 
 class DocsController
 {
@@ -65,7 +65,7 @@ class DocsController
             $title = $this->viewTemplateInfo['docs_title'];
         }
 
-        return view('doc-weaver::index', [
+        return view('docweaver::index', [
             'title' => $title,
             'products' => $products,
             'viewTemplateInfo' => $this->viewTemplateInfo,
@@ -140,7 +140,7 @@ class DocsController
             $canonical = route($routeNames['product_page'], [$product, $defaultVersion, $sectionPage]);
         }
 
-        return view('doc-weaver::page', [
+        return view('docweaver::page', [
             'title' => count($title) ? $title->text() : null,
             'index' => $this->docs->getIndex($product, $version),
             'currentProduct' => $this->docs->getProduct($product),

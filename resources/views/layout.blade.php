@@ -2,21 +2,21 @@
 
 @php
 $accents = (empty($viewTemplateInfo['accents']) ? [] : $viewTemplateInfo['accents']);
-$scripts = '<script type="text/javascript" src="/vendor/doc-weaver/js/doc-weaver.js"></script>';
-$styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/doc-weaver/css/doc-weaver.css" />';
+$scripts = '<script type="text/javascript" src="/vendor/docweaver/js/docweaver.js"></script>';
+$styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docweaver/css/docweaver.css" />';
 @endphp
 
 @section($viewTemplateInfo['master_section'])
-<div id="doc-weaver-wrapper" class="doc-weaver-wrapper docs-wrapper">
+<div id="docweaver-wrapper" class="docweaver-wrapper docs-wrapper">
     @isset($currentProduct)
-    <nav id="doc-weaver-product-bar" class="navbar navbar-expand-sm navbar-light">
-        <a id="doc-weaver-docs-home-link" class="docs-home" href="{!! route($routeConfig['names']['index']) !!}">
+    <nav id="docweaver-product-bar" class="navbar navbar-expand-sm navbar-light">
+        <a id="docweaver-docs-home-link" class="docs-home" href="{!! route($routeConfig['names']['index']) !!}">
             <span></span>
             <span></span>
             <span></span>
         </a>
         <a class="navbar-brand" href="{!! route($routeConfig['names']['product_index'], $currentProduct['key']) !!}">{{ $currentProduct['name'] }}</a>
-        <div class="doc-weaver-navbar-collapse-replacement navbar-fake-collapse" id="doc-weaver-navbar-collapse-replacement">
+        <div class="docweaver-navbar-collapse-replacement navbar-fake-collapse" id="docweaver-navbar-collapse-replacement">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <div class="version-switcher btn-group ml-auto">
@@ -39,15 +39,15 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/doc-
     </nav>
     @else
     @if(empty($accents['product_line']) ? true : $accents['product_line'])
-    <div id="doc-weaver-product-line"></div>
+    <div id="docweaver-product-line"></div>
     @endif
     @endisset
     <div class="docs container">
-    @yield('doc-weaver-content')
+    @yield('docweaver-content')
     </div>
     @if(empty($accents['footnotes']) ? true : $accents['product_line'])
-    <aside id="doc-weaver-footnotes">
-        <p class="by-line">Docs by <a href="http://docweaver.reliqarts.com" target="doc-weaver.rqa">Doc Weaver</a>.</p>
+    <aside id="docweaver-footnotes">
+        <p class="by-line">Docs by <a href="http://docweaver.reliqarts.com" target="docweaver.rqa">Docweaver</a>.</p>
     </aside>
     @endif  
 </div>

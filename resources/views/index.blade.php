@@ -1,8 +1,8 @@
-@extends('doc-weaver::layout')
+@extends('docweaver::layout')
 
-@section('doc-weaver-content')
-<div id="doc-weaver-product-showcase" class="products product-showcase">
-    <h1 class="doc-weaver-h1">{{ $title }}</h1>
+@section('docweaver-content')
+<div id="docweaver-product-showcase" class="products product-showcase">
+    <h1 class="docweaver-h1">{{ $title }}</h1>
     @if(count($products))
     <div class="product-list row">
         @foreach($products as $productKey => $product)

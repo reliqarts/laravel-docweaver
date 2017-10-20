@@ -1,5 +1,5 @@
 /**
- * DocWeaver - Core 
+ * Docweaver - Core 
  * */
 
 export default class Core {
@@ -9,7 +9,7 @@ export default class Core {
      */
     constructor() {
         // set props
-        this.$wrapper = $('#doc-weaver-wrapper');
+        this.$wrapper = $('#docweaver-wrapper');
 
         // init parts
         this.initAnchors()
@@ -93,8 +93,8 @@ export default class Core {
      */
     initNavbar() {
         let _self = this,
-            $navbar = this.$wrapper.find('#doc-weaver-product-bar'),
-            $docsHomeLink = $navbar.find('#doc-weaver-docs-home-link');
+            $navbar = this.$wrapper.find('#docweaver-product-bar'),
+            $docsHomeLink = $navbar.find('#docweaver-docs-home-link');
 
         if ($navbar.length) {
             // docs home link
@@ -114,9 +114,9 @@ export default class Core {
      */
     initSidebar() {
         let _self = this,
-            $sidebar = this.$wrapper.find('#doc-weaver-sidebar'),
-            $sidebarPopper = $sidebar.find('#doc-weaver-sidebar-popper'),
-            $article = this.$wrapper.find('#doc-weaver-article'),
+            $sidebar = this.$wrapper.find('#docweaver-sidebar'),
+            $sidebarPopper = $sidebar.find('#docweaver-sidebar-popper'),
+            $article = this.$wrapper.find('#docweaver-article'),
             $activeLink = $sidebar.find('li a[href="' + window.location.pathname + '"]');
 
         if ($sidebar.length) {
