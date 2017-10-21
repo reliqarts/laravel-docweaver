@@ -14,7 +14,7 @@
 </section>
 
 <article id="docweaver-article">
-	<div class="article-content">
+	<div id="docweaver-article-content" class="docweaver-article-content article-content">
 		{!! $content !!}
 	</div>
 </article>

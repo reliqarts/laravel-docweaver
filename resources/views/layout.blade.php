@@ -15,7 +15,7 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docw
             <span></span>
             <span></span>
         </a>
-        <a class="navbar-brand" href="{!! route($routeConfig['names']['product_index'], $currentProduct['key']) !!}">{{ $currentProduct['name'] }}</a>
+        <a id="docweaver-current-product-name" class="navbar-brand" href="{!! route($routeConfig['names']['product_index'], $currentProduct['key']) !!}">{{ $currentProduct['name'] }}</a>
         <div class="docweaver-navbar-collapse-replacement navbar-fake-collapse" id="docweaver-navbar-collapse-replacement">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
