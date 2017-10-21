@@ -37,6 +37,8 @@
                 "ReliQArts\\Docweaver\\DocweaverServiceProvider"
             ],
             "aliases": {
+                "DocweaverProduct": "ReliQArts\\Docweaver\\Models\\Product",
+                "DocweaverDocumentation": "ReliQArts\\Docweaver\\Models\\Documentation",
                 "DocweaverHelper": "ReliQArts\\Docweaver\\Helpers\\CoreHelper"
             }
         }

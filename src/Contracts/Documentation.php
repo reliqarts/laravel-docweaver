@@ -2,7 +2,7 @@
 
 namespace ReliQArts\Docweaver\Contracts;
 
-interface ProductDocumentor
+interface Documentation
 {
     /**
      * Get the documentation index page.
@@ -21,13 +21,5 @@ interface ProductDocumentor
      * @param  string  $page
      * @return string
      */
-    public function get($product, $version, $page);
-
-    /**
-     * Get the publicly available versions of the documentation.
-     *
-     * @param  string  $product Name of product
-     * @return array
-     */
-    public function getDocVersions($product);
+    public function getPage($product, $version, $page);
 }

@@ -15,7 +15,7 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docw
             <span></span>
             <span></span>
         </a>
-        <a id="docweaver-current-product-name" class="navbar-brand" href="{!! route($routeConfig['names']['product_index'], $currentProduct['key']) !!}">{{ $currentProduct['name'] }}</a>
+        <a id="docweaver-current-product-name" class="navbar-brand" href="{!! route($routeConfig['names']['product_index'], $currentProduct->key) !!}">{{ $currentProduct->getName() }}</a>
         <div class="docweaver-navbar-collapse-replacement navbar-fake-collapse" id="docweaver-navbar-collapse-replacement">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
@@ -26,9 +26,9 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docw
                         </button>
                         <div class="version-menu dropdown-menu dropdown-menu-right">
                             <h6 class="dropdown-header">Versions</h6>
-                            @foreach ($currentProduct['versions'] as $versionTag => $versionName)
+                            @foreach ($currentProduct->getVersions() as $versionTag => $versionName)
                                 @if ($currentVersion != $versionTag)
-                                <a class="dropdown-item" href="{!! route('docs.show', [$currentProduct['key'], $versionTag]) !!}">{{ $versionName }}</a>
+                                <a class="dropdown-item" href="{!! route('docs.show', [$currentProduct->key, $versionTag]) !!}">{{ $versionName }}</a>
                                 @endif
                             @endforeach
                         </div>

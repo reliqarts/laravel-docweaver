@@ -1,8 +1,14 @@
 <?php
 
 return [
+    
     // debug mode?
     'debug' => false,
+    
+    // cache
+    'cache' => [
+        'key' => 'docweaver.docs',
+    ],
 
     // doc specific settings
     'doc' => [

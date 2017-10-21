@@ -9,11 +9,11 @@
         <div class="col-md-4">
             <div id="product-{{ $productKey }}" class="product">
                 <a href="{!! route($routeConfig['names']['product_index'], $productKey) !!}">
-                    <h4 class="product-title">{{ $product['name'] }}</h4>
+                    <h4 class="product-title">{{ $product->getName() }}</h4>
                     <div class="product-info">
                         <ul class="info-list">
-                            <li>Version: {{ $product['defaultVersion'] }}</li>
-                            <li>Last updated: {{ $product['lastModified']->diffForHumans() }}</li>
+                            <li>Version: {{ $product->getDefaultVersion() }}</li>
+                            <li>Last updated: {{ $product->getLastModified()->diffForHumans() }}</li>
                         </ul>
                     </div>
                 </a>

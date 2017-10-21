@@ -131,14 +131,21 @@ class DocweaverServiceProvider extends ServiceProvider
     {
         $loader = AliasLoader::getInstance();
 
-        // bind contract to model
+        // bind contracts to models
         $this->app->bind(
             Contracts\Documentation::class,
             Models\Documentation::class
         );
 
+        $this->app->bind(
+            Contracts\Product::class,
+            Models\Product::class
+        );
+
         // Register facades...
+        $loader->alias('DocweaverProduct', Models\Product::class);
         $loader->alias('DocweaverHelper', Helpers\CoreHelper::class);
+        $loader->alias('DocweaverDocumentation', Models\Documentation::class);
     }
 
     /**

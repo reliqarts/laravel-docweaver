@@ -4,19 +4,16 @@ namespace ReliQArts\Docweaver\Models;
 
 use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
+use ReliQArts\Docweaver\Traits\FileHandler;
 use Illuminate\Contracts\Cache\Repository as Cache;
-use ReliQArts\Docweaver\Contracts\ProductDocumentor;
 use ReliQArts\Docweaver\Helpers\CoreHelper as Helper;
+use ReliQArts\Docweaver\Exceptions\BadProductException;
 use ReliQArts\Docweaver\Exceptions\ImplementationException;
+use ReliQArts\Docweaver\Contracts\Documentation as DocumentationContract;
 
-class Documentation implements ProductDocumentor
+class Documentation implements DocumentationContract
 {
-    /**
-     * The filesystem implementation.
-     *
-     * @var Filesystem
-     */
-    protected $files;
+    use FileHandler;
 
     /**
      * The cache implementation.
@@ -24,6 +21,13 @@ class Documentation implements ProductDocumentor
      * @var Cache
      */
     protected $cache;
+
+    /**
+     * The cache key.
+     *
+     * @var string
+     */
+    protected $cacheKey;
 
     /**
      * Documentation configuration array.
@@ -47,32 +51,6 @@ class Documentation implements ProductDocumentor
     protected $docsDir;
 
     /**
-     * Directory separator.
-     *
-     * @var string
-     */
-    protected $sep;
-
-    /**
-     * Unknown version identifier.
-     *
-     * @var UNKNOWN_VERSION
-     */
-    public const UNKNOWN_VERSION = 'unknown';
-
-    /**
-     * Format path correctly based on OS.
-     * i.e. using DIRECTORY_SEPARATOR.
-     *
-     * @param string $path
-     * @return string
-     */
-    private function dirPath($path)
-    {
-        return str_replace(['/', '\\'], $this->sep, $path);
-    }
-
-    /**
      * Create a new documentation instance.
      *
      * @param  Filesystem  $files
@@ -87,7 +65,7 @@ class Documentation implements ProductDocumentor
         $this->cache = $cache;
         $this->config = Helper::getConfig();
         $this->docsDir = Helper::getDocsDir();
-        $this->sep = DIRECTORY_SEPARATOR;
+        $this->cacheKey = $this->config['cache']['key'];
 
         $docsDirAbsPath = base_path($this->docsDir);
         if (! $this->files->isDirectory($docsDirAbsPath)) {
@@ -107,9 +85,10 @@ class Documentation implements ProductDocumentor
     {
         $this->currentProduct = $product;
         $config = $this->config;
-
-        return $this->cache->remember("docweaver.docs.{$product}.{$version}.index", 5, function () use ($product, $version, $config) {
-            $path = base_path("{$this->docsDir}/{$product}/{$version}/{$config['doc']['index']}.md");
+        $indexCacheKey = "{$this->cacheKey}.{$product->key}.{$version}.index";
+        
+        return $this->cache->remember($indexCacheKey, 5, function () use ($product, $version, $config) {
+            $path = "{$product->getDir()}/{$version}/{$config['doc']['index']}.md";
 
             if ($this->files->exists($path)) {
                 return $this->replaceLinks($version, Helper::markdown($this->files->get($path)));
@@ -120,18 +99,19 @@ class Documentation implements ProductDocumentor
     /**
      * Get the given documentation page.
      *
-     * @param  string  $product
+     * @param  Product  $product
      * @param  string  $version
      * @param  string  $page
      *
      * @return string
      */
-    public function get($product, $version, $page)
+    public function getPage($product, $version, $page)
     {
         $this->currentProduct = $product;
+        $pageCacheKey = "{$this->cacheKey}.{$product->key}.{$version}.{$page}";
 
-        return $this->cache->remember("docweaver.docs.{$product}.{$version}.{$page}", 5, function () use ($product, $version, $page) {
-            $path = base_path("{$this->docsDir}/{$product}/{$version}/{$page}.md");
+        return $this->cache->remember($pageCacheKey, 5, function () use ($product, $version, $page) {
+            $path = "{$product->getDir()}/{$version}/{$page}.md";
 
             if ($this->files->exists($path)) {
                 return $this->replaceLinks($version, Helper::markdown($this->files->get($path)));
@@ -150,8 +130,8 @@ class Documentation implements ProductDocumentor
     {
         $routePrefix = Helper::getRoutePrefix();
         // ensure product name exists in url
-        if (! empty($this->currentProduct)) {
-            $content = str_replace('docs/{{version}}', "$routePrefix/{$this->currentProduct}/$version", $content);
+        if (!empty($this->currentProduct)) {
+            $content = str_replace('docs/{{version}}', "$routePrefix/{$this->currentProduct->key}/$version", $content);
         }
 
         return str_replace('{{version}}', $version, $content);
@@ -160,7 +140,7 @@ class Documentation implements ProductDocumentor
     /**
      * Check if the given section exists.
      *
-     * @param  string  $product
+     * @param  Product  $product
      * @param  string  $version
      * @param  string  $page
      *
@@ -170,73 +150,7 @@ class Documentation implements ProductDocumentor
     {
         $this->currentProduct = $product;
 
-        return $this->files->exists(
-            base_path("{$this->docsDir}/{$product}/{$version}/{$page}.md")
-        );
-    }
-
-    /**
-     * Get the publicly available versions of the documentation.
-     *
-     * @param string $product Name of product.
-     *
-     * @return array
-     */
-    public function getDocVersions($product = null)
-    {
-        $versions = [];
-        $product = strtolower($product);
-
-        if ($product) {
-            $this->currentProduct = $product;
-            $productDirectory = base_path("{$this->docsDir}{$this->sep}{$product}");
-
-            if ($this->files->isDirectory($productDirectory)) {
-                $versionDirs = $this->files->directories($productDirectory);
-                // add versions to version array
-                foreach ($versionDirs as $ver) {
-                    $versionTag = basename($ver);
-                    $versionName = title_case($versionTag);
-                    $versions[$versionTag] = $versionName;
-                }
-            }
-
-            // sort versions
-            krsort($versions);
-        }
-
-        return $versions;
-    }
-
-    /**
-     * Get default doc version for product.
-     *
-     * @param string $product
-     * @param bool $allowWordedDefault Whether a worded version should be accepted as default.
-     *
-     * @return string
-     */
-    public function getDefaultVersion($product, $allowWordedDefault = false)
-    {
-        $product = strtolower($product);
-        $versions = $this->getDocVersions($product);
-        $this->currentProduct = $product;
-        $allowWordedDefault = $allowWordedDefault || $this->config['versions']['allow_worded_default'];
-        $defaultVersion = self::UNKNOWN_VERSION;
-
-        foreach ($versions as $tag => $ver) {
-            if (! $allowWordedDefault) {
-                if (is_numeric($tag)) {
-                    $defaultVersion = $tag;
-                    break;
-                }
-            } else {
-                $defaultVersion = $tag;
-                break;
-            }
-        }
-
-        return $defaultVersion;
+        return $this->files->exists("{$product->getDir()}/{$version}/{$page}.md");
     }
 
     /**
@@ -252,17 +166,13 @@ class Documentation implements ProductDocumentor
         $productDirectories = $this->files->directories(base_path($this->docsDir));
 
         foreach ($productDirectories as $prod) {
-            $productName = title_case(basename($prod));
-            $product = [
-                'key' => strtolower($productName),
-                'name' => $productName,
-                'directory' => $this->dirPath($prod),
-                'versions' => $this->getDocVersions($productName),
-                'defaultVersion' => $this->getDefaultVersion($productName),
-                'lastModified' => Carbon::createFromTimestamp($this->files->lastModified($prod)),
-            ];
-            if ($includeUnknowns || $product['defaultVersion'] != self::UNKNOWN_VERSION) {
-                $products[strtolower($productName)] = $product;
+            try {
+                $product = new Product($prod);
+                if ($includeUnknowns || $product->getDefaultVersion() !== Product::UNKNOWN_VERSION) {
+                    $products[$product->key] = $product;
+                }
+            } catch (BadProductException $e) {
+                // error already logged
             }
         }
 
@@ -277,14 +187,14 @@ class Documentation implements ProductDocumentor
      *
      * @return bool|array
      */
-    public function productExists($product, $returnProduct = false)
+    public function productExists($productName, $returnProduct = false)
     {
-        $product    = strtolower($product);
+        $productKey = strtolower($productName);
         $products   = $this->listProducts();
-        $exists     = array_key_exists($product, $products);
+        $exists     = array_key_exists($productKey, $products);
 
         if ($exists && $returnProduct) {
-            $exists = $products[$product];
+            $exists = $products[$productKey];
         }
 
         return $exists;
@@ -293,12 +203,12 @@ class Documentation implements ProductDocumentor
     /**
      * Get product info.
      *
-     * @param string $product
+     * @param string $productName
      *
      * @return bool
      */
-    public function getProduct($product)
+    public function getProduct($productName)
     {
-        return $this->productExists($product, true);
+        return $this->productExists($productName, true);
     }
 }

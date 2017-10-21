@@ -2,6 +2,8 @@
 
 namespace ReliQArts\Docweaver\Http\Controllers;
 
+use Log;
+use ReliQArts\Docweaver\Models\Product;
 use Symfony\Component\DomCrawler\Crawler;
 use ReliQArts\Docweaver\Models\Documentation;
 use ReliQArts\Docweaver\Helpers\CoreHelper as Helper;
@@ -80,16 +82,20 @@ class DocsController
      *
      * @return Response
      */
-    public function productIndex($product)
+    public function productIndex($productName)
     {
         $routeNames = $this->config['route']['names'];
-        $defaultVersion = $this->docs->getDefaultVersion($product);
+        $product = $this->docs->getProduct($productName);
         
-        if (!$this->docs->productExists($product) || $defaultVersion == Documentation::UNKNOWN_VERSION) {
+        if (!$product || $product->getDefaultVersion() === Product::UNKNOWN_VERSION) {
             abort(404);
         }
 
-        return redirect()->route($routeNames['product_page'], [$product, $defaultVersion]);
+        // route to default version
+        return redirect()->route($routeNames['product_page'], [
+            $product->key,
+            $product->getDefaultVersion()
+        ]);
     }
 
     /**
@@ -101,69 +107,64 @@ class DocsController
      *
      * @return Response
      */
-    public function show($product, $version, $page = null)
+    public function show($productKey, $version, $page = null)
     {
         $routeConfig = $this->config['route'];
         $routeNames = $routeConfig['names'];
         
         // ensure product exists
-        if (! $this->docs->productExists($product)) {
+        if (!$product = $this->docs->getProduct($productKey)) {
             abort(404);
         }
         
         // get default version for product
-        $defaultVersion = $this->docs->getDefaultVersion($product);
-        if (!$this->isVersion($product, $version)) {
-            return redirect(route($routeNames['product_page'], [$product, $defaultVersion]), 301);
+        $defaultVersion = $product->getDefaultVersion();
+        if (!$product->hasVersion($version)) {
+            return redirect(route($routeNames['product_page'], [$product->key, $defaultVersion]), 301);
         }
 
         // get page content
         $sectionPage = $page ?: 'installation';
-        $content = $this->docs->get($product, $version, $sectionPage);
+        $content = $this->docs->getPage($product, $version, $sectionPage);
 
         // ensure page has content
         if (is_null($content)) {
+            Log::warning("Documentation page ({$page}) for {$product->getName()} has no content.", [
+                'product' => $product]
+            );
             abort(404);
         }
 
         $title = (new Crawler($content))->filterXPath('//h1');
         $section = '';
 
+        // ensure section exists
         if ($this->docs->sectionExists($product, $version, $page)) {
-            $section .= '/'.$page;
+            $section .= "/$page";
         } elseif (!is_null($page)) {
-            return redirect()->route($routeNames['product_page'], [$product, $version]);
+            // section does not exist, go to version index
+            return redirect()->route($routeNames['product_page'], [$product->key, $version]);
         }
 
+        // set canonical
         $canonical = null;
         if ($this->docs->sectionExists($product, $defaultVersion, $sectionPage)) {
-            $canonical = route($routeNames['product_page'], [$product, $defaultVersion, $sectionPage]);
+            $canonical = route($routeNames['product_page'], [$product->key, $defaultVersion, $sectionPage]);
         }
+
+        // dd($version);
 
         return view('docweaver::page', [
             'title' => count($title) ? $title->text() : null,
             'index' => $this->docs->getIndex($product, $version),
-            'currentProduct' => $this->docs->getProduct($product),
+            'currentProduct' => $product,
             'content' => $content,
             'currentVersion' => $version,
-            'versions' => $this->docs->getDocVersions($product),
+            'versions' => $product->getVersions(),
             'currentSection' => $section,
             'canonical' => $canonical,
             'viewTemplateInfo' => $this->viewTemplateInfo,
             'routeConfig' => $routeConfig,
         ]);
-    }
-
-    /**
-     * Determine if the given URL segment is a valid version.
-     *
-     * @param  string  $product
-     * @param  string  $version
-     *
-     * @return bool
-     */
-    protected function isVersion($product, $version)
-    {
-        return in_array($version, array_keys($this->docs->getDocVersions($product)));
     }
 }
