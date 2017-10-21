@@ -61,11 +61,11 @@ class Product implements Arrayable, Jsonable, ProductContract
      */
     public $key = null;
 
-     /**
-     * Unknown version identifier.
-     *
-     * @var UNKNOWN_VERSION
-     */
+    /**
+    * Unknown version identifier.
+    *
+    * @var UNKNOWN_VERSION
+    */
     public const UNKNOWN_VERSION = 'unknown';
 
     /**
