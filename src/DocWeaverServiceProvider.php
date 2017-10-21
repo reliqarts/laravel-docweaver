@@ -1,15 +1,15 @@
 <?php
 
-namespace ReliQArts\DocWeaver;
+namespace ReliQArts\Docweaver;
 
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 
 /**
- *  DocWeaverServiceProvider.
+ *  DocweaverServiceProvider.
  */
-class DocWeaverServiceProvider extends ServiceProvider
+class DocweaverServiceProvider extends ServiceProvider
 {
     /**
      * Indicates if loading of the provider is deferred.
@@ -40,8 +40,8 @@ class DocWeaverServiceProvider extends ServiceProvider
     protected function handleAssets()
     {
         $this->publishes([
-            "$this->assetsDir/public" => public_path('vendor/doc-weaver'),
-        ], 'doc-weaver:public');
+            "$this->assetsDir/public" => public_path('vendor/docweaver'),
+        ], 'docweaver:public');
     }
 
     /**
@@ -63,10 +63,10 @@ class DocWeaverServiceProvider extends ServiceProvider
         $docWeaverConfig = "{$this->assetsDir}/config/config.php";
 
         // merge config
-        $this->mergeConfigFrom($docWeaverConfig, 'doc-weaver');
+        $this->mergeConfigFrom($docWeaverConfig, 'docweaver');
 
         // allow publishing the config file, with tag: docweaver:config
-        $this->publishes([$docWeaverConfig => config_path('doc-weaver.php')], 'doc-weaver:config');
+        $this->publishes([$docWeaverConfig => config_path('docweaver.php')], 'docweaver:config');
     }
 
     /**
@@ -93,12 +93,12 @@ class DocWeaverServiceProvider extends ServiceProvider
     private function handleViews()
     {
         // Load the views...
-        $this->loadViewsFrom("{$this->assetsDir}/resources/views", 'doc-weaver');
+        $this->loadViewsFrom("{$this->assetsDir}/resources/views", 'docweaver');
 
         // Allow publishing view files, with tag: views
         $this->publishes([
-            "{$this->assetsDir}/resources/views" => base_path('resources/views/vendor/doc-weaver'),
-        ], 'doc-weaver:views');
+            "{$this->assetsDir}/resources/views" => base_path('resources/views/vendor/docweaver'),
+        ], 'docweaver:views');
     }
 
     /**
@@ -138,7 +138,7 @@ class DocWeaverServiceProvider extends ServiceProvider
         );
 
         // Register facades...
-        $loader->alias('DocWeaverHelper', Helpers\CoreHelper::class);
+        $loader->alias('DocweaverHelper', Helpers\CoreHelper::class);
     }
 
     /**

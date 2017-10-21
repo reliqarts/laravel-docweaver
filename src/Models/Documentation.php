@@ -1,13 +1,13 @@
 <?php
 
-namespace ReliQArts\DocWeaver\Models;
+namespace ReliQArts\Docweaver\Models;
 
 use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Contracts\Cache\Repository as Cache;
-use ReliQArts\DocWeaver\Contracts\ProductDocumentor;
-use ReliQArts\DocWeaver\Helpers\CoreHelper as Helper;
-use ReliQArts\DocWeaver\Exceptions\ImplementationException;
+use ReliQArts\Docweaver\Contracts\ProductDocumentor;
+use ReliQArts\Docweaver\Helpers\CoreHelper as Helper;
+use ReliQArts\Docweaver\Exceptions\ImplementationException;
 
 class Documentation implements ProductDocumentor
 {
@@ -77,7 +77,7 @@ class Documentation implements ProductDocumentor
      *
      * @param  Filesystem  $files
      * @param  Cache  $cache
-     * @throws ReliQArts\DocWeaver\Exceptions\ImplementationException
+     * @throws ReliQArts\Docweaver\Exceptions\ImplementationException
      *
      * @return void
      */
@@ -108,7 +108,7 @@ class Documentation implements ProductDocumentor
         $this->currentProduct = $product;
         $config = $this->config;
 
-        return $this->cache->remember("doc-weaver.docs.{$product}.{$version}.index", 5, function () use ($product, $version, $config) {
+        return $this->cache->remember("docweaver.docs.{$product}.{$version}.index", 5, function () use ($product, $version, $config) {
             $path = base_path("{$this->docsDir}/{$product}/{$version}/{$config['doc']['index']}.md");
 
             if ($this->files->exists($path)) {
@@ -130,7 +130,7 @@ class Documentation implements ProductDocumentor
     {
         $this->currentProduct = $product;
 
-        return $this->cache->remember("doc-weaver.docs.{$product}.{$version}.{$page}", 5, function () use ($product, $version, $page) {
+        return $this->cache->remember("docweaver.docs.{$product}.{$version}.{$page}", 5, function () use ($product, $version, $page) {
             $path = base_path("{$this->docsDir}/{$product}/{$version}/{$page}.md");
 
             if ($this->files->exists($path)) {

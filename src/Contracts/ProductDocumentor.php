@@ -1,6 +1,6 @@
 <?php
 
-namespace ReliQArts\DocWeaver\Contracts;
+namespace ReliQArts\Docweaver\Contracts;
 
 interface ProductDocumentor
 {

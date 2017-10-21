@@ -1,6 +1,6 @@
 <?php
 
-namespace ReliQArts\DocWeaver\Exceptions;
+namespace ReliQArts\Docweaver\Exceptions;
 
 use Exception;
 

@@ -1,4 +1,4 @@
-// DocWeaver - Products
+// Docweaver - Products
 
 // common
 
@@ -7,12 +7,12 @@ a {
 }
 
 // Product Bar
-#doc-weaver-product-bar, #doc-weaver-product-line {
+#docweaver-product-bar, #docweaver-product-line {
     background-color: lighten($color-primary, 2%);
     margin-bottom: 20px;
     min-height: 2px;
 
-    #doc-weaver-docs-home-link {
+    #docweaver-docs-home-link {
         display: inline-block;
         padding-right: 0.68em;
         position: relative;
@@ -65,7 +65,7 @@ a {
         }
     }
 
-    #doc-weaver-navbar-collapse-replacement {
+    #docweaver-navbar-collapse-replacement {
         @include display-flex;
         margin-left: auto;
     }
@@ -90,13 +90,13 @@ a {
         }
     }
 
-    &#doc-weaver-product-line {
+    &#docweaver-product-line {
         display: block;
     }
 }
 
 // Product Showcase
-#doc-weaver-product-showcase {
+#docweaver-product-showcase {
     > .empty {
         padding: 1rem 0;
 
@@ -163,7 +163,7 @@ a {
     }
 }
 
-#doc-weaver-footnotes {
+#docweaver-footnotes {
     display: block;
     color: rgba($color-gray, 0.83);
     font-size: 9px;

@@ -1,9 +1,9 @@
 <?php
 
-namespace ReliQArts\DocWeaver\Tests;
+namespace ReliQArts\Docweaver\Tests;
 
 use View;
-use DocWeaverHelper;
+use DocweaverHelper;
 use Orchestra\Testbench\BrowserKit\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -22,13 +22,13 @@ abstract class TestCase extends BaseTestCase
 
         // set app config
         $app['config']->set('database.default', 'testing');
-        $app['config']->set('doc-weaver.storage.dir', 'tests/resources/docs');
-        $app['config']->set('doc-weaver.view', [
+        $app['config']->set('docweaver.storage.dir', 'tests/resources/docs');
+        $app['config']->set('docweaver.view', [
             'accents' => [],
             'master_template' => 'test::layout',
             'master_section' => 'content',
         ]);
-        $app['config']->set('doc-weaver.route', [
+        $app['config']->set('docweaver.route', [
             'prefix' => 'tp-are-u-wi-mi',
             'names' => [
                 'index' => 'docs',
@@ -57,7 +57,7 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageProviders($app)
     {
         return [
-            \ReliQArts\DocWeaver\DocWeaverServiceProvider::class,
+            \ReliQArts\Docweaver\DocweaverServiceProvider::class,
         ];
     }
 
@@ -74,7 +74,7 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageAliases($app)
     {
         return [
-            'DocWeaverHelper' => 'ReliQArts\DocWeaver\Helpers\CoreHelper',
+            'DocweaverHelper' => 'ReliQArts\Docweaver\Helpers\CoreHelper',
         ];
     }
 

@@ -1,21 +1,21 @@
-# Laravel Doc Weaver
+# Laravel Docweaver
 
 A simple Laravel 5.x product documentation package. 
 
-Doc Weaver is suitable for product documentation and/or knowledge bases. Converts folder(s) of .md files into full-bread complete documentation. Doc Weaver is inspired by Laravel's very own documentation.
+Doc Weaver is suitable for product documentation and/or knowledge bases. Converts folder(s) of .md files into full-bread complete documentation. Docweaver is inspired by Laravel's very own documentation.
 
 [![Built For Laravel](https://img.shields.io/badge/built%20for-laravel-red.svg?style=flat-square)](http://laravel.com)
-[![Build Status](https://img.shields.io/scrutinizer/build/g/reliqarts/doc-weaver/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/reliqarts/doc-weaver/build-status/master)
-[![Scrutinizer](https://img.shields.io/scrutinizer/g/reliqarts/doc-weaver.svg?style=flat-square)](https://scrutinizer-ci.com/g/reliqarts/doc-weaver/)
-[![License](https://poser.pugx.org/reliqarts/doc-weaver/license?format=flat-square)](https://packagist.org/packages/reliqarts/doc-weaver)
-[![Latest Stable Version](https://poser.pugx.org/reliqarts/doc-weaver/version?format=flat-square)](https://packagist.org/packages/reliqarts/doc-weaver)
-[![Latest Unstable Version](https://poser.pugx.org/reliqarts/doc-weaver/v/unstable?format=flat-square)](//packagist.org/packages/reliqarts/doc-weaver)
+[![Build Status](https://img.shields.io/scrutinizer/build/g/reliqarts/docweaver/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/reliqarts/docweaver/build-status/master)
+[![Scrutinizer](https://img.shields.io/scrutinizer/g/reliqarts/docweaver.svg?style=flat-square)](https://scrutinizer-ci.com/g/reliqarts/docweaver/)
+[![License](https://poser.pugx.org/reliqarts/docweaver/license?format=flat-square)](https://packagist.org/packages/reliqarts/docweaver)
+[![Latest Stable Version](https://poser.pugx.org/reliqarts/docweaver/version?format=flat-square)](https://packagist.org/packages/reliqarts/docweaver)
+[![Latest Unstable Version](https://poser.pugx.org/reliqarts/docweaver/v/unstable?format=flat-square)](//packagist.org/packages/reliqarts/docweaver)
 
 &nbsp;
 
 ## Key Features
 
-Doc Weaver provides the following features and more out of the box.
+Docweaver provides the following features and more out of the box.
 
 - Multi-product support
     - Doc Weaver supports multiple products out-the-box. Just create your product folders and drop in your documentation version directories.
@@ -28,13 +28,13 @@ Doc Weaver provides the following features and more out of the box.
 
 Install via composer; in console: 
 ```
-composer require reliqarts/doc-weaver
+composer require reliqarts/docweaver
 ``` 
 or require in *composer.json*:
 ```js
 {
     "require": {
-        "reliqarts/doc-weaver": "^1.0"
+        "reliqarts/docweaver": "^1.0"
     }
 }
 ```
@@ -44,19 +44,19 @@ Once this has finished, you will need to add the service provider to the provide
 *(n.b. This package supports Laravel's package auto-discovery; if you are using Laravel 5.5 or above you can skip this step.)*
 
 ```php
-ReliQArts\DocWeaver\DocWeaverServiceProvider::class,
+ReliQArts\Docweaver\DocweaverServiceProvider::class,
 ```
 
 Finally, publish package resources and configuration:
 
 ```
-php artisan vendor:publish --provider="ReliQArts\DocWeaver\DocWeaverServiceProvider"
+php artisan vendor:publish --provider="ReliQArts\Docweaver\DocweaverServiceProvider"
 ``` 
 
-You may opt to publish only configuration by using the `doc-weaver:config` tag:
+You may opt to publish only configuration by using the `docweaver:config` tag:
 
 ```
-php artisan vendor:publish --provider="ReliQArts\DocWeaver\DocWeaverServiceProvider" --tag="doc-weaver:config"
+php artisan vendor:publish --provider="ReliQArts\Docweaver\DocweaverServiceProvider" --tag="docweaver:config"
 ``` 
 You may publish migrations in a similar manner using the tag `migrations`.
 
@@ -70,11 +70,11 @@ DOC_WEAVER_ROUTE_PREFIX=docs
 DOC_WEAVER_DIR=resources/docs
 ```
 
-These variables, and more are explained within the [config](https://github.com/ReliQArts/laravel-doc-weaver/blob/master/src/config/config.php) file.
+These variables, and more are explained within the [config](https://github.com/ReliQArts/laravel-docweaver/blob/master/src/config/config.php) file.
 
 ### Documentation Directory
 
-The documentation directory is the place where you put your project documentation directories. It may be changed with the config key `doc-weaver.storage.dir` or the environment variable `DOC_WEAVER_DIR`. The default documentation directory is `resources/docs`.
+The documentation directory is the place where you put your project documentation directories. It may be changed with the config key `docweaver.storage.dir` or the environment variable `DOC_WEAVER_DIR`. The default documentation directory is `resources/docs`.
 
 #### Structure
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace ReliQArts\DocWeaver\Traits;
+namespace ReliQArts\Docweaver\Traits;
 
 use Config;
 
@@ -13,7 +13,7 @@ trait RouteHelper
      */
     public static function getRouteConfig()
     {
-        return Config::get('doc-weaver.route', []);
+        return Config::get('docweaver.route', []);
     }
 
     /**
@@ -23,7 +23,7 @@ trait RouteHelper
      */
     public static function getRoutePrefix()
     {
-        return Config::get('doc-weaver.route.prefix', 'docs');
+        return Config::get('docweaver.route.prefix', 'docs');
     }
 
     /**
@@ -32,7 +32,7 @@ trait RouteHelper
     public static function getRouteGroupBindings($bindings = [])
     {
         $defaults = ['prefix' => self::getRoutePrefix()];
-        $bindings = array_merge(Config::get('doc-weaver.route.bindings', []), $bindings);
+        $bindings = array_merge(Config::get('docweaver.route.bindings', []), $bindings);
 
         return array_merge($defaults, $bindings);
     }

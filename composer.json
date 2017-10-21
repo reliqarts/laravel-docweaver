@@ -1,5 +1,5 @@
 {
-    "name": "reliqarts/doc-weaver",
+    "name": "reliqarts/docweaver",
     "description": "Highly configurable Laravel 5.x package for product documentation.",
     "keywords": ["doc", "package", "generation", "documentation", "laravel5", "content"],
     "type": "library",
@@ -10,6 +10,9 @@
             "email": "reliq@reliqarts.com"
         }
     ],
+    "replace": {
+        "reliqarts/doc-weaver": "1.*"
+    },
     "require": {
         "php": ">=5.6.4",
         "illuminate/support": "5.*",
@@ -24,17 +27,17 @@
     },
     "autoload": {
         "psr-4": {
-            "ReliQArts\\DocWeaver\\": "src/",
-            "ReliQArts\\DocWeaver\\Tests\\": "tests/"
+            "ReliQArts\\Docweaver\\": "src/",
+            "ReliQArts\\Docweaver\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "ReliQArts\\DocWeaver\\DocWeaverServiceProvider"
+                "ReliQArts\\Docweaver\\DocweaverServiceProvider"
             ],
             "aliases": {
-                "DocWeaverHelper": "ReliQArts\\DocWeaver\\Helpers\\CoreHelper"
+                "DocweaverHelper": "ReliQArts\\Docweaver\\Helpers\\CoreHelper"
             }
         }
     }

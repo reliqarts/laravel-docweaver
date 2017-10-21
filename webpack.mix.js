@@ -1,5 +1,5 @@
 /**
- * DocWeaver Asset Management via Laravel mix.
+ * Docweaver Asset Management via Laravel mix.
  * Webpack build steps.
  */
 
@@ -41,5 +41,5 @@ mix.webpackConfig({
 
 // start mixing:
 mix
-    .js('resources/assets/js/doc-weaver.js', assetFolders.scripts)
-    .sass('resources/assets/sass/doc-weaver.scss', assetFolders.styles)
+    .js('resources/assets/js/docweaver.js', assetFolders.scripts)
+    .sass('resources/assets/sass/docweaver.scss', assetFolders.styles)
