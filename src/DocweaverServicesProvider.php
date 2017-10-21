@@ -9,7 +9,7 @@ use Illuminate\Support\ServiceProvider;
 /**
  *  DocweaverServiceProvider.
  */
-class DocWeaverServiceProvider extends ServiceProvider
+class DocweaverServicesProvider extends ServiceProvider
 {
     /**
      * Indicates if loading of the provider is deferred.
