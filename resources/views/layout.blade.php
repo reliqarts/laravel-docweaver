@@ -39,7 +39,7 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docw
         </div>
     </nav>
     @else
-    <div id="docweaver-product-line" class="{{ $accents['product_line'] ? 'show' : 'hide' }}"></div>
+    <div id="docweaver-product-line" class="{{ $accents['product_line'] ? 'show' : 'hide d-none' }}"></div>
     @endisset
     <div class="docs container">
     @yield('docweaver-content')
