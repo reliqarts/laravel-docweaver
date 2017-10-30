@@ -92,6 +92,10 @@ a {
 
     &#docweaver-product-line {
         display: block;
+
+        &:not(.show):not(.true) {
+            display: none;
+        }
     }
 }
 

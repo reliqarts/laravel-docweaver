@@ -2,6 +2,7 @@
 
 @php
 $accents = (empty($viewTemplateInfo['accents']) ? [] : $viewTemplateInfo['accents']);
+$accents['product_line'] = (bool) $accents['product_line'];
 $scripts = '<script type="text/javascript" src="/vendor/docweaver/js/docweaver.js"></script>';
 $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docweaver/css/docweaver.css" />';
 @endphp
@@ -38,9 +39,7 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docw
         </div>
     </nav>
     @else
-    @if(empty($accents['product_line']) ? true : $accents['product_line'])
-    <div id="docweaver-product-line"></div>
-    @endif
+    <div id="docweaver-product-line" class="{{ $accents['product_line'] ? 'show' : 'hide' }}"></div>
     @endisset
     <div class="docs container">
     @yield('docweaver-content')
