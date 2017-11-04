@@ -117,7 +117,7 @@ export default class Core {
             $sidebar = this.$wrapper.find('#docweaver-sidebar'),
             $sidebarPopper = $sidebar.find('#docweaver-sidebar-popper'),
             $article = this.$wrapper.find('#docweaver-article'),
-            $activeLink = $sidebar.find('li a[href="' + window.location.pathname + '"]');
+            $activeLink = $sidebar.find('li a[href="' + decodeURIComponent(window.location.pathname) + '"]');
 
         if ($sidebar.length) {
             // highlight active link

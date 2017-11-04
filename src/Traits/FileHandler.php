@@ -23,6 +23,6 @@ trait FileHandler
      */
     private function dirPath($path)
     {
-        return str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
+        return realpath($path);
     }
 }

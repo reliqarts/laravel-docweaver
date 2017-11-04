@@ -141,6 +141,27 @@ a {
                 margin-bottom: 0;
             }
 
+            .product-image {
+                background: rgba($color-lighter-gray, 0.28);
+                border-bottom: 1px solid rgba($color-lighter-gray, 0.346);
+                display: block;
+                height: auto;
+                padding: 0;
+
+                img {
+                    color: transparent;
+                    display: block;
+                    height: auto;
+                    margin: 0 auto;
+                    max-height: 100%;
+                    max-width: 100%;
+                }
+
+                @media (min-width: $bp-medium + 1) {
+
+                }
+            }
+
             .product-info {
                 color: $color-gray;
 
@@ -150,8 +171,31 @@ a {
                     padding: 0;
     
                     li {
+                        color: rgba($color-gray, 0.7);
+                        font-size: rem-calc(12px);
                         margin: 0;
                         padding: 0;
+                        @include transition(all 200ms);
+
+                        &:hover {
+                            color: rgba($color-gray, 0.9);
+                        }
+
+                        .label {
+                            background: transparent;
+                            color: inherit;
+                            font-size: 1em;
+                        }
+
+                        &.description {
+                            color: inherit;
+                            font-size: 1rem;
+                            margin-bottom: 0.8rem;
+
+                            .label {
+                                display: none;
+                            }
+                        }
                     }
                 }
             }
