@@ -49,7 +49,7 @@ interface Product
      *
      * @param mixed $meta Meta or straight url to use.
      * @param string $version
-     * 
+     *
      * @return void
      */
     public function setImageUrl($meta, $version = null);
@@ -83,7 +83,7 @@ interface Product
      * Publish product public assets.
      *
      * @param string $version
-     * 
+     *
      * @return void
      */
     public function publishAssets($version = null);

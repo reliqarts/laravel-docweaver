@@ -87,7 +87,7 @@ class Product implements Arrayable, Jsonable, ProductContract
 
     /**
      * Placeholders to replace in documentation asset URL.
-     * 
+     *
      * @var array
      */
     public const ASSET_URL_PLACEHOLDERS = ['{{docs}}', '{{doc}}'];
@@ -101,7 +101,7 @@ class Product implements Arrayable, Jsonable, ProductContract
 
     /**
      * Product meta file.
-     * 
+     *
      * @var string
      */
     public const META_FILE = '.docweaver.yml';
@@ -219,7 +219,7 @@ class Product implements Arrayable, Jsonable, ProductContract
      *
      * @param mixed $meta Meta or straight url to use.
      * @param string $version
-     * 
+     *
      * @return void
      */
     public function setImageUrl($meta, $version = null)
@@ -267,10 +267,10 @@ class Product implements Arrayable, Jsonable, ProductContract
      *
      * @param string $url
      * @param string $version
-     * 
+     *
      * @return string
      */
-    public function assetUrl($url = null, $version = null) 
+    public function assetUrl($url = null, $version = null)
     {
         $url = empty($url) ? self::ASSET_URL_PLACEHOLDERS[0] : $url;
         $version = empty($version) ? $this->getDefaultVersion() : $version;
@@ -304,7 +304,7 @@ class Product implements Arrayable, Jsonable, ProductContract
      * Publish product public assets.
      *
      * @param string $version
-     * 
+     *
      * @return void
      */
     public function publishAssets($version = null)
@@ -352,7 +352,7 @@ class Product implements Arrayable, Jsonable, ProductContract
      * Load meta onto product.
      *
      * @param string $version Version to load configuration from. (optional)
-     * 
+     *
      * @return void
      */
     private function loadMeta($version = null)
@@ -366,7 +366,7 @@ class Product implements Arrayable, Jsonable, ProductContract
                 // set params from meta file
                 if (!empty($meta['name'])) {
                     $this->name = $meta['name'];
-                } 
+                }
                 if (!empty($meta['description'])) {
                     $this->description = $meta['description'];
                 }
