@@ -281,9 +281,6 @@ class Product implements Arrayable, Jsonable, ProductContract
             $url = str_replace(self::ASSET_URL_PLACEHOLDERS, 'storage/'.Helper::getRoutePrefix()."/$this->key/$version", $url);
             $url = asset($url);
         }
-
-        // publish assets
-        $this->publishAssets();
         
         return $url;
     }
@@ -311,10 +308,14 @@ class Product implements Arrayable, Jsonable, ProductContract
     {
         $version = empty($version) ? $this->getDefaultVersion() : $version;
         $storagePath = storage_path('app/public/'.Helper::getRoutePrefix()."/$this->key/$version");
-
+        
         // publish images
-        if (!$this->files->copyDirectory("{$this->dir}/$version/images", "$storagePath/images")) {
-            Log::error("Failed to publish image assets for product.", ['product' => $this]);
+        if ($this->files->isDirectory("{$this->dir}/$version/images")) {
+            if (!$this->files->copyDirectory("{$this->dir}/$version/images", "$storagePath/images")) {
+                Log::error("Failed to publish image assets for product.", ['product' => $this]);
+            }
+        } else {
+            Log::info("Skipped publishing image assets for product. No images directory.", ['product' => $this]);
         }
     }
 

@@ -4,10 +4,18 @@ namespace ReliQArts\Docweaver\Tests;
 
 use View;
 use DocweaverHelper;
+use Illuminate\Filesystem\Filesystem;
 use Orchestra\Testbench\BrowserKit\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
+    /**
+     * Filesystem
+     *
+     * @var Filesystem
+     */
+    protected $files = null;
+
     /**
      * Define environment setup.
      *
@@ -23,6 +31,7 @@ abstract class TestCase extends BaseTestCase
         // set app config
         $app['config']->set('database.default', 'testing');
         $app['config']->set('docweaver.storage.dir', 'tests/resources/docs');
+        $app['config']->set('docweaver.versions.allow_worded_default', true);
         $app['config']->set('docweaver.view', [
             'accents' => [],
             'master_template' => 'test::layout',
@@ -39,6 +48,9 @@ abstract class TestCase extends BaseTestCase
 
         // setup routes
         $this->setupRoutes($app);
+
+        // grab filesystem instance
+        $this->files = resolve(Filesystem::class);
 
         // add views
         View::addNamespace('test', realpath($app->basePath('/tests/resources/views')));
@@ -76,6 +88,16 @@ abstract class TestCase extends BaseTestCase
         return [
             'DocweaverHelper' => 'ReliQArts\Docweaver\Helpers\CoreHelper',
         ];
+    }
+
+    /**
+     * Clean up the testing environment before the next test.
+     *
+     * @return void
+     */
+    protected function tearDown()
+    {   
+        parent::tearDown();
     }
 
     /**

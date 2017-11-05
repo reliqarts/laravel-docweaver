@@ -31,9 +31,10 @@ class AvailabilityTest extends TestCase
         $docIndex = $routeConfig['prefix'];
 
         $this->visit($docIndex)
-            ->see('Sand')
-            ->see('Version: 4.7')
-            ->click('Sand')
+            ->see('Sandy')
+            ->see('Project Sandy the great.')
+            ->see('4.7')
+            ->click('Sandy')
             ->dontSee('documentation')
             ->see('elements are important')
             ->see('Haha! It\'s pre-installed fam.');

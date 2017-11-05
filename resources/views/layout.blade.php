@@ -2,7 +2,7 @@
 
 @php
 $accents = (empty($viewTemplateInfo['accents']) ? [] : $viewTemplateInfo['accents']);
-$accents['product_line'] = (bool) $accents['product_line'];
+$accents['product_line'] = empty($accents['product_line']) ? false : (bool) $accents['product_line'];
 $scripts = '<script type="text/javascript" src="/vendor/docweaver/js/docweaver.js"></script>';
 $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docweaver/css/docweaver.css" />';
 @endphp

@@ -29,7 +29,9 @@ class DocweaverServiceProvider extends ServiceProvider
      * @var array
      */
     protected $commands = [
-        // ...
+        Console\Commands\Publish::class,
+        Console\Commands\Update::class,
+        Console\Commands\UpdateAll::class,
     ];
 
     /**
@@ -142,10 +144,16 @@ class DocweaverServiceProvider extends ServiceProvider
             Models\Product::class
         );
 
+        $this->app->singleton(
+            Contracts\Publisher::class,
+            Services\Publisher::class
+        );
+
         // Register facades...
         $loader->alias('DocweaverProduct', Models\Product::class);
         $loader->alias('DocweaverHelper', Helpers\CoreHelper::class);
         $loader->alias('DocweaverDocumentation', Models\Documentation::class);
+        $loader->alias('DocweaverPublisher', Services\Publisher::class);
     }
 
     /**
@@ -157,6 +165,8 @@ class DocweaverServiceProvider extends ServiceProvider
     {
         return [
             Contracts\Documentation::class,
+            Contracts\Product::class,
+            Contracts\Publisher::class,
         ];
     }
 }

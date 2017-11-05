@@ -1,5 +1,7 @@
 /node_modules
 /public/mix-manifest.json
+/tests/resources/docs/*
+!/tests/resources/docs/Sand/
 /storage
 /vendor
 npm-debug.log
