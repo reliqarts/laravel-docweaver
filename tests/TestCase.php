@@ -96,7 +96,7 @@ abstract class TestCase extends BaseTestCase
      * @return void
      */
     protected function tearDown()
-    {   
+    {
         parent::tearDown();
     }
 

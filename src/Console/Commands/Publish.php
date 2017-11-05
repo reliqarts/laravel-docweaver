@@ -59,7 +59,6 @@ class Publish extends Command
         $this->comment(PHP_EOL."<info>♣♣♣</info> Docweaver Publisher \nHelp is here, try: php artisan docweaver:publish --help");
 
         if ($skipConfirmation || $this->confirm("This command will attempt to pull documentation for product ({$productName}) from {$productSource}. \nPlease ensure your internet connection is stable. Ready?")) {
-
             $this->info("Publishing {$productName}.\nT: ".Carbon::now()->toCookieString()."\n----------");
 
             // Seek
