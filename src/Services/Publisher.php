@@ -57,7 +57,7 @@ class Publisher implements PublisherContract
      * Create a new Publisher.
      *
      * @param  Filesystem  $files
-     * 
+     *
      * @return void
      */
     public function __construct(Filesystem $files)
@@ -78,10 +78,10 @@ class Publisher implements PublisherContract
      * @param string $name
      * @param string $source Git Repository
      * @param \Illuminate\Console\Command $callingCommand
-     * 
+     *
      * @return Result
      */
-    public function publish($name, $source, &$callingCommand = null) 
+    public function publish($name, $source, &$callingCommand = null)
     {
         $result = $this->result;
         $startTime = microtime(true);
@@ -165,7 +165,7 @@ class Publisher implements PublisherContract
                             // publish assets
                             $product->publishAssets($tag);
                             $this->tell("Successfully published tag $tag.");
-                            // increment 
+                            // increment
                             $versionsPublished++;
                         } else {
                             $message = "Version $tag already exists.";
@@ -174,7 +174,6 @@ class Publisher implements PublisherContract
                             $this->tell($message);
                         }
                     }
-
                 } catch (ProcessFailedException $e) {
                     $result->message = $result->error = $e->getMessage();
                 }
@@ -190,7 +189,6 @@ class Publisher implements PublisherContract
                     ];
                 }
             }
-            
         } else {
             $result->error = "Product directory ({$dir}) is not writable.";
         }
@@ -203,10 +201,10 @@ class Publisher implements PublisherContract
      *
      * @param string $name
      * @param \Illuminate\Console\Command $callingCommand
-     * 
+     *
      * @return Result
      */
-    public function update($name, &$callingCommand = null) 
+    public function update($name, &$callingCommand = null)
     {
         $result = $this->result;
         $startTime = microtime(true);
@@ -272,7 +270,7 @@ class Publisher implements PublisherContract
      *
      * @param Product $product
      * @param string $version Version to update.
-     * 
+     *
      * @return bool
      */
     private function updateProductVersion($product, $version)
@@ -342,11 +340,11 @@ class Publisher implements PublisherContract
      * Ensure documentation resource directory exists and is writable.
      *
      * @param string $dir
-     * 
+     *
      * @return bool
      */
     private function readyResourceDir($dir = null)
-    {  
+    {
         $dir = empty($dir) ? $this->workingDir : $dir;
 
         if (!$this->files->isDirectory($dir)) {

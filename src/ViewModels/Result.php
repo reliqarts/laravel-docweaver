@@ -29,7 +29,7 @@ class Result implements Arrayable, Jsonable
     /**
      * {@inheritDoc}
      *
-     * @param int $options 
+     * @param int $options
      * @return string
      */
     public function toJson($options = 0)

@@ -57,7 +57,6 @@ class Update extends Command
         $this->comment(PHP_EOL."<info>♣♣♣</info> Docweaver Publisher \nHelp is here, try: php artisan docweaver:update --help");
 
         if ($skipConfirmation || $this->confirm("This command will attempt to update documentation for product ({$productName}). \nPlease ensure your internet connection is stable. Ready?")) {
-
             $this->info("Updating {$productName}.\nT: ".Carbon::now()->toCookieString()."\n----------");
 
             // Seek

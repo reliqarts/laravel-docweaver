@@ -55,7 +55,6 @@ class UpdateAll extends Command
         $this->comment(PHP_EOL."<info>♣♣♣</info> Docweaver Publisher \nHelp is here, try: php artisan docweaver:update-all --help");
 
         if ($skipConfirmation || $this->confirm("This command will attempt to update documentation for all products. \nPlease ensure your internet connection is stable. Ready?")) {
-
             $this->info("Updating products.\nT: ".Carbon::now()->toCookieString()."\n----------");
 
             // Seek
