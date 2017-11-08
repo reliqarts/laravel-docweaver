@@ -154,24 +154,26 @@ class Publisher implements PublisherContract
                 
                 try {
                     $listTags->mustRun();
-                    $tags = array_map('trim', preg_split("[\n\r]", $listTags->getOutput()));
+                    $tags = array_map('trim', preg_split("/[\n\r]/", $listTags->getOutput()));
                     $result->messages = [];
 
                     // publish each tag
                     foreach ($tags as $tag) {
-                        if (!$this->files->isDirectory("$masterDir/../$tag")) {
-                            $cloneTag = new Process("git clone --branch $tag \"{$source}\" ../$tag", $masterDir);
-                            $cloneTag->mustRun();
-                            // publish assets
-                            $product->publishAssets($tag);
-                            $this->tell("Successfully published tag $tag.");
-                            // increment
-                            $versionsPublished++;
-                        } else {
-                            $message = "Version $tag already exists.";
-                            $result->messages[] = $message;
-                            Log::info($message, ['state' => $this, 'product' => $product]);
-                            $this->tell($message);
+                        if (!empty($tag)) {
+                            if (!$this->files->isDirectory("$masterDir/../$tag")) {
+                                $cloneTag = new Process("git clone --branch $tag \"{$source}\" ../$tag", $masterDir);
+                                $cloneTag->mustRun();
+                                // publish assets
+                                $product->publishAssets($tag);
+                                $this->tell("Successfully published tag $tag.");
+                                // increment
+                                $versionsPublished++;
+                            } else {
+                                $message = "Version $tag already exists.";
+                                $result->messages[] = $message;
+                                Log::info($message, ['state' => $this, 'product' => $product]);
+                                $this->tell($message);
+                            }
                         }
                     }
                 } catch (ProcessFailedException $e) {
