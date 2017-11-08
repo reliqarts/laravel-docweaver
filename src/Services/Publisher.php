@@ -150,7 +150,7 @@ class Publisher implements PublisherContract
                 $product = empty($product) ? new Product($productDir) : $product;
                 $product->publishAssets('master');
                 // publish the different tags
-                $listTags = new Process("git tag", $masterDir);
+                $listTags = new Process("git tag -l", $masterDir);
                 
                 try {
                     $listTags->mustRun();
