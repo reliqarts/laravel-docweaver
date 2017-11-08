@@ -47,6 +47,13 @@ Once this has finished, you will need to add the service provider to the provide
 ReliQArts\Docweaver\DocweaverServiceProvider::class,
 ```
 
+Ensure that your applications public storage directory is linked and assessible via the browser.
+
+```bash 
+php artisan storage:link
+```
+see: https://laravel.com/docs/5.5/filesystem
+
 Finally, publish package resources and configuration:
 
 ```
@@ -80,17 +87,33 @@ The documentation directory is the place where you put your project documentatio
 
 Each project directory should contain seperate folders for each documented version. Each version must have at least two (2) markdown files, namely `documentation.md` and `installation.md`, which serve as the sidebar and initial documentation pages respectively.
 
-```
+```bash
 [doc dir]
     │
     └─── Project One
-    │       └── 1.0
+    │       └── 1.0 
     │       └── 2.1
+    │            └── .docweaver.yml       # meta file (optional)
     │            └── documentation.md     # sidebar nav
     │            └── installation.md      # initial page
     │
     └─── Project Two
 ```
+
+#### Meta File
+
+Configurations for each doc version may be placed in `.docweaver.yml`. The supported settings are:
+- #### name
+    Product name.
+- #### description
+    Product description.
+
+- #### image_url
+    Product image url. This may be an absolute url (e.g. `http://mywebsite.com/myimage.jpg`) or an image found in the `images` resource directory.
+
+    To use the `foo.jpg` in the images directory you would set `image_url` to `{{docs}}/images/foo.jpg`.
+
+    For more info. see: [Assets](/docs/{{version}}/assets)
 
 ----
 
