@@ -109,7 +109,6 @@ a {
         }
     }
     .product-list {
-        @include display-flex;
         margin-bottom: 2rem;
         margin-top: 2rem;
 
@@ -117,6 +116,7 @@ a {
             background: rgba(#fff, 0.7);
             border: 1px solid rgba($color-lighter-gray, 0.6);
             @include border-radius(3px);
+            @include box-shadow(0 0 5px 0 rgba(#111, 0.05));
             margin: 1rem 0;
             overflow: hidden;
             @include transition(all 200ms);
@@ -126,7 +126,8 @@ a {
             }
 
             a {
-                display: block;
+                @include display-flex;
+                @include flex-wrap(wrap);
                 text-decoration: none;
             }
 
@@ -139,12 +140,14 @@ a {
                 border-bottom: 1px solid rgba($color-lighter-gray, 0.46);
                 font-size: 21px;
                 margin-bottom: 0;
+                @include flexbox((flex: 1 0 100%));
             }
 
             .product-image {
                 background: rgba($color-lighter-gray, 0.28);
                 border-bottom: 1px solid rgba($color-lighter-gray, 0.346);
                 display: block;
+                @include flexbox((flex: 1 1 auto));
                 height: auto;
                 padding: 0;
 
@@ -158,12 +161,14 @@ a {
                 }
 
                 @media (min-width: $bp-medium + 1) {
-
+                    max-width: 30%;
                 }
             }
 
             .product-info {
+                background-color: rgba($color-lighter-gray, 0.26);
                 color: $color-gray;
+                @include flexbox((flex: 3 1 auto));
 
                 ul {
                     list-style-type: none;
@@ -202,9 +207,19 @@ a {
 
             &:hover, &:focus {
                 border-color: rgba($color-primary, 0.6);
+                @include box-shadow(0 0 5px 0 rgba(#111, 0.005));
 
-                .product-title {
+                .product-image {
+                    background-color: rgba($color-primary, 0.25);
+                }
+
+                .product-image, .product-title {
                     color: $color-primary;
+                    border-bottom-color: rgba($color-primary, 0.2);
+                }
+
+                .product-info {
+                    background-color: rgba($color-primary, 0.07);
                 }
             }
         }
