@@ -8,7 +8,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use ReliQArts\Docweaver\Models\Documentation;
 use ReliQArts\Docweaver\Helpers\CoreHelper as Helper;
 
-class DocsController
+class DocumentationController
 {
     /**
      * Documentation configuration array.

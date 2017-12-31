@@ -12,11 +12,11 @@
 $routeConfig = DocweaverHelper::getRouteConfig();
 
 // Controller FQCN
-$docsController = 'ReliQArts\\Docweaver\\Http\\Controllers\\DocsController';
+$docController = 'ReliQArts\\Docweaver\\Http\\Controllers\\DocumentationController';
 
 // the route group
-Route::group(DocweaverHelper::getRouteGroupBindings(), function () use ($routeConfig, $docsController) {
-    Route::get('/', "$docsController@index")->name($routeConfig['names']['index']);
-    Route::get('{product}', "$docsController@productIndex")->name($routeConfig['names']['product_index']);
-    Route::get('{product}/{version}/{page?}', "$docsController@show")->name($routeConfig['names']['product_page']);
+Route::group(DocweaverHelper::getRouteGroupBindings(), function () use ($routeConfig, $docController) {
+    Route::get('/', "$docController@index")->name($routeConfig['names']['index']);
+    Route::get('{product}', "$docController@productIndex")->name($routeConfig['names']['product_index']);
+    Route::get('{product}/{version}/{page?}', "$docController@show")->name($routeConfig['names']['product_page']);
 });
