@@ -161,12 +161,14 @@ a {
                 }
 
                 @media (min-width: $bp-medium + 1) {
+                    border: 1px solid rgba($color-lighter-gray, 0.26);
                     max-width: 30%;
+                    padding: 1rem;
                 }
             }
 
             .product-info {
-                background-color: rgba($color-lighter-gray, 0.26);
+                background-color: rgba(235, 235, 235, 0.26);
                 color: $color-gray;
                 @include flexbox((flex: 3 1 auto));
 
