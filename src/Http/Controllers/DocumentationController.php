@@ -3,6 +3,8 @@
 namespace ReliQArts\Docweaver\Http\Controllers;
 
 use Log;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use ReliQArts\Docweaver\Models\Product;
 use Symfony\Component\DomCrawler\Crawler;
 use ReliQArts\Docweaver\Models\Documentation;
@@ -56,7 +58,7 @@ class DocumentationController
     /**
      * Show the documentation home page (docs).
      *
-     * @return Response
+     * @return RedirectResponse
      */
     public function index()
     {
@@ -80,7 +82,7 @@ class DocumentationController
      *
      * @param string $product
      *
-     * @return Response
+     * @return RedirectResponse
      */
     public function productIndex($productName)
     {
@@ -105,7 +107,7 @@ class DocumentationController
      * @param  string $version
      * @param  string|null $page
      *
-     * @return Response
+     * @return View|RedirectResponse
      */
     public function show($productKey, $version, $page = null)
     {
