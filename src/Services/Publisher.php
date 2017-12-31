@@ -155,7 +155,9 @@ class Publisher implements PublisherContract
                 
                 try {
                     $listTags->mustRun();
-                    $tags = array_map('trim', preg_split("/[\n\r]/", $listTags->getOutput()));
+                    if ($splitTags = preg_split("/[\n\r]/", $listTags->getOutput())) {
+                        $tags = array_map('trim', $splitTags);
+                    }
                     $result->messages = [];
 
                     // publish each tag
