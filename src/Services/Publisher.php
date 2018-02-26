@@ -6,6 +6,7 @@ use Log;
 use Exception;
 use ReflectionException;
 use InvalidArgumentException;
+use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use ReliQArts\Docweaver\Models\Product;
@@ -57,7 +58,6 @@ class Publisher implements PublisherContract
      * Create a new Publisher.
      *
      * @param  Filesystem  $files
-     *
      * @return void
      */
     public function __construct(Filesystem $files)
@@ -111,8 +111,8 @@ class Publisher implements PublisherContract
      *
      * @param string $dir Product directory.
      * @param string $source Git repository.
-     * @param \Illuminate\Console\Command $callingCommand
-     * @return void
+     * @param Command $callingCommand
+     * @return Result
      */
     private function publishVersions($name, $dir, $source, &$callingCommand = null)
     {
@@ -149,12 +149,15 @@ class Publisher implements PublisherContract
             if ($masterExists) {
                 $product = empty($product) ? new Product($productDir) : $product;
                 $product->publishAssets('master');
+                $tags = [];
                 // publish the different tags
                 $listTags = new Process("git tag -l", $masterDir);
                 
                 try {
                     $listTags->mustRun();
-                    $tags = array_map('trim', preg_split("/[\n\r]/", $listTags->getOutput()));
+                    if ($splitTags = preg_split("/[\n\r]/", $listTags->getOutput())) {
+                        $tags = array_map('trim', $splitTags);
+                    }
                     $result->messages = [];
 
                     // publish each tag
@@ -202,8 +205,7 @@ class Publisher implements PublisherContract
      * Update documentation for a particular product.
      *
      * @param string $name
-     * @param \Illuminate\Console\Command $callingCommand
-     *
+     * @param Command $callingCommand
      * @return Result
      */
     public function update($name, &$callingCommand = null)
@@ -272,7 +274,6 @@ class Publisher implements PublisherContract
      *
      * @param Product $product
      * @param string $version Version to update.
-     *
      * @return bool
      */
     private function updateProductVersion($product, $version)
@@ -298,8 +299,8 @@ class Publisher implements PublisherContract
      *
      * @param string $name
      * @param string $dir Product directory.
-     * @param \Illuminate\Console\Command $callingCommand
-     * @return void
+     * @param Command $callingCommand
+     * @return Result
      */
     private function updateVersions($name, $dir, &$callingCommand = null)
     {
@@ -342,7 +343,6 @@ class Publisher implements PublisherContract
      * Ensure documentation resource directory exists and is writable.
      *
      * @param string $dir
-     *
      * @return bool
      */
     private function readyResourceDir($dir = null)
