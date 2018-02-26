@@ -126,14 +126,12 @@ class DocumentationController
         }
 
         // get page content
-        $sectionPage = $page ?: 'installation';
-        $content = $this->docs->getPage($product, $version, $sectionPage);
+        $page = $page ?: 'installation';
+        $content = $this->docs->getPage($product, $version, $page);
 
         // ensure page has content
         if (is_null($content)) {
-            Log::warning("Documentation page ({$page}) for {$product->getName()} has no content.", [
-                'product' => $product]
-            );
+            Log::warning("Documentation page ({$page}) for {$product->getName()} has no content.", ['product' => $product]);
             abort(404);
         }
 
@@ -150,23 +148,22 @@ class DocumentationController
 
         // set canonical
         $canonical = null;
-        if ($this->docs->sectionExists($product, $defaultVersion, $sectionPage)) {
-            $canonical = route($routeNames['product_page'], [$product->key, $defaultVersion, $sectionPage]);
+        if ($this->docs->sectionExists($product, $defaultVersion, $page)) {
+            $canonical = route($routeNames['product_page'], [$product->key, $defaultVersion, $page]);
         }
 
-        // dd($version);
-
         return view('docweaver::page', [
-            'title' => count($title) ? $title->text() : null,
-            'index' => $this->docs->getIndex($product, $version),
-            'currentProduct' => $product,
-            'content' => $content,
-            'currentVersion' => $version,
-            'versions' => $product->getVersions(),
-            'currentSection' => $section,
             'canonical' => $canonical,
-            'viewTemplateInfo' => $this->viewTemplateInfo,
+            'content' => $content,
+            'currentProduct' => $product,
+            'currentSection' => $section,
+            'currentVersion' => $version,
+            'index' => $this->docs->getIndex($product, $version),
+            'page' => $page,
             'routeConfig' => $routeConfig,
+            'title' => count($title) ? $title->text() : null,
+            'versions' => $product->getVersions(),
+            'viewTemplateInfo' => $this->viewTemplateInfo,
         ]);
     }
 }

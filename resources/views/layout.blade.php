@@ -29,7 +29,7 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docw
                             <h6 class="dropdown-header">Versions</h6>
                             @foreach ($currentProduct->getVersions() as $versionTag => $versionName)
                                 @if ($currentVersion != $versionTag)
-                                <a class="dropdown-item" href="{!! route('docs.show', [$currentProduct->key, $versionTag]) !!}">{{ $versionName }}</a>
+                                <a class="dropdown-item" href="{!! route('docs.show', [$currentProduct->key, $versionTag, $page]) !!}">{{ $versionName }}</a>
                                 @endif
                             @endforeach
                         </div>
