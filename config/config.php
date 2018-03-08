@@ -63,7 +63,7 @@ return [
         'docs_title' => false,
 
         // Documentation page intro paragraph
-        'docs_intro' => 'Please consult the documentation provided below for help with setting up and using our commercial/opensource products.',
+        'docs_intro' => 'Please consult the documentation provided below for help with setting up and using our commercial/open-source products.',
 
         // configurable accents
         'accents' => [
