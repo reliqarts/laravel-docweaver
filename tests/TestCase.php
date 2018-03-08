@@ -36,6 +36,7 @@ abstract class TestCase extends BaseTestCase
             'accents' => [],
             'master_template' => 'test::layout',
             'master_section' => 'content',
+            'docs_intro' => 'Oh my! Docs!',
         ]);
         $app['config']->set('docweaver.route', [
             'prefix' => 'tp-are-u-wi-mi',
