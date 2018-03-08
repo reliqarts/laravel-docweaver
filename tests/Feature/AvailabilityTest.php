@@ -34,6 +34,7 @@ class AvailabilityTest extends TestCase
             ->see('Sandy')
             ->see('Project Sandy the great.')
             ->see('4.7')
+            ->see('Oh my! Docs!')
             ->click('Sandy')
             ->dontSee('documentation')
             ->see('elements are important')

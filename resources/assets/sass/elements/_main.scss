@@ -108,6 +108,13 @@ a {
             line-height: inherit;
         }
     }
+
+    > .docweaver-h1 {
+        & + .docweaver-intro {
+            margin: 1rem 0;
+        }
+    }
+
     .product-list {
         margin-bottom: 2rem;
         margin-top: 2rem;
