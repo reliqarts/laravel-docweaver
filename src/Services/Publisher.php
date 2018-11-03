@@ -2,29 +2,32 @@
 
 namespace ReliQArts\Docweaver\Services;
 
-use Log;
-use Exception;
-use ReflectionException;
-use InvalidArgumentException;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Symfony\Component\Process\Process;
+use Log;
+use ReliQArts\Docweaver\Exceptions\BadImplementation;
+use ReliQArts\Docweaver\Helpers\Config;
 use ReliQArts\Docweaver\Models\Product;
-use ReliQArts\Docweaver\Traits\Timeable;
+use ReliQArts\Docweaver\Traits\HandlesFiles;
+use ReliQArts\Docweaver\Traits\HasVariableOutput;
+use ReliQArts\Docweaver\Traits\Timed;
 use ReliQArts\Docweaver\ViewModels\Result;
-use ReliQArts\Docweaver\Traits\FileHandler;
-use ReliQArts\Docweaver\Traits\VariableOutput;
-use ReliQArts\Docweaver\Helpers\CoreHelper as Helper;
-use ReliQArts\Docweaver\Exceptions\ImplementationException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use ReliQArts\Docweaver\Contracts\Publisher as PublisherContract;
+use Symfony\Component\Process\Process;
 
 /**
  * Publisher service. For publishing or updating documentation.
  */
-class Publisher implements PublisherContract
+class Publisher
 {
-    use FileHandler, Timeable, VariableOutput;
+    use HandlesFiles, Timed, HasVariableOutput;
+
+    /**
+     * Result of operation.
+     *
+     * @var \ReliQArts\Scavenger\ViewModels\Result
+     */
+    public $result;
 
     /**
      * Documentation configuration array.
@@ -48,45 +51,38 @@ class Publisher implements PublisherContract
     protected $workingDir;
 
     /**
-     * Result of operation.
-     *
-     * @var \ReliQArts\Scavenger\ViewModels\Result
-     */
-    public $result = null;
-
-    /**
      * Create a new Publisher.
      *
-     * @param  Filesystem  $files
-     * @return void
+     * @param Filesystem $files
      */
     public function __construct(Filesystem $files)
     {
         $this->files = $files;
-        $this->result = new Result;
-        $this->config = Helper::getConfig();
-        $this->docsDir = Helper::getDocsDir();
+        $this->result = new Result();
+        $this->config = Config::getConfig();
+        $this->docsDir = Config::getDocsDir();
         $this->workingDir = base_path($this->docsDir);
 
         if (!$this->readyResourceDir()) {
-            throw new ImplementationException("Could not ready document resource directory ({$this->docsDir}). Please ensure file system is writable.");
+            throw new BadImplementation("Could not ready document resource directory ({$this->docsDir}). Please ensure file system is writable.");
         }
     }
+
     /**
      * Publish documentation for a particular product.
      *
-     * @param string $name
-     * @param string $source Git Repository
-     * @param \Illuminate\Console\Command $callingCommand
+     * @param string  $name
+     * @param string  $source         Git Repository
+     * @param Command $callingCommand
      *
      * @return Result
      */
-    public function publish($name, $source, &$callingCommand = null)
+    public function publish(string $name, string $source, Command &$callingCommand = null): Result
     {
         $result = $this->result;
         $startTime = microtime(true);
-        $productDir = "{$this->workingDir}/$name";
-        
+        $productDir = "{$this->workingDir}/${name}";
+
         if ($this->readyResourceDir($productDir)) {
             $result = $this->publishVersions($name, $productDir, $source, $callingCommand);
         } else {
@@ -102,19 +98,93 @@ class Publisher implements PublisherContract
         if (empty($result->extra)) {
             $result->extra = (object) [];
         }
-        $result->extra->executionTime = $this->secondsSince($startTime).'s';
+        $result->extra->executionTime = $this->secondsSince($startTime) . 's';
+
+        return $result;
+    }
+
+    /**
+     * Update documentation for a particular product.
+     *
+     * @param string  $name
+     * @param Command $callingCommand
+     *
+     * @return Result
+     */
+    public function update(string $name, Command &$callingCommand = null): Result
+    {
+        $result = $this->result;
+        $startTime = microtime(true);
+        $productDir = "{$this->workingDir}/${name}";
+
+        if ($this->readyResourceDir($productDir)) {
+            $result = $this->updateVersions($name, $productDir, $callingCommand);
+        } else {
+            $result->error = "Product directory {$productDir} is not writable.";
+        }
+
+        // add identity to result error
+        if ($result->error) {
+            $result->error = "Could not update product ({$name}) because:\n{$result->error}";
+        }
+
+        // finalize extra details
+        if (empty($result->extra)) {
+            $result->extra = (object) [];
+        }
+        $result->extra->executionTime = $this->secondsSince($startTime) . 's';
+
+        return $result;
+    }
+
+    /**
+     * Update all products.
+     *
+     * @param Command $callingCommand
+     *
+     * @return Result
+     */
+    public function updateAll(Command &$callingCommand = null): Result
+    {
+        $result = $this->result;
+        $result->extra = (object) [];
+        $startTime = microtime(true);
+        $productDirs = $this->files->directories($this->workingDir);
+        $productResults = [];
+        $productsUpdated = 0;
+
+        foreach ($productDirs as $productDir) {
+            $productName = basename($productDir);
+            $this->tell("Updating ${productName} ", 'flat');
+            $productResult = $this->update($productName, $callingCommand);
+            $productResults[$productName] = $productResult;
+
+            if ($productResult->success) {
+                ++$productsUpdated;
+            }
+        }
+
+        // add extra details
+        $result->extra = (object) [
+            'products' => count($productDirs),
+            'productsUpdated' => $productsUpdated,
+        ];
+        $result->extra->executionTime = $this->secondsSince($startTime) . 's';
+
         return $result;
     }
 
     /**
      * Publish doc versions of a product.
      *
-     * @param string $dir Product directory.
-     * @param string $source Git repository.
+     * @param string  $name           product directory
+     * @param string  $dir            Product Directory
+     * @param string  $source         Documentation source
      * @param Command $callingCommand
+     *
      * @return Result
      */
-    private function publishVersions($name, $dir, $source, &$callingCommand = null)
+    private function publishVersions(string $name, string $dir, string $source, Command &$callingCommand = null): Result
     {
         $this->callingCommand = $callingCommand;
         $result = $this->result;
@@ -129,7 +199,7 @@ class Publisher implements PublisherContract
                 $masterExists = true;
                 $product = new Product($productDir);
                 if ($this->updateProductVersion($product, 'master')) {
-                    $versionsUpdated++;
+                    ++$versionsUpdated;
                 }
             } else {
                 $cloneMaster = new Process("git clone --branch master \"{$source}\" master");
@@ -137,9 +207,9 @@ class Publisher implements PublisherContract
 
                 try {
                     $cloneMaster->mustRun();
-                    $this->tell("Successfully published master.");
+                    $this->tell('Successfully published master.');
                     $masterExists = true;
-                    $versionsPublished++;
+                    ++$versionsPublished;
                 } catch (ProcessFailedException $e) {
                     $result->message = $result->error = $e->getMessage();
                 }
@@ -151,8 +221,8 @@ class Publisher implements PublisherContract
                 $product->publishAssets('master');
                 $tags = [];
                 // publish the different tags
-                $listTags = new Process("git tag -l", $masterDir);
-                
+                $listTags = new Process('git tag -l', $masterDir);
+
                 try {
                     $listTags->mustRun();
                     if ($splitTags = preg_split("/[\n\r]/", $listTags->getOutput())) {
@@ -163,16 +233,16 @@ class Publisher implements PublisherContract
                     // publish each tag
                     foreach ($tags as $tag) {
                         if (!empty($tag)) {
-                            if (!$this->files->isDirectory("$masterDir/../$tag")) {
-                                $cloneTag = new Process("git clone --branch $tag \"{$source}\" ../$tag", $masterDir);
+                            if (!$this->files->isDirectory("${masterDir}/../${tag}")) {
+                                $cloneTag = new Process("git clone --branch ${tag} \"{$source}\" ../${tag}", $masterDir);
                                 $cloneTag->mustRun();
                                 // publish assets
                                 $product->publishAssets($tag);
-                                $this->tell("Successfully published tag $tag.");
+                                $this->tell("Successfully published tag ${tag}.");
                                 // increment
-                                $versionsPublished++;
+                                ++$versionsPublished;
                             } else {
-                                $message = "Version $tag already exists.";
+                                $message = "Version ${tag} already exists.";
                                 $result->messages[] = $message;
                                 Log::info($message, ['state' => $this, 'product' => $product]);
                                 $this->tell($message);
@@ -197,74 +267,6 @@ class Publisher implements PublisherContract
         } else {
             $result->error = "Product directory ({$dir}) is not writable.";
         }
-        
-        return $result;
-    }
-
-    /**
-     * Update documentation for a particular product.
-     *
-     * @param string $name
-     * @param Command $callingCommand
-     * @return Result
-     */
-    public function update($name, &$callingCommand = null)
-    {
-        $result = $this->result;
-        $startTime = microtime(true);
-        $productDir = "{$this->workingDir}/$name";
-        
-        if ($this->readyResourceDir($productDir)) {
-            $result = $this->updateVersions($name, $productDir, $callingCommand);
-        } else {
-            $result->error = "Product directory {$productDir} is not writable.";
-        }
-
-        // add identity to result error
-        if ($result->error) {
-            $result->error = "Could not update product ({$name}) because:\n{$result->error}";
-        }
-
-        // finalize extra details
-        if (empty($result->extra)) {
-            $result->extra = (object) [];
-        }
-        $result->extra->executionTime = $this->secondsSince($startTime).'s';
-
-        return $result;
-    }
-
-    /**
-     * Update all products.
-     *
-     * @return Result
-     */
-    public function updateAll(&$callingCommand = null)
-    {
-        $result = $this->result;
-        $result->extra = (object) [];
-        $startTime = microtime(true);
-        $productDirs = $this->files->directories($this->workingDir);
-        $productResults = [];
-        $productsUpdated = 0;
-
-        foreach ($productDirs as $productDir) {
-            $productName = basename($productDir);
-            $this->tell("Updating $productName ", 'flat');
-            $productResult = $this->update($productName, $callingCommand);
-            $productResults[$productName] = $productResult;
-
-            if ($productResult->success) {
-                $productsUpdated++;
-            }
-        }
-
-        // add extra details
-        $result->extra = (object) [
-            'products' => count($productDirs),
-            'productsUpdated' => $productsUpdated,
-        ];
-        $result->extra->executionTime = $this->secondsSince($startTime).'s';
 
         return $result;
     }
@@ -273,21 +275,22 @@ class Publisher implements PublisherContract
      * Update a particular product version.
      *
      * @param Product $product
-     * @param string $version Version to update.
+     * @param string  $version version to update
+     *
      * @return bool
      */
-    private function updateProductVersion($product, $version)
+    private function updateProductVersion(Product $product, string $version): bool
     {
         $updated = true;
 
         try {
-            $updateVer = new Process("git pull", "{$product->getDir()}/$version");
+            $updateVer = new Process('git pull', "{$product->getDir()}/${version}");
             $updateVer->mustRun();
-            $this->tell("Successfully updated version $version.");
+            $this->tell("Successfully updated version ${version}.");
         } catch (ProcessFailedException $e) {
-            $this->tell("Assets republished for version $version.");
+            $this->tell("Assets republished for version ${version}.");
         }
-        
+
         // publish assets
         $product->publishAssets($version);
 
@@ -297,12 +300,13 @@ class Publisher implements PublisherContract
     /**
      * Publish doc versions of a product.
      *
-     * @param string $name
-     * @param string $dir Product directory.
+     * @param string  $name
+     * @param string  $dir            product directory
      * @param Command $callingCommand
+     *
      * @return Result
      */
-    private function updateVersions($name, $dir, &$callingCommand = null)
+    private function updateVersions(string $name, string $dir, Command &$callingCommand = null): Result
     {
         $this->callingCommand = $callingCommand;
         $result = $this->result;
@@ -316,10 +320,10 @@ class Publisher implements PublisherContract
 
                 foreach ($versions as $version) {
                     if ($this->updateProductVersion($product, $version)) {
-                        $versionsUpdated++;
+                        ++$versionsUpdated;
                     }
                 }
-                
+
                 // success check
                 if (!$result->error) {
                     $result->success = true;
@@ -329,13 +333,13 @@ class Publisher implements PublisherContract
                         'versionsUpdated' => $versionsUpdated,
                     ];
                 }
-            } catch (BadProductException $e) {
+            } catch (InvalidDirectory $e) {
                 $result->error = "Failed to initialize product from ({$productDir}).";
             }
         } else {
             $result->error = "Product directory ({$dir}) is not writable.";
         }
-        
+
         return $result;
     }
 
@@ -343,9 +347,10 @@ class Publisher implements PublisherContract
      * Ensure documentation resource directory exists and is writable.
      *
      * @param string $dir
+     *
      * @return bool
      */
-    private function readyResourceDir($dir = null)
+    private function readyResourceDir(string $dir = null): bool
     {
         $dir = empty($dir) ? $this->workingDir : $dir;
 

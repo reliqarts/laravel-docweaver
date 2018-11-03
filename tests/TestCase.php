@@ -2,31 +2,36 @@
 
 namespace ReliQArts\Docweaver\Tests;
 
-use View;
-use DocweaverHelper;
 use Illuminate\Filesystem\Filesystem;
 use Orchestra\Testbench\BrowserKit\TestCase as BaseTestCase;
+use View;
 
 abstract class TestCase extends BaseTestCase
 {
     /**
-     * Filesystem
+     * Filesystem.
      *
      * @var Filesystem
      */
-    protected $files = null;
+    protected $files;
+
+    /**
+     * Clean up the testing environment before the next test.
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
+    }
 
     /**
      * Define environment setup.
      *
-     * @param  \Illuminate\Foundation\Application  $app
-     *
-     * @return void
+     * @param \Illuminate\Foundation\Application $app
      */
     protected function getEnvironmentSetUp($app)
     {
         // set base path
-        $app->setBasePath(__DIR__.'/..');
+        $app->setBasePath(__DIR__ . '/..');
 
         // set app config
         $app['config']->set('database.default', 'testing');
@@ -63,7 +68,7 @@ abstract class TestCase extends BaseTestCase
      * In a normal app environment these would be added to the 'providers' array in
      * the config/app.php file.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param \Illuminate\Foundation\Application $app
      *
      * @return array
      */
@@ -80,33 +85,19 @@ abstract class TestCase extends BaseTestCase
      * aliased facade, you should add the alias here, along with aliases for
      * facades upon which your package depends, e.g. Cartalyst/Sentry.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param \Illuminate\Foundation\Application $app
      *
      * @return array
      */
     protected function getPackageAliases($app)
     {
-        return [
-            'DocweaverHelper' => 'ReliQArts\Docweaver\Helpers\CoreHelper',
-        ];
-    }
-
-    /**
-     * Clean up the testing environment before the next test.
-     *
-     * @return void
-     */
-    protected function tearDown()
-    {
-        parent::tearDown();
+        return [];
     }
 
     /**
      * Set up routes for testing.
      *
-     * @param  Illuminate\Foundation\Application  $app
-     *
-     * @return void
+     * @param Illuminate\Foundation\Application $app
      */
     private function setupRoutes($app)
     {

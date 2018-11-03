@@ -2,18 +2,18 @@
 
 namespace ReliQArts\Docweaver\Models;
 
-use Carbon\Carbon;
-use Illuminate\Filesystem\Filesystem;
-use ReliQArts\Docweaver\Traits\FileHandler;
 use Illuminate\Contracts\Cache\Repository as Cache;
-use ReliQArts\Docweaver\Helpers\CoreHelper as Helper;
-use ReliQArts\Docweaver\Exceptions\BadProductException;
-use ReliQArts\Docweaver\Exceptions\ImplementationException;
-use ReliQArts\Docweaver\Contracts\Documentation as DocumentationContract;
+use Illuminate\Filesystem\Filesystem;
+use Log;
+use ReliQArts\Docweaver\Exceptions\BadImplementation;
+use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
+use ReliQArts\Docweaver\Helpers\Config;
+use ReliQArts\Docweaver\Helpers\Markdown;
+use ReliQArts\Docweaver\Traits\HandlesFiles;
 
-class Documentation implements DocumentationContract
+class Documentation
 {
-    use FileHandler;
+    use HandlesFiles;
 
     /**
      * The cache implementation.
@@ -53,45 +53,44 @@ class Documentation implements DocumentationContract
     /**
      * Create a new documentation instance.
      *
-     * @param  Filesystem  $files
-     * @param  Cache  $cache
-     * @throws ReliQArts\Docweaver\Exceptions\ImplementationException
+     * @param Filesystem $files
+     * @param Cache      $cache
      *
-     * @return void
+     * @throws ReliQArts\Docweaver\Exceptions\BadImplementation
      */
     public function __construct(Filesystem $files, Cache $cache)
     {
         $this->files = $files;
         $this->cache = $cache;
-        $this->config = Helper::getConfig();
-        $this->docsDir = Helper::getDocsDir();
+        $this->config = Config::getConfig();
+        $this->docsDir = Config::getDocsDir();
         $this->cacheKey = $this->config['cache']['key'];
 
         $docsDirAbsPath = base_path($this->docsDir);
-        if (! $this->files->isDirectory($docsDirAbsPath)) {
-            throw new ImplementationException("Documentation resource directory ({$this->docsDir}) does not exist. [{$docsDirAbsPath}]");
+        if (!$this->files->isDirectory($docsDirAbsPath)) {
+            throw new BadImplementation("Documentation resource directory ({$this->docsDir}) does not exist. [{$docsDirAbsPath}]");
         }
     }
 
     /**
      * Get the documentation index page.
      *
-     * @param  string  $product
-     * @param  string  $version
+     * @param Product $product
+     * @param string  $version
      *
      * @return string
      */
-    public function getIndex($product, $version)
+    public function getIndex(Product $product, string $version): string
     {
         $this->currentProduct = $product;
         $config = $this->config;
         $indexCacheKey = "{$this->cacheKey}.{$product->key}.{$version}.index";
-        
+
         return $this->cache->remember($indexCacheKey, 5, function () use ($product, $version, $config) {
             $path = "{$product->getDir()}/{$version}/{$config['doc']['index']}.md";
 
             if ($this->files->exists($path)) {
-                return $this->replaceLinks($version, Helper::markdown($this->files->get($path)));
+                return $this->replaceLinks($version, Markdown::parse($this->files->get($path)));
             }
         });
     }
@@ -99,13 +98,13 @@ class Documentation implements DocumentationContract
     /**
      * Get the given documentation page.
      *
-     * @param  Product  $product
-     * @param  string  $version
-     * @param  string  $page
+     * @param Product $product
+     * @param string  $version
+     * @param string  $page
      *
      * @return string
      */
-    public function getPage($product, $version, $page)
+    public function getPage(Product $product, string $version, string $page): string
     {
         $this->currentProduct = $product;
         $pageCacheKey = "{$this->cacheKey}.{$product->key}.{$version}.{$page}";
@@ -114,7 +113,7 @@ class Documentation implements DocumentationContract
             $path = "{$product->getDir()}/{$version}/{$page}.md";
 
             if ($this->files->exists($path)) {
-                return $this->replaceLinks($version, Helper::markdown($this->files->get($path)));
+                return $this->replaceLinks($version, Markdown::parse($this->files->get($path)));
             }
         });
     }
@@ -122,16 +121,17 @@ class Documentation implements DocumentationContract
     /**
      * Replace the version place-holder in links.
      *
-     * @param  string  $version
-     * @param  string  $content
+     * @param string $version
+     * @param string $content
+     *
      * @return string
      */
-    public function replaceLinks($version, $content)
+    public function replaceLinks(string $version, string $content): string
     {
-        $routePrefix = Helper::getRoutePrefix();
+        $routePrefix = Config::getRoutePrefix();
         // ensure product name exists in url
         if (!empty($this->currentProduct)) {
-            $content = str_replace('docs/{{version}}', "$routePrefix/{$this->currentProduct->key}/$version", $content);
+            $content = str_replace('docs/{{version}}', "${routePrefix}/{$this->currentProduct->key}/${version}", $content);
         }
 
         return str_replace('{{version}}', $version, $content);
@@ -140,13 +140,13 @@ class Documentation implements DocumentationContract
     /**
      * Check if the given section exists.
      *
-     * @param  Product  $product
-     * @param  string  $version
-     * @param  string  $page
+     * @param Product $product
+     * @param string  $version
+     * @param string  $page
      *
      * @return bool
      */
-    public function sectionExists($product, $version, $page)
+    public function sectionExists(Product $product, string $version, string $page): bool
     {
         $this->currentProduct = $product;
 
@@ -156,11 +156,11 @@ class Documentation implements DocumentationContract
     /**
      * List available products.
      *
-     * @param bool $includeUnkowns Whether to include products with unkown version.
+     * @param bool $includeUnkowns whether to include products with unkown version
      *
-     * @return void
+     * @return array
      */
-    public function listProducts($includeUnknowns = false)
+    public function listProducts(bool $includeUnknowns = false): array
     {
         $products = [];
         $productDirectories = $this->files->directories(base_path($this->docsDir));
@@ -171,8 +171,9 @@ class Documentation implements DocumentationContract
                 if ($includeUnknowns || $product->getDefaultVersion() !== Product::UNKNOWN_VERSION) {
                     $products[$product->key] = $product;
                 }
-            } catch (BadProductException $e) {
-                // error already logged
+            } catch (InvalidDirectory $e) {
+                // log error
+                Log::error($e->getMessage(), []);
             }
         }
 
@@ -182,16 +183,16 @@ class Documentation implements DocumentationContract
     /**
      * Check whether product exists.
      *
-     * @param string $product
-     * @param bool $returnProduct
+     * @param string $productName
+     * @param bool   $returnProduct
      *
-     * @return bool|array
+     * @return bool|Product
      */
-    public function productExists($productName, $returnProduct = false)
+    public function productExists(string $productName, bool $returnProduct = false)
     {
         $productKey = strtolower($productName);
-        $products   = $this->listProducts();
-        $exists     = array_key_exists($productKey, $products);
+        $products = $this->listProducts();
+        $exists = array_key_exists($productKey, $products);
 
         if ($exists && $returnProduct) {
             $exists = $products[$productKey];
@@ -205,9 +206,9 @@ class Documentation implements DocumentationContract
      *
      * @param string $productName
      *
-     * @return bool
+     * @return bool|Product
      */
-    public function getProduct($productName)
+    public function getProduct(string $productName)
     {
         return $this->productExists($productName, true);
     }

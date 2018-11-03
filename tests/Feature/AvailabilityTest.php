@@ -2,17 +2,21 @@
 
 namespace ReliQArts\Docweaver\Tests\Feature;
 
-use DocweaverHelper;
+use DocweaverConfig;
 use ReliQArts\Docweaver\Tests\TestCase as TestCase;
 
-class AvailabilityTest extends TestCase
+/**
+ * @internal
+ * @coversNothing
+ */
+final class AvailabilityTest extends TestCase
 {
     /**
      * Ensure views have required data.
      */
     public function testViewData()
     {
-        $routeConfig = DocweaverHelper::getRouteConfig();
+        $routeConfig = DocweaverConfig::getRouteConfig();
         $docIndex = $routeConfig['prefix'];
 
         $this->visit($docIndex)
@@ -27,7 +31,7 @@ class AvailabilityTest extends TestCase
      */
     public function testProjectAvailability()
     {
-        $routeConfig = DocweaverHelper::getRouteConfig();
+        $routeConfig = DocweaverConfig::getRouteConfig();
         $docIndex = $routeConfig['prefix'];
 
         $this->visit($docIndex)

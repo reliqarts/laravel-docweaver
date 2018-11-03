@@ -7,6 +7,6 @@ use Exception;
 /**
  * {@inheritdoc}
  */
-class BadProductException extends Exception
+class BadImplementation extends Exception
 {
 }

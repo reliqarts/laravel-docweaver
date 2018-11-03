@@ -1,10 +1,9 @@
 <?php
 
 return [
-    
     // debug mode?
     'debug' => false,
-    
+
     // cache
     'cache' => [
         'key' => 'docweaver.docs',
@@ -33,9 +32,9 @@ return [
 
         // route names
         'names' => [
-            'index' =>  env('DOC_WEAVER_ROUTE_NAME_INDEX', 'docs'),
-            'product_index' =>  env('DOC_WEAVER_ROUTE_NAME_PRODUCT_INDEX', 'docs.product'),
-            'product_page' =>  env('DOC_WEAVER_ROUTE_NAME_PRODUCT_PAGE', 'docs.show'),
+            'index' => env('DOC_WEAVER_ROUTE_NAME_INDEX', 'docs'),
+            'product_index' => env('DOC_WEAVER_ROUTE_NAME_PRODUCT_INDEX', 'docs.product'),
+            'product_page' => env('DOC_WEAVER_ROUTE_NAME_PRODUCT_PAGE', 'docs.show'),
         ],
     ],
 
@@ -63,7 +62,7 @@ return [
         'docs_title' => false,
 
         // Documentation page intro paragraph
-        'docs_intro' => 'Please consult the documentation provided below for help with setting up and using our commercial/opensource products.',
+        'docs_intro' => 'Please consult the documentation provided below for help with setting up and using our commercial/open-source products.',
 
         // configurable accents
         'accents' => [
@@ -71,5 +70,4 @@ return [
             'product_line' => true,
         ],
     ],
-
 ];

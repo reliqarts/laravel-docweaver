@@ -19,7 +19,7 @@
         "compass-sass-mixins": "^0.12.7",
         "cross-env": "^5.0.5",
         "foundation-sites": "^6.4.4-rc1",
-        "laravel-mix": "^1.4.5"
+        "laravel-mix": "^2.1.14"
     },
     "dependencies": {}
 }
