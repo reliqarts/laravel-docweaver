@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Log;
 use ReliQArts\Docweaver\Exceptions\BadImplementation;
+use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
 use ReliQArts\Docweaver\Helpers\Config;
 use ReliQArts\Docweaver\Models\Product;
 use ReliQArts\Docweaver\Traits\HandlesFiles;
@@ -84,7 +85,7 @@ class Publisher
         $productDir = "{$this->workingDir}/${name}";
 
         if ($this->readyResourceDir($productDir)) {
-            $result = $this->publishVersions($name, $productDir, $source, $callingCommand);
+            $result = $this->publishVersions($productDir, $source, $callingCommand);
         } else {
             $result->error = "Product directory {$productDir} is not writable.";
         }
@@ -118,7 +119,7 @@ class Publisher
         $productDir = "{$this->workingDir}/${name}";
 
         if ($this->readyResourceDir($productDir)) {
-            $result = $this->updateVersions($name, $productDir, $callingCommand);
+            $result = $this->updateVersions($productDir, $callingCommand);
         } else {
             $result->error = "Product directory {$productDir} is not writable.";
         }
@@ -177,14 +178,13 @@ class Publisher
     /**
      * Publish doc versions of a product.
      *
-     * @param string  $name           product directory
      * @param string  $dir            Product Directory
      * @param string  $source         Documentation source
      * @param Command $callingCommand
      *
      * @return Result
      */
-    private function publishVersions(string $name, string $dir, string $source, Command &$callingCommand = null): Result
+    private function publishVersions(string $dir, string $source, Command &$callingCommand = null): Result
     {
         $this->callingCommand = $callingCommand;
         $result = $this->result;
@@ -300,13 +300,12 @@ class Publisher
     /**
      * Publish doc versions of a product.
      *
-     * @param string  $name
      * @param string  $dir            product directory
      * @param Command $callingCommand
      *
      * @return Result
      */
-    private function updateVersions(string $name, string $dir, Command &$callingCommand = null): Result
+    private function updateVersions(string $dir, Command &$callingCommand = null): Result
     {
         $this->callingCommand = $callingCommand;
         $result = $this->result;
