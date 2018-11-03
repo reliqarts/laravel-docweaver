@@ -3,7 +3,6 @@
 /**
  * This file defines the web routes provided by the Docweaver Package.
  */
-
 $routeConfig = DocweaverConfig::getRouteConfig();
 
 // Controller FQCN

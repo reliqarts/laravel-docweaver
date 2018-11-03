@@ -15,7 +15,7 @@ class DocumentationController
     /**
      * Documentation configuration array.
      *
-     * @var Cache
+     * @var array
      */
     protected $config;
 
@@ -114,7 +114,8 @@ class DocumentationController
         $routeNames = $routeConfig['names'];
 
         // ensure product exists
-        if (!$product = $this->docs->getProduct($productKey)) {
+        $product = $this->docs->getProduct($productKey);
+        if (!$product instanceof Product) {
             abort(404);
         }
 
@@ -129,7 +130,7 @@ class DocumentationController
         $content = $this->docs->getPage($product, $version, $page);
 
         // ensure page has content
-        if (is_null($content)) {
+        if (empty($content)) {
             Log::warning("Documentation page ({$page}) for {$product->getName()} has no content.", ['product' => $product]);
             abort(404);
         }
@@ -140,7 +141,7 @@ class DocumentationController
         // ensure section exists
         if ($this->docs->sectionExists($product, $version, $page)) {
             $section .= "/${page}";
-        } elseif (!is_null($page)) {
+        } elseif (!empty($page)) {
             // section does not exist, go to version index
             return redirect()->route($routeNames['product_page'], [$product->key, $version]);
         }

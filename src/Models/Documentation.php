@@ -39,7 +39,7 @@ class Documentation
     /**
      * Current product.
      *
-     * @var string
+     * @var Product
      */
     protected $currentProduct;
 
