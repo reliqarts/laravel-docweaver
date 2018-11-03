@@ -1,13 +1,8 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Docweaver Routes
-|--------------------------------------------------------------------------
-|
-| This file defines the routes provided by the Docweaver Package.
-|
-*/
+/**
+ * This file defines the web routes provided by the Docweaver Package.
+ */
 
 $routeConfig = DocweaverConfig::getRouteConfig();
 
