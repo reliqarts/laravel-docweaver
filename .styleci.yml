@@ -1,1 +1,5 @@
 preset: psr2
+
+enabled:
+  - align_comments
+  - alpha_ordered_imports

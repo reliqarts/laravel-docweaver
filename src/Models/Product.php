@@ -2,25 +2,51 @@
 
 namespace ReliQArts\Docweaver\Models;
 
-use Log;
-use Storage;
 use Carbon\Carbon;
-use Symfony\Component\Yaml\Yaml;
-use Illuminate\Filesystem\Filesystem;
-use ReliQArts\Docweaver\Traits\FileHandler;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Filesystem\Filesystem;
+use Log;
+use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
+use ReliQArts\Docweaver\Helpers\Config;
+use ReliQArts\Docweaver\Traits\HandlesFiles;
 use Symfony\Component\Yaml\Exception\ParseException;
-use ReliQArts\Docweaver\Helpers\CoreHelper as Helper;
-use ReliQArts\Docweaver\Exceptions\BadProductException;
-use ReliQArts\Docweaver\Contracts\Product as ProductContract;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * A documented product.
  */
-class Product implements Arrayable, Jsonable, ProductContract
+class Product implements Arrayable, Jsonable
 {
-    use FileHandler;
+    use HandlesFiles;
+
+    /**
+     * Placeholders to replace in documentation asset URL.
+     *
+     * @var array
+     */
+    public const ASSET_URL_PLACEHOLDERS = ['{{docs}}', '{{doc}}'];
+
+    /**
+     * Unknown version identifier.
+     *
+     * @var string
+     */
+    public const UNKNOWN_VERSION = 'unknown';
+
+    /**
+     * Product meta file.
+     *
+     * @var string
+     */
+    public const META_FILE = '.docweaver.yml';
+
+    /**
+     * Product key.
+     *
+     * @var string
+     */
+    public $key;
 
     /**
      * Filesystem implementation.
@@ -41,28 +67,28 @@ class Product implements Arrayable, Jsonable, ProductContract
      *
      * @var string
      */
-    protected $name = null;
+    protected $name;
 
     /**
      * Product description.
      *
-     * @var string
+     * @var null|string
      */
-    protected $description = null;
+    protected $description;
 
     /**
      * Product image url.
      *
-     * @var string
+     * @var null|string
      */
-    protected $imageUrl = null;
+    protected $imageUrl;
 
     /**
      * Product resource directory.
      *
      * @var string
      */
-    protected $dir = null;
+    protected $dir;
 
     /**
      * Product meta (from file).
@@ -79,53 +105,23 @@ class Product implements Arrayable, Jsonable, ProductContract
     protected $versions = [];
 
     /**
-     * Product key.
-     *
-     * @var string
-     */
-    public $key = null;
-
-    /**
-     * Placeholders to replace in documentation asset URL.
-     *
-     * @var array
-     */
-    public const ASSET_URL_PLACEHOLDERS = ['{{docs}}', '{{doc}}'];
-
-    /**
-    * Unknown version identifier.
-    *
-    * @var string
-    */
-    public const UNKNOWN_VERSION = 'unknown';
-
-    /**
-     * Product meta file.
-     *
-     * @var string
-     */
-    public const META_FILE = '.docweaver.yml';
-
-    /**
      * Create product instance.
      *
-     * @param string $dir Documentation directory.
+     * @param string $dir documentation directory
      */
-    public function __construct($dir)
+    public function __construct(string $dir)
     {
-        $this->files  = resolve(Filesystem::class);
+        $this->files = resolve(Filesystem::class);
 
         if (!$this->files->isDirectory($dir)) {
-            $error = "Could not instantiate product, documentation directory ({$dir}) does not exist.";
-            Log::error($error, []);
-            throw new BadProductException($error);
+            throw new InvalidDirectory($dir);
         }
 
         // proceed with build
         $this->name = title_case(basename($dir));
-        $this->key  = strtolower($this->name);
-        $this->dir  = $this->dirPath($dir);
-        
+        $this->key = strtolower($this->name);
+        $this->dir = $this->dirPath($dir);
+
         // populate product
         $this->populate();
     }
@@ -135,7 +131,7 @@ class Product implements Arrayable, Jsonable, ProductContract
      *
      * @return array
      */
-    public function populate()
+    public function populate(): array
     {
         // load versions
         $this->loadVersions();
@@ -148,25 +144,27 @@ class Product implements Arrayable, Jsonable, ProductContract
     /**
      * Get default version for product.
      *
-     * @param bool $allowWordedDefault Whether a worded version should be accepted as default.
+     * @param bool $allowWordedDefault whether a worded version should be accepted as default
      *
      * @return string
      */
-    public function getDefaultVersion($allowWordedDefault = false)
+    public function getDefaultVersion(bool $allowWordedDefault = false): string
     {
-        $docweaverConfig = Helper::getConfig();
+        $docweaverConfig = Config::getConfig();
         $versions = empty($this->versions) ? $this->getVersions() : $this->versions;
         $allowWordedDefault = $allowWordedDefault || $docweaverConfig['versions']['allow_worded_default'];
         $defaultVersion = self::UNKNOWN_VERSION;
 
         foreach ($versions as $tag => $ver) {
-            if (! $allowWordedDefault) {
+            if (!$allowWordedDefault) {
                 if (is_numeric($tag)) {
                     $defaultVersion = $tag;
+
                     break;
                 }
             } else {
                 $defaultVersion = $tag;
+
                 break;
             }
         }
@@ -179,7 +177,7 @@ class Product implements Arrayable, Jsonable, ProductContract
      *
      * @return string
      */
-    public function getDir()
+    public function getDir(): string
     {
         return $this->dir;
     }
@@ -189,7 +187,7 @@ class Product implements Arrayable, Jsonable, ProductContract
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -199,7 +197,7 @@ class Product implements Arrayable, Jsonable, ProductContract
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -209,7 +207,7 @@ class Product implements Arrayable, Jsonable, ProductContract
      *
      * @return string
      */
-    public function getImageUrl()
+    public function getImageUrl(): ?string
     {
         return $this->imageUrl;
     }
@@ -217,12 +215,10 @@ class Product implements Arrayable, Jsonable, ProductContract
     /**
      * Set product image url.
      *
-     * @param mixed $meta Meta or straight url to use.
-     * @param string $version
-     *
-     * @return void
+     * @param array|string $meta    meta or straight url to use
+     * @param string       $version
      */
-    public function setImageUrl($meta, $version = null)
+    public function setImageUrl($meta, string $version = null): void
     {
         $url = '';
         $version = empty($version) ? $this->getDefaultVersion() : $version;
@@ -238,7 +234,7 @@ class Product implements Arrayable, Jsonable, ProductContract
         } elseif (is_string($meta)) {
             $url = $meta;
         }
-        
+
         $this->imageUrl = $this->assetUrl($url, $version);
     }
 
@@ -247,7 +243,7 @@ class Product implements Arrayable, Jsonable, ProductContract
      *
      * @return array
      */
-    public function getVersions()
+    public function getVersions(): array
     {
         return $this->versions;
     }
@@ -255,9 +251,9 @@ class Product implements Arrayable, Jsonable, ProductContract
     /**
      * Get last modified time.
      *
-     * @return void
+     * @return Carbon
      */
-    public function getLastModified()
+    public function getLastModified(): Carbon
     {
         return Carbon::createFromTimestamp($this->lastModified);
     }
@@ -270,7 +266,7 @@ class Product implements Arrayable, Jsonable, ProductContract
      *
      * @return string
      */
-    public function assetUrl($url = null, $version = null)
+    public function assetUrl(string $url = null, string $version = null): string
     {
         $url = empty($url) ? self::ASSET_URL_PLACEHOLDERS[0] : $url;
         $version = empty($version) ? $this->getDefaultVersion() : $version;
@@ -278,44 +274,42 @@ class Product implements Arrayable, Jsonable, ProductContract
         // if url contains schema, ignore it
         if (strpos('http://', $url) === false && strpos('https://', $url) === false) {
             // build asset url
-            $url = str_replace(self::ASSET_URL_PLACEHOLDERS, 'storage/'.Helper::getRoutePrefix()."/$this->key/$version", $url);
+            $url = str_replace(self::ASSET_URL_PLACEHOLDERS, 'storage/' . Config::getRoutePrefix() . "/{$this->key}/${version}", $url);
             $url = asset($url);
         }
-        
+
         return $url;
     }
 
     /**
      * Determine if the given string is a valid version.
      *
-     * @param  string  $version
+     * @param string $version
      *
      * @return bool
      */
-    public function hasVersion($version)
+    public function hasVersion(string $version): bool
     {
-        return in_array($version, array_keys($this->getVersions()));
+        return in_array($version, array_keys($this->getVersions()), true);
     }
 
     /**
      * Publish product public assets.
      *
      * @param string $version
-     *
-     * @return void
      */
-    public function publishAssets($version = null)
+    public function publishAssets(string $version = null): void
     {
         $version = empty($version) ? $this->getDefaultVersion() : $version;
-        $storagePath = storage_path('app/public/'.Helper::getRoutePrefix()."/$this->key/$version");
-        
+        $storagePath = storage_path('app/public/' . Config::getRoutePrefix() . "/{$this->key}/${version}");
+
         // publish images
-        if ($this->files->isDirectory("{$this->dir}/$version/images")) {
-            if (!$this->files->copyDirectory("{$this->dir}/$version/images", "$storagePath/images")) {
-                Log::error("Failed to publish image assets for product.", ['product' => $this]);
+        if ($this->files->isDirectory("{$this->dir}/${version}/images")) {
+            if (!$this->files->copyDirectory("{$this->dir}/${version}/images", "${storagePath}/images")) {
+                Log::error('Failed to publish image assets for product.', ['product' => $this]);
             }
         } else {
-            Log::info("Skipped publishing image assets for product. No images directory.", ['product' => $this]);
+            Log::info('Skipped publishing image assets for product. No images directory.', ['product' => $this]);
         }
     }
 
@@ -324,7 +318,7 @@ class Product implements Arrayable, Jsonable, ProductContract
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'key' => $this->key,
@@ -341,10 +335,11 @@ class Product implements Arrayable, Jsonable, ProductContract
     /**
      * Convert the object to its JSON representation.
      *
-     * @param  int  $options
+     * @param int $options
+     *
      * @return string
      */
-    public function toJson($options = 0)
+    public function toJson($options = 0): string
     {
         return json_encode($this->toArray());
     }
@@ -353,14 +348,12 @@ class Product implements Arrayable, Jsonable, ProductContract
      * Load meta onto product.
      *
      * @param string $version Version to load configuration from. (optional)
-     *
-     * @return void
      */
-    private function loadMeta($version = null)
+    private function loadMeta(string $version = null): void
     {
         $version = empty($version) ? $this->getDefaultVersion() : $version;
         // load configuration file, if exists
-        if ($metaFile = realpath("{$this->dir}/{$version}/".self::META_FILE)) {
+        if ($metaFile = realpath("{$this->dir}/{$version}/" . self::META_FILE)) {
             try {
                 $this->meta = $meta = Yaml::parse(file_get_contents($metaFile));
 
@@ -380,10 +373,8 @@ class Product implements Arrayable, Jsonable, ProductContract
 
     /**
      * Load product versions.
-     *
-     * @return void
      */
-    private function loadVersions()
+    private function loadVersions(): void
     {
         $versions = [];
 

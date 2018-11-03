@@ -3,17 +3,18 @@
 namespace ReliQArts\Docweaver\Traits;
 
 /**
- * Timeable trait.
+ * Timed trait.
  */
-trait Timeable
+trait Timed
 {
     /**
      * Get seconds since a microtime start-time.
      *
-     * @param int $startTime Start time in microseconds.
-     * @return string Seconds since, to 2 decimal places.
+     * @param int $startTime start time in microseconds
+     *
+     * @return string seconds since, to 2 decimal places
      */
-    protected function secondsSince($startTime)
+    protected function secondsSince(int $startTime): string
     {
         $duration = microtime(true) - $startTime;
         $hours = (int) ($duration / 60 / 60);

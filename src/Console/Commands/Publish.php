@@ -2,11 +2,9 @@
 
 namespace ReliQArts\Docweaver\Console\Commands;
 
-use PDOException;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use ReliQArts\Docweaver\Contracts\Publisher;
-use ReliQArts\Docweaver\Helpers\CoreHelper as Helper;
+use ReliQArts\Docweaver\Services\Publisher;
 
 class Publish extends Command
 {
@@ -31,12 +29,10 @@ class Publish extends Command
     /**
      * Publisher instance.
      */
-    protected $publisher = null;
+    protected $publisher;
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct(Publisher $publisher)
     {
@@ -56,25 +52,30 @@ class Publish extends Command
         $productSource = $this->argument('source');
         $skipConfirmation = $this->option('y');
 
-        $this->comment(PHP_EOL."<info>♣♣♣</info> Docweaver Publisher \nHelp is here, try: php artisan docweaver:publish --help");
+        $this->comment(PHP_EOL . "<info>♣♣♣</info> Docweaver Publisher \nHelp is here, try: php artisan docweaver:publish --help");
 
         if ($skipConfirmation || $this->confirm("This command will attempt to pull documentation for product ({$productName}) from {$productSource}. \nPlease ensure your internet connection is stable. Ready?")) {
-            $this->info("Publishing {$productName}.\nT: ".Carbon::now()->toCookieString()."\n----------");
+            $this->info("Publishing {$productName}.\nT: " . Carbon::now()->toCookieString() . "\n----------");
 
             // Seek
             $publish = $this->publisher->publish($productName, $productSource, $this);
             if ($publish->success) {
-                $this->info(PHP_EOL.'----------');
+                $this->info(PHP_EOL . '----------');
                 $this->comment("<info>✔</info> Done. {$publish->message}");
 
                 // Display results
                 $this->line('');
                 $headers = ['Time', 'Versions', 'Published', 'Updated'];
-                $data = [[$publish->extra->executionTime, $publish->extra->versions, $publish->extra->versionsPublished, $publish->extra->versionsUpdated]];
+                $data = [[
+                    $publish->extra->executionTime,
+                    $publish->extra->versions,
+                    $publish->extra->versionsPublished,
+                    $publish->extra->versionsUpdated,
+                ]];
                 $this->table($headers, $data);
                 $this->line(PHP_EOL);
             } else {
-                $this->line(PHP_EOL."<error>✘</error> $publish->error");
+                $this->line(PHP_EOL . "<error>✘</error> {$publish->error}");
             }
         }
     }

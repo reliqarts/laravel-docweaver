@@ -2,8 +2,8 @@
 
 namespace ReliQArts\Docweaver;
 
-use Illuminate\Routing\Router;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -21,7 +21,7 @@ class DocweaverServiceProvider extends ServiceProvider
     /**
      * Assets location.
      */
-    protected $assetsDir = __DIR__.'/..';
+    protected $assetsDir = __DIR__ . '/..';
 
     /**
      * List of commands.
@@ -35,80 +35,9 @@ class DocweaverServiceProvider extends ServiceProvider
     ];
 
     /**
-     * Publish assets.
-     *
-     * @return void
-     */
-    protected function handleAssets()
-    {
-        $this->publishes([
-            "$this->assetsDir/public" => public_path('vendor/docweaver'),
-        ], 'docweaver:public');
-    }
-
-    /**
-     * Command files.
-     */
-    private function handleCommands()
-    {
-        // Register the commands...
-        if ($this->app->runningInConsole() && ! empty($this->commands)) {
-            $this->commands($this->commands);
-        }
-    }
-
-    /**
-     * Register Configuraion.
-     */
-    protected function handleConfig()
-    {
-        $docWeaverConfig = "{$this->assetsDir}/config/config.php";
-
-        // merge config
-        $this->mergeConfigFrom($docWeaverConfig, 'docweaver');
-
-        // allow publishing the config file, with tag: docweaver:config
-        $this->publishes([$docWeaverConfig => config_path('docweaver.php')], 'docweaver:config');
-    }
-
-    /**
-     * Migration files.
-     */
-    private function handleMigrations()
-    {
-        // Load the migrations...
-        $this->loadMigrationsFrom("{$this->assetsDir}/database/migrations");
-    }
-
-    /**
-     * Route files.
-     */
-    private function handleRoutes()
-    {
-        // Get the routes...
-        require realpath("{$this->assetsDir}/routes/web.php");
-    }
-
-    /**
-     * View files.
-     */
-    private function handleViews()
-    {
-        // Load the views...
-        $this->loadViewsFrom("{$this->assetsDir}/resources/views", 'docweaver');
-
-        // Allow publishing view files, with tag: views
-        $this->publishes([
-            "{$this->assetsDir}/resources/views" => base_path('resources/views/vendor/docweaver'),
-        ], 'docweaver:views');
-    }
-
-    /**
      * Perform post-registration booting of services.
-     *
-     * @return void
      */
-    public function boot(Router $router)
+    public function boot(Router $router): void
     {
         // register config
         $this->handleConfig();
@@ -126,32 +55,15 @@ class DocweaverServiceProvider extends ServiceProvider
 
     /**
      * Register bindings in the container.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $loader = AliasLoader::getInstance();
 
-        // bind contracts to models
-        $this->app->bind(
-            Contracts\Documentation::class,
-            Models\Documentation::class
-        );
-
-        $this->app->bind(
-            Contracts\Product::class,
-            Models\Product::class
-        );
-
-        $this->app->singleton(
-            Contracts\Publisher::class,
-            Services\Publisher::class
-        );
-
-        // Register facades...
+        // Register aliases...
         $loader->alias('DocweaverProduct', Models\Product::class);
-        $loader->alias('DocweaverHelper', Helpers\CoreHelper::class);
+        $loader->alias('DocweaverConfig', Helpers\Config::class);
+        $loader->alias('DocweaverMarkdown', Helpers\Markdown::class);
         $loader->alias('DocweaverDocumentation', Models\Documentation::class);
         $loader->alias('DocweaverPublisher', Services\Publisher::class);
     }
@@ -161,12 +73,75 @@ class DocweaverServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    public function provides()
+    public function provides(): array
     {
-        return [
-            Contracts\Documentation::class,
-            Contracts\Product::class,
-            Contracts\Publisher::class,
-        ];
+        return [];
+    }
+
+    /**
+     * Publish assets.
+     */
+    protected function handleAssets(): void
+    {
+        $this->publishes([
+            "{$this->assetsDir}/public" => public_path('vendor/docweaver'),
+        ], 'docweaver:public');
+    }
+
+    /**
+     * Register Configuraion.
+     */
+    protected function handleConfig(): void
+    {
+        $docWeaverConfig = "{$this->assetsDir}/config/config.php";
+
+        // merge config
+        $this->mergeConfigFrom($docWeaverConfig, 'docweaver');
+
+        // allow publishing the config file, with tag: docweaver:config
+        $this->publishes([$docWeaverConfig => config_path('docweaver.php')], 'docweaver:config');
+    }
+
+    /**
+     * Command files.
+     */
+    private function handleCommands(): void
+    {
+        // Register the commands...
+        if ($this->app->runningInConsole() && !empty($this->commands)) {
+            $this->commands($this->commands);
+        }
+    }
+
+    /**
+     * Migration files.
+     */
+    private function handleMigrations(): void
+    {
+        // Load the migrations...
+        $this->loadMigrationsFrom("{$this->assetsDir}/database/migrations");
+    }
+
+    /**
+     * Route files.
+     */
+    private function handleRoutes(): void
+    {
+        // Get the routes...
+        require realpath("{$this->assetsDir}/routes/web.php");
+    }
+
+    /**
+     * View files.
+     */
+    private function handleViews(): void
+    {
+        // Load the views...
+        $this->loadViewsFrom("{$this->assetsDir}/resources/views", 'docweaver');
+
+        // Allow publishing view files, with tag: views
+        $this->publishes([
+            "{$this->assetsDir}/resources/views" => base_path('resources/views/vendor/docweaver'),
+        ], 'docweaver:views');
     }
 }

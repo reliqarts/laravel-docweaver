@@ -5,7 +5,7 @@ namespace ReliQArts\Docweaver\Traits;
 /**
  * A handler of files.
  */
-trait FileHandler
+trait HandlesFiles
 {
     /**
      * The filesystem implementation.
@@ -13,15 +13,16 @@ trait FileHandler
      * @var Filesystem
      */
     protected $files;
-    
+
     /**
      * Format path correctly based on OS.
      * i.e. using DIRECTORY_SEPARATOR.
      *
      * @param string $path
+     *
      * @return string
      */
-    private function dirPath($path)
+    private function dirPath(string $path): string
     {
         return realpath($path);
     }

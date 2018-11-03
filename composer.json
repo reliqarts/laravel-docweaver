@@ -21,7 +21,7 @@
         "reliqarts/doc-weaver": "1.*"
     },
     "require": {
-        "php": ">=5.6.4",
+        "php": ">=7.1.3",
         "illuminate/support": "5.*",
         "erusev/parsedown-extra": "^0.7.1",
         "monolog/monolog": "~1.11",
@@ -31,7 +31,7 @@
         "symfony/yaml": "^3.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.6|~7.0",
+        "phpunit/phpunit": "~7.0",
         "orchestra/testbench-browser-kit": "~3.1"
     },
     "autoload": {
@@ -46,9 +46,11 @@
                 "ReliQArts\\Docweaver\\DocweaverServiceProvider"
             ],
             "aliases": {
-                "DocweaverProduct": "ReliQArts\\Docweaver\\Models\\Product",
+                "DocweaverConfig": "ReliQArts\\Docweaver\\Helpers\\Config",
                 "DocweaverDocumentation": "ReliQArts\\Docweaver\\Models\\Documentation",
-                "DocweaverHelper": "ReliQArts\\Docweaver\\Helpers\\CoreHelper"
+                "DocweaverMarkdown": "ReliQArts\\Docweaver\\Helpers\\Markdown",
+                "DocweaverProduct": "ReliQArts\\Docweaver\\Models\\Product",
+                "DocweaverPublisher": "ReliQArts\\Docweaver\\Services\\Publisher"
             }
         }
     }
