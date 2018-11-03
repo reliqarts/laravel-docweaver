@@ -3,6 +3,7 @@
 namespace ReliQArts\Docweaver\Traits;
 
 use App;
+use Illuminate\Console\Command;
 
 /**
  * HasVariableOutput trait.
@@ -12,7 +13,7 @@ trait HasVariableOutput
     /**
      * Calling command if running in console.
      *
-     * @var Illuminate\Console\Command
+     * @var Command
      */
     protected $callingCommand;
 
