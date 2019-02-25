@@ -2,8 +2,8 @@
 
 namespace ReliQArts\Docweaver\Tests\Feature;
 
-use Artisan;
-use DocweaverConfig;
+use Illuminate\Support\Facades\Artisan;
+use ReliQArts\Docweaver\Helpers\Config;
 use ReliQArts\Docweaver\Tests\TestCase as TestCase;
 
 /**
@@ -14,15 +14,18 @@ final class PublishTest extends TestCase
 {
     /**
      * Test the ability to publish documentation.
+     *
+     * @covers \ReliQArts\Docweaver\Console\Commands\Publish
+     * @covers \ReliQArts\Docweaver\Services\DocumentationPublisher::publish
      */
     public function testPublishDoc()
     {
-        $routeConfig = DocweaverConfig::getRouteConfig();
+        $routeConfig = Config::getRouteConfig();
         $docIndex = $routeConfig['prefix'];
         $productName = 'Docweaver';
 
         // publish Docweaver docs
-        $exitCode = Artisan::call('docweaver:publish', [
+        Artisan::call('docweaver:publish', [
             'product' => $productName,
             'source' => 'https://github.com/reliqarts/docweaver-docs.git',
             '--y' => true,

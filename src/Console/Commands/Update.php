@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ReliQArts\Docweaver\Console\Commands;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use ReliQArts\Docweaver\Services\Publisher;
+use ReliQArts\Docweaver\Contracts\Documentation\Publisher;
 
 class Update extends Command
 {
@@ -26,12 +28,14 @@ class Update extends Command
     protected $description = 'Update documentation for product';
 
     /**
-     * Publisher instance.
+     * @var Publisher
      */
     protected $publisher;
 
     /**
      * Create a new command instance.
+     *
+     * @param Publisher $publisher
      */
     public function __construct(Publisher $publisher)
     {
@@ -42,34 +46,39 @@ class Update extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $productName = $this->argument('product');
         $skipConfirmation = $this->option('y');
+        $confirmationMessage = sprintf(
+            "This command will attempt to update documentation for product (%s). \n"
+            . 'Please ensure your internet connection is stable. Ready?',
+            $productName
+        );
 
-        $this->comment(PHP_EOL . "<info>♣♣♣</info> Docweaver Publisher \nHelp is here, try: php artisan docweaver:update --help");
+        $this->comment(PHP_EOL
+            . "<info>♣♣♣</info> Docweaver DocumentationPublisher \n"
+            . 'Help is here, try: php artisan docweaver:update --help');
 
-        if ($skipConfirmation || $this->confirm("This command will attempt to update documentation for product ({$productName}). \nPlease ensure your internet connection is stable. Ready?")) {
+        if ($skipConfirmation || $this->confirm($confirmationMessage)) {
             $this->info("Updating {$productName}.\nT: " . Carbon::now()->toCookieString() . "\n----------");
 
-            // Seek
-            $update = $this->publisher->update($productName, $this);
+            $result = $this->publisher->update($productName, $this);
 
-            if ($update->success) {
+            if ($result->isSuccess()) {
                 $this->info(PHP_EOL . '----------');
-                $this->comment("<info>✔</info> Done. {$update->message}");
+                $this->comment("<info>✔</info> Done. {$result->getMessage()}");
 
                 // Display results
                 $this->line('');
                 $headers = ['Time', 'Versions', 'Updated'];
-                $data = [[$update->extra->executionTime, $update->extra->versions, $update->extra->versionsUpdated]];
-                $this->table($headers, $data);
+                $data = $result->getData();
+                $rows = [[$data->executionTime, count($data->versions), count($data->versionsUpdated)]];
+                $this->table($headers, $rows);
                 $this->line(PHP_EOL);
             } else {
-                $this->line(PHP_EOL . "<error>✘</error> {$update->error}");
+                $this->line(PHP_EOL . "<error>✘</error> {$result->getError()}");
             }
         }
     }

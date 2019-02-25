@@ -1,21 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ReliQArts\Docweaver\Exceptions;
 
-use Exception;
+use ReliQArts\Docweaver\Contracts\Exception as ExceptionContract;
 
 class InvalidDirectory extends Exception
 {
-    /**
-     * @param string    $directory directory
-     * @param int       $code      user defined exception code
-     * @param Exception $previous  previous exception if nested exception
-     */
-    public function __construct(string $directory, int $code = 0, Exception $previous = null)
-    {
-        $message = "Directory ({$directory}) is invalid.";
+    private const CODE = 4002;
 
-        // make sure everything is assigned properly
-        parent::__construct($message, $code, $previous);
+    /**
+     * @var null|string
+     */
+    protected $directory;
+
+    /**
+     * @param string            $directory Directory
+     * @param ExceptionContract $previous  Previous Exception if nested exception
+     *
+     * @return ExceptionContract
+     */
+    public static function forDirectory(string $directory, ExceptionContract $previous = null): ExceptionContract
+    {
+        $message = sprintf('Invalid directory: `%s`.', $directory);
+        $self = new self($message, self::CODE, $previous);
+        $self->directory = $directory;
+
+        return $self;
+    }
+
+    /**
+     * @return null|string
+     */
+    final public function getDirectory(): ?string
+    {
+        return $this->directory;
     }
 }

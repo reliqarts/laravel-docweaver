@@ -1,22 +1,24 @@
-@extends($viewTemplateInfo['master_template'])
-
 @php
-$accents = (empty($viewTemplateInfo['accents']) ? [] : $viewTemplateInfo['accents']);
-$accents['product_line'] = empty($accents['product_line']) ? false : (bool) $accents['product_line'];
-$scripts = '<script type="text/javascript" src="/vendor/docweaver/js/docweaver.js"></script>';
-$styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docweaver/css/docweaver.css" />';
+    /**
+     * @var \ReliQArts\Docweaver\Services\ConfigProvider $docweaverConfigProvider
+     */
+    $templateConfig = $docweaverConfigProvider->getTemplateConfig();
+    $scripts = '<script type="text/javascript" src="/vendor/docweaver/js/docweaver.js"></script>';
+    $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docweaver/css/docweaver.css" />';
 @endphp
 
-@section($viewTemplateInfo['master_section'])
+@extends($templateConfig->getMasterTemplate())
+
+@section($templateConfig->getMasterSection())
 <div id="docweaver-wrapper" class="docweaver-wrapper docs-wrapper">
     @isset($currentProduct)
     <nav id="docweaver-product-bar" class="navbar navbar-expand-sm navbar-light">
-        <a id="docweaver-docs-home-link" class="docs-home" href="{!! route($routeConfig['names']['index']) !!}">
+        <a id="docweaver-docs-home-link" class="docs-home" href="{!! route($docweaverConfigProvider->getIndexRouteName()) !!}">
             <span></span>
             <span></span>
             <span></span>
         </a>
-        <a id="docweaver-current-product-name" class="navbar-brand" href="{!! route($routeConfig['names']['product_index'], $currentProduct->key) !!}">{{ $currentProduct->getName() }}</a>
+        <a id="docweaver-current-product-name" class="navbar-brand" href="{!! route($docweaverConfigProvider->getProductIndexRouteName(), $currentProduct->getKey()) !!}">{{ $currentProduct->getName() }}</a>
         <div class="docweaver-navbar-collapse-replacement navbar-fake-collapse" id="docweaver-navbar-collapse-replacement">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
@@ -29,7 +31,7 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docw
                             <h6 class="dropdown-header">Versions</h6>
                             @foreach ($currentProduct->getVersions() as $versionTag => $versionName)
                                 @if ($currentVersion != $versionTag)
-                                <a class="dropdown-item" href="{!! route('docs.show', [$currentProduct->key, $versionTag, $page]) !!}">{{ $versionName }}</a>
+                                <a class="dropdown-item" href="{!! route('docs.show', [$currentProduct->getKey(), $versionTag, $page]) !!}">{{ $versionName }}</a>
                                 @endif
                             @endforeach
                         </div>
@@ -39,12 +41,12 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docw
         </div>
     </nav>
     @else
-    <div id="docweaver-product-line" class="{{ $accents['product_line'] ? '' : 'invisible' }}"></div>
+    <div id="docweaver-product-line" class="{{ $templateConfig->isShowProductLine() ? '' : 'invisible' }}"></div>
     @endisset
     <div class="docs container">
     @yield('docweaver-content')
     </div>
-    @if(empty($accents['footnotes']) ? true : $accents['product_line'])
+    @if($templateConfig->isShowFootnotes())
     <aside id="docweaver-footnotes">
         <p class="by-line">Docs by <a href="http://docweaver.reliqarts.com" target="docweaver.rqa">Docweaver</a>.</p>
     </aside>
@@ -52,14 +54,14 @@ $styles = '<link media="all" type="text/css" rel="stylesheet" href="/vendor/docw
 </div>
 @endsection
 
-@if(!empty($viewTemplateInfo['style_stack']))
-@push($viewTemplateInfo['style_stack'], $styles)
+@if($templateConfig->hasStyleStack())
+@push($templateConfig->getStyleStack(), $styles)
 @else
 {!! $styles !!}
 @endif
 
-@if(!empty($viewTemplateInfo['script_stack']))
-@push($viewTemplateInfo['script_stack'], $scripts)
+@if($templateConfig->hasScriptStack())
+@push($templateConfig->getScriptStack(), $scripts)
 @else
 {!! $scripts !!}
 @endif

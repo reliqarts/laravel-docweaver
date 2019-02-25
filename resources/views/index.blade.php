@@ -1,16 +1,22 @@
+@php
+    /**
+     * @var \ReliQArts\Docweaver\Services\ConfigProvider $docweaverConfigProvider
+     */
+    $templateConfig = $docweaverConfigProvider->getTemplateConfig();
+@endphp
 @extends('docweaver::layout')
 
 @section('docweaver-content')
 <div id="docweaver-product-showcase" class="products product-showcase">
     <h1 class="docweaver-h1">{{ $title }}</h1>
-    @if(!empty($viewTemplateInfo['docs_intro']))
-    <p class="docweaver-intro">{{ $viewTemplateInfo['docs_intro'] }}</p>
+    @if(!empty($templateConfig->getIndexIntro()))
+    <p class="docweaver-intro">{{ $templateConfig->getIndexIntro() }}</p>
     @endif
     @if(count($products))
     <div class="product-list">
         @foreach($products as $productKey => $product)
         <div id="product-{{ $productKey }}" class="product" data-name="{{ $product->getName() }}">
-            <a href="{!! route($routeConfig['names']['product_index'], $productKey) !!}">
+            <a href="{!! route($docweaverConfigProvider->getProductIndexRouteName(), $productKey) !!}">
                 <h4 class="product-title">{{ $product->getName() }}</h4>
                 @if (!empty($product->getImageUrl()))
                 <div class="product-image">

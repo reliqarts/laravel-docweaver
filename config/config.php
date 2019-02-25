@@ -11,7 +11,7 @@ return [
 
     // doc specific settings
     'doc' => [
-        'index' => env('DOC_WEAVER_DOC_INDEX', 'documentation'),
+        'index' => env('DOCWEAVER_DOC_INDEX', 'documentation'),
     ],
 
     // versions
@@ -23,7 +23,7 @@ return [
     // route options
     'route' => [
         // prefix that should be used for routes
-        'prefix' => env('DOC_WEAVER_ROUTE_PREFIX', 'docs'),
+        'prefix' => env('DOCWEAVER_ROUTE_PREFIX', 'docs'),
 
         // bindings for routes
         'bindings' => [
@@ -32,25 +32,25 @@ return [
 
         // route names
         'names' => [
-            'index' => env('DOC_WEAVER_ROUTE_NAME_INDEX', 'docs'),
-            'product_index' => env('DOC_WEAVER_ROUTE_NAME_PRODUCT_INDEX', 'docs.product'),
-            'product_page' => env('DOC_WEAVER_ROUTE_NAME_PRODUCT_PAGE', 'docs.show'),
+            'index' => env('DOCWEAVER_ROUTE_NAME_INDEX', 'docs'),
+            'product_index' => env('DOCWEAVER_ROUTE_NAME_PRODUCT_INDEX', 'docs.product'),
+            'product_page' => env('DOCWEAVER_ROUTE_NAME_PRODUCT_PAGE', 'docs.show'),
         ],
     ],
 
     // storage options
     'storage' => [
         // where docs are stored
-        'dir' => env('DOC_WEAVER_DIR', 'resources/docs'),
+        'dir' => env('DOCWEAVER_DIR', 'resources/docs'),
     ],
 
     // view options
     'view' => [
         // master layout template
-        'master_template' => env('DOC_WEAVER_VIEW_MASTER_TEMPLATE', 'app'),
+        'master_template' => env('DOCWEAVER_VIEW_MASTER_TEMPLATE', 'app'),
 
         // master content section
-        'master_section' => env('DOC_WEAVER_VIEW_MASTER_SECTION', 'content'),
+        'master_section' => env('DOCWEAVER_VIEW_MASTER_SECTION', 'content'),
 
         // stack for injecting styles in master template
         'style_stack' => 'styles',
@@ -62,7 +62,8 @@ return [
         'docs_title' => false,
 
         // Documentation page intro paragraph
-        'docs_intro' => 'Please consult the documentation provided below for help with setting up and using our commercial/open-source products.',
+        'docs_intro' => 'Please consult the documentation provided below for help '
+            . 'with setting up and using our commercial/open-source products.',
 
         // configurable accents
         'accents' => [

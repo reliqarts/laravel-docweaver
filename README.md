@@ -5,11 +5,12 @@ A simple Laravel 5.x product documentation package.
 Docweaver is suitable for product documentation and/or knowledge bases. Converts folder(s) of .md files into full-bread complete documentation. Docweaver is inspired by Laravel's very own documentation.
 
 [![Built For Laravel](https://img.shields.io/badge/built%20for-laravel-red.svg?style=flat-square)](http://laravel.com)
-[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/reliqarts/docweaver.svg?style=flat-square)](https://circleci.com/gh/reliqarts/docweaver)
-[![Scrutinizer](https://img.shields.io/scrutinizer/g/reliqarts/docweaver.svg?style=flat-square)](https://scrutinizer-ci.com/g/reliqarts/docweaver/)
+[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/reliqarts/laravel-docweaver/master.svg?style=flat-square)](https://circleci.com/gh/reliqarts/laravel-docweaver/tree/master)
+[![Scrutinizer](https://img.shields.io/scrutinizer/g/reliqarts/laravel-docweaver.svg?style=flat-square)](https://scrutinizer-ci.com/g/reliqarts/laravel-docweaver/)
 [![License](https://poser.pugx.org/reliqarts/docweaver/license?format=flat-square)](https://packagist.org/packages/reliqarts/docweaver)
 [![Latest Stable Version](https://poser.pugx.org/reliqarts/docweaver/version?format=flat-square)](https://packagist.org/packages/reliqarts/docweaver)
 [![Latest Unstable Version](https://poser.pugx.org/reliqarts/docweaver/v/unstable?format=flat-square)](//packagist.org/packages/reliqarts/docweaver)
+[![check it out!](https://img.shields.io/badge/read-the%20docs-blue.svg?style=flat-square)](http://docweaver.reliqarts.com) 
 
 &nbsp;
 
@@ -18,7 +19,7 @@ Docweaver is suitable for product documentation and/or knowledge bases. Converts
 Docweaver provides the following features and more out of the box.
 
 - Multi-product support
-    - Doc Weaver supports multiple products out-the-box. Just create your product folders and drop in your documentation version directories.
+    - Docweaver supports multiple products out-the-box. Just create your product folders and drop in your documentation version directories.
 - Plug and play
     - Just install and configure and you're golden! *(approx. 2min)*
 
@@ -64,8 +65,7 @@ You may opt to publish only configuration by using the `docweaver:config` tag:
 
 ```
 php artisan vendor:publish --provider="ReliQArts\Docweaver\DocweaverServiceProvider" --tag="docweaver:config"
-``` 
-You may publish migrations in a similar manner using the tag `migrations`.
+```
 
 ### Setup
 

@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ReliQArts\Docweaver\Models;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Filesystem\Filesystem;
-use Log;
+use ReliQArts\Docweaver\Contracts\ConfigProvider;
+use ReliQArts\Docweaver\Contracts\Exception;
 use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
-use ReliQArts\Docweaver\Helpers\Config;
-use ReliQArts\Docweaver\Traits\HandlesFiles;
+use ReliQArts\Docweaver\Exceptions\ParsingFailed;
+use ReliQArts\Docweaver\Exceptions\Product\AssetPublicationFailed;
+use ReliQArts\Docweaver\Exceptions\Product\InvalidAssetDirectory;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -18,127 +22,112 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Product implements Arrayable, Jsonable
 {
-    use HandlesFiles;
+    public const VERSION_MASTER = 'master';
+    public const VERSION_UNKNOWN = 'unknown';
 
-    /**
-     * Placeholders to replace in documentation asset URL.
-     *
-     * @var array
-     */
-    public const ASSET_URL_PLACEHOLDERS = ['{{docs}}', '{{doc}}'];
-
-    /**
-     * Unknown version identifier.
-     *
-     * @var string
-     */
-    public const UNKNOWN_VERSION = 'unknown';
-
-    /**
-     * Product meta file.
-     *
-     * @var string
-     */
-    public const META_FILE = '.docweaver.yml';
+    private const ASSET_URL_PLACEHOLDERS = ['{{docs}}', '{{doc}}'];
+    private const META_FILE = '.docweaver.yml';
 
     /**
      * Product key.
      *
      * @var string
      */
-    public $key;
+    private $key;
 
     /**
-     * Filesystem implementation.
+     * Filesystem.
      *
      * @var Filesystem
      */
-    protected $files;
+    private $filesystem;
+
+    /**
+     * @var ConfigProvider
+     */
+    private $configProvider;
 
     /**
      * Last time product was modified (timestamp).
      *
      * @var int
      */
-    protected $lastModified;
+    private $lastModified;
 
     /**
      * Product name.
      *
      * @var string
      */
-    protected $name;
+    private $name;
 
     /**
      * Product description.
      *
      * @var null|string
      */
-    protected $description;
+    private $description;
 
     /**
      * Product image url.
      *
      * @var null|string
      */
-    protected $imageUrl;
+    private $imageUrl;
 
     /**
      * Product resource directory.
      *
      * @var string
      */
-    protected $dir;
+    private $directory;
 
     /**
      * Product meta (from file).
      *
      * @var array
      */
-    protected $meta = [];
+    private $meta;
 
     /**
      * List of available product versions.
      *
      * @var array
      */
-    protected $versions = [];
+    private $versions;
 
     /**
      * Create product instance.
      *
-     * @param string $dir documentation directory
+     * @param Filesystem     $filesystem
+     * @param ConfigProvider $configProvider
+     * @param string         $directory
+     *
+     * @throws Exception if directory is invalid or meta could not be parsed
      */
-    public function __construct(string $dir)
+    public function __construct(Filesystem $filesystem, ConfigProvider $configProvider, string $directory)
     {
-        $this->files = resolve(Filesystem::class);
-
-        if (!$this->files->isDirectory($dir)) {
-            throw new InvalidDirectory($dir);
+        if (!$filesystem->isDirectory($directory)) {
+            throw InvalidDirectory::forDirectory($directory);
         }
 
-        // proceed with build
-        $this->name = title_case(basename($dir));
+        $this->filesystem = $filesystem;
+        $this->configProvider = $configProvider;
+        $this->name = title_case(basename($directory));
         $this->key = strtolower($this->name);
-        $this->dir = $this->dirPath($dir);
+        $this->directory = realpath($directory);
+        $this->meta = [];
+        $this->versions = [];
 
-        // populate product
         $this->populate();
     }
 
     /**
-     * Populate product versions and information.
-     *
-     * @return array
+     * @return string
      */
-    public function populate(): array
+    public function getKey(): string
     {
-        // load versions
-        $this->loadVersions();
-        // load config
-        $this->loadMeta();
-
-        return $this->toArray();
+        return $this->key;
     }
 
     /**
@@ -150,10 +139,9 @@ class Product implements Arrayable, Jsonable
      */
     public function getDefaultVersion(bool $allowWordedDefault = false): string
     {
-        $docweaverConfig = Config::getConfig();
         $versions = empty($this->versions) ? $this->getVersions() : $this->versions;
-        $allowWordedDefault = $allowWordedDefault || $docweaverConfig['versions']['allow_worded_default'];
-        $defaultVersion = self::UNKNOWN_VERSION;
+        $allowWordedDefault = $allowWordedDefault || $this->configProvider->isWordedDefaultVersionAllowed();
+        $defaultVersion = self::VERSION_UNKNOWN;
 
         foreach ($versions as $tag => $ver) {
             if (!$allowWordedDefault) {
@@ -177,9 +165,9 @@ class Product implements Arrayable, Jsonable
      *
      * @return string
      */
-    public function getDir(): string
+    public function getDirectory(): string
     {
-        return $this->dir;
+        return $this->directory;
     }
 
     /**
@@ -235,7 +223,7 @@ class Product implements Arrayable, Jsonable
             $url = $meta;
         }
 
-        $this->imageUrl = $this->assetUrl($url, $version);
+        $this->imageUrl = $this->getAssetUrl($url, $version);
     }
 
     /**
@@ -259,29 +247,6 @@ class Product implements Arrayable, Jsonable
     }
 
     /**
-     * Convert url string to asset url relative to current product.
-     *
-     * @param string $url
-     * @param string $version
-     *
-     * @return string
-     */
-    public function assetUrl(string $url = null, string $version = null): string
-    {
-        $url = empty($url) ? self::ASSET_URL_PLACEHOLDERS[0] : $url;
-        $version = empty($version) ? $this->getDefaultVersion() : $version;
-
-        // if url contains schema, ignore it
-        if (strpos('http://', $url) === false && strpos('https://', $url) === false) {
-            // build asset url
-            $url = str_replace(self::ASSET_URL_PLACEHOLDERS, 'storage/' . Config::getRoutePrefix() . "/{$this->key}/${version}", $url);
-            $url = asset($url);
-        }
-
-        return $url;
-    }
-
-    /**
      * Determine if the given string is a valid version.
      *
      * @param string $version
@@ -297,19 +262,23 @@ class Product implements Arrayable, Jsonable
      * Publish product public assets.
      *
      * @param string $version
+     *
+     * @throws Exception if products asset directory is invalid or assets could not be published
      */
-    public function publishAssets(string $version = null): void
+    public function publishAssets(string $version): void
     {
         $version = empty($version) ? $this->getDefaultVersion() : $version;
-        $storagePath = storage_path('app/public/' . Config::getRoutePrefix() . "/{$this->key}/${version}");
+        $storagePath = storage_path(
+            sprintf('app/public/%s/%s/%s', $this->configProvider->getRoutePrefix(), $this->key, $version)
+        );
+        $imageDirectory = sprintf('%s/%s/images', $this->directory, $version);
 
-        // publish images
-        if ($this->files->isDirectory("{$this->dir}/${version}/images")) {
-            if (!$this->files->copyDirectory("{$this->dir}/${version}/images", "${storagePath}/images")) {
-                Log::error('Failed to publish image assets for product.', ['product' => $this]);
-            }
-        } else {
-            Log::info('Skipped publishing image assets for product. No images directory.', ['product' => $this]);
+        if (!$this->filesystem->isDirectory($imageDirectory)) {
+            throw InvalidAssetDirectory::forDirectory($imageDirectory);
+        }
+
+        if (!$this->filesystem->copyDirectory($imageDirectory, sprintf('%s/images', $storagePath))) {
+            throw AssetPublicationFailed::forProductAssetsOfType($this, 'image');
         }
     }
 
@@ -325,7 +294,7 @@ class Product implements Arrayable, Jsonable
             'name' => $this->name,
             'description' => $this->description,
             'imageUrl' => $this->imageUrl,
-            'directory' => $this->dir,
+            'directory' => $this->directory,
             'versions' => $this->versions,
             'defaultVersion' => $this->getDefaultVersion(),
             'lastModified' => $this->getLastModified(),
@@ -345,29 +314,68 @@ class Product implements Arrayable, Jsonable
     }
 
     /**
+     * Convert url string to asset url relative to current product.
+     *
+     * @param string $url
+     * @param string $version
+     *
+     * @return string
+     */
+    private function getAssetUrl(string $url = null, string $version = null): string
+    {
+        $url = empty($url) ? self::ASSET_URL_PLACEHOLDERS[0] : $url;
+        $version = empty($version) ? $this->getDefaultVersion() : $version;
+
+        // if url contains schema, ignore it
+        if (strpos('http://', $url) === false && strpos('https://', $url) === false) {
+            // build asset url
+            $url = str_replace(
+                self::ASSET_URL_PLACEHOLDERS,
+                sprintf('storage/%s/%s/%s', $this->configProvider->getRoutePrefix(), $this->key, $version),
+                $url
+            );
+            $url = asset($url);
+        }
+
+        return $url;
+    }
+
+    /**
      * Load meta onto product.
      *
      * @param string $version Version to load configuration from. (optional)
+     *
+     * @throws Exception
      */
     private function loadMeta(string $version = null): void
     {
         $version = empty($version) ? $this->getDefaultVersion() : $version;
-        // load configuration file, if exists
-        if ($metaFile = realpath("{$this->dir}/{$version}/" . self::META_FILE)) {
-            try {
-                $this->meta = $meta = Yaml::parse(file_get_contents($metaFile));
+        $metaFile = realpath(sprintf('%s/%s/%s', $this->directory, $version, self::META_FILE));
 
-                // set params from meta file
-                if (!empty($meta['name'])) {
-                    $this->name = $meta['name'];
-                }
-                if (!empty($meta['description'])) {
-                    $this->description = $meta['description'];
-                }
-                $this->setImageUrl($meta, $version);
-            } catch (ParseException $e) {
-                Log::error("Unable to parse the YAML string: {$e->getMessage()}", ['product' => $this]);
+        if (empty($metaFile)) {
+            return;
+        }
+
+        try {
+            $meta = Yaml::parse(file_get_contents($metaFile));
+
+            if (!empty($meta['name'])) {
+                $this->name = $meta['name'];
             }
+            if (!empty($meta['description'])) {
+                $this->description = $meta['description'];
+            }
+
+            $this->setImageUrl($meta, $version);
+            $this->meta = $meta;
+        } catch (ParseException $exception) {
+            $message = sprintf(
+                'Failed to parse meta file `%s`. %s',
+                $metaFile,
+                $exception->getMessage()
+            );
+
+            throw ParsingFailed::forFile($metaFile)->withMessage($message);
         }
     }
 
@@ -379,8 +387,8 @@ class Product implements Arrayable, Jsonable
         $versions = [];
 
         if ($this->key) {
-            if ($this->files->isDirectory($this->dir)) {
-                $versionDirs = $this->files->directories($this->dir);
+            if ($this->filesystem->isDirectory($this->directory)) {
+                $versionDirs = $this->filesystem->directories($this->directory);
                 // add versions to version array
                 foreach ($versionDirs as $ver) {
                     $versionTag = basename($ver);
@@ -389,7 +397,7 @@ class Product implements Arrayable, Jsonable
                 }
 
                 // update last modified
-                $this->lastModified = $this->files->lastModified($this->dir);
+                $this->lastModified = $this->filesystem->lastModified($this->directory);
             }
 
             // sort versions
@@ -397,5 +405,16 @@ class Product implements Arrayable, Jsonable
         }
 
         $this->versions = $versions;
+    }
+
+    /**
+     * Populate product versions and information.
+     *
+     * @throws Exception
+     */
+    private function populate(): void
+    {
+        $this->loadVersions();
+        $this->loadMeta();
     }
 }

@@ -3,8 +3,10 @@
 namespace ReliQArts\Docweaver\Tests;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\View;
 use Orchestra\Testbench\BrowserKit\TestCase as BaseTestCase;
-use View;
+use ReliQArts\Docweaver\ServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -26,7 +28,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Define environment setup.
      *
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      */
     protected function getEnvironmentSetUp($app)
     {
@@ -64,18 +66,18 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * Get package providers.  At a minimum this is the package being tested, but also
-     * would include packages upon which our package depends, e.g. Cartalyst/Sentry
+     * would include packages upon which our package depends, e.g. Catalyst/Sentry
      * In a normal app environment these would be added to the 'providers' array in
      * the config/app.php file.
      *
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      *
      * @return array
      */
     protected function getPackageProviders($app)
     {
         return [
-            \ReliQArts\Docweaver\DocweaverServiceProvider::class,
+            ServiceProvider::class,
         ];
     }
 
@@ -83,9 +85,9 @@ abstract class TestCase extends BaseTestCase
      * Get package aliases.  In a normal app environment these would be added to
      * the 'aliases' array in the config/app.php file.  If your package exposes an
      * aliased facade, you should add the alias here, along with aliases for
-     * facades upon which your package depends, e.g. Cartalyst/Sentry.
+     * facades upon which your package depends, e.g. Catalyst/Sentry.
      *
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      *
      * @return array
      */
@@ -97,7 +99,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Set up routes for testing.
      *
-     * @param Illuminate\Foundation\Application $app
+     * @param Application $app
      */
     private function setupRoutes($app)
     {

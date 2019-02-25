@@ -1,56 +1,66 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ReliQArts\Docweaver\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Log;
-use ReliQArts\Docweaver\Helpers\Config;
-use ReliQArts\Docweaver\Models\Documentation;
+use ReliQArts\Docweaver\Contracts\ConfigProvider;
+use ReliQArts\Docweaver\Contracts\Documentation\Provider;
+use ReliQArts\Docweaver\Contracts\Logger;
+use ReliQArts\Docweaver\Contracts\Product\Finder;
 use ReliQArts\Docweaver\Models\Product;
 use Symfony\Component\DomCrawler\Crawler;
 
 class DocumentationController
 {
+    private const DEFAULT_PAGE = 'installation';
+
     /**
-     * Documentation configuration array.
-     *
-     * @var array
+     * @var ConfigProvider
      */
-    protected $config;
+    protected $configProvider;
 
     /**
      * The documentation repository.
      *
-     * @var Documentation
+     * @var Provider
      */
-    protected $docs;
+    protected $documentationProvider;
 
     /**
      * Doc home path.
      *
      * @var
      */
-    protected $docsHome;
+    protected $documentationHome;
 
     /**
-     * View template information.
-     *
-     * @var array
+     * @var Finder
      */
-    protected $viewTemplateInfo;
+    protected $productFinder;
+
+    /**
+     * @var Logger
+     */
+    protected $logger;
 
     /**
      * Create a new controller instance.
      *
-     * @param Documentation $docs
+     * @param ConfigProvider $configProvider
+     * @param Logger         $logger
+     * @param Provider       $docs
+     * @param Finder         $productFinder
      */
-    public function __construct(Documentation $docs)
+    public function __construct(ConfigProvider $configProvider, Logger $logger, Provider $docs, Finder $productFinder)
     {
-        $this->docs = $docs;
-        $this->docsHome = Config::getRoutePrefix();
-        $this->viewTemplateInfo = Config::getViewTemplateInfo();
-        $this->config = Config::getConfig();
+        $this->logger = $logger;
+        $this->documentationProvider = $docs;
+        $this->productFinder = $productFinder;
+        $this->documentationHome = $configProvider->getRoutePrefix();
+        $this->configProvider = $configProvider;
     }
 
     /**
@@ -60,18 +70,13 @@ class DocumentationController
      */
     public function index(): View
     {
-        $title = 'Documentation';
-        $products = $this->docs->listProducts();
-
-        if (!empty($this->viewTemplateInfo['docs_title'])) {
-            $title = $this->viewTemplateInfo['docs_title'];
-        }
+        $templateConfig = $this->configProvider->getTemplateConfig();
+        $title = $templateConfig->getIndexTitle();
+        $products = $this->productFinder->listProducts();
 
         return view('docweaver::index', [
             'title' => $title,
             'products' => $products,
-            'viewTemplateInfo' => $this->viewTemplateInfo,
-            'routeConfig' => $this->config['route'],
         ]);
     }
 
@@ -84,16 +89,15 @@ class DocumentationController
      */
     public function productIndex(string $productName): RedirectResponse
     {
-        $routeNames = $this->config['route']['names'];
-        $product = $this->docs->getProduct($productName);
+        $product = $this->productFinder->findProduct($productName);
 
-        if (!$product || $product->getDefaultVersion() === Product::UNKNOWN_VERSION) {
+        if (empty($product) || $product->getDefaultVersion() === Product::VERSION_UNKNOWN) {
             abort(404);
         }
 
         // route to default version
-        return redirect()->route($routeNames['product_page'], [
-            $product->key,
+        return redirect()->route($this->configProvider->getProductPageRouteName(), [
+            $product->getKey(),
             $product->getDefaultVersion(),
         ]);
     }
@@ -101,37 +105,39 @@ class DocumentationController
     /**
      * Show a documentation page.
      *
-     * @param string $product
+     * @param string $productKey
      * @param string $version
      * @param string $page
-     * @param mixed  $productKey
      *
      * @return RedirectResponse|View
      */
     public function show(string $productKey, string $version, string $page = null)
     {
-        $routeConfig = $this->config['route'];
+        $routeConfig = $this->configProvider->getRouteConfig();
         $routeNames = $routeConfig['names'];
 
         // ensure product exists
-        $product = $this->docs->getProduct($productKey);
-        if (!$product instanceof Product) {
+        $product = $this->productFinder->findProduct($productKey);
+        if (empty($product)) {
             abort(404);
         }
 
         // get default version for product
         $defaultVersion = $product->getDefaultVersion();
         if (!$product->hasVersion($version)) {
-            return redirect(route($routeNames['product_page'], [$product->key, $defaultVersion]), 301);
+            return redirect(route($routeNames['product_page'], [$product->getKey(), $defaultVersion]), 301);
         }
 
         // get page content
-        $page = $page ?: 'installation';
-        $content = $this->docs->getPage($product, $version, $page);
+        $page = $page ?: self::DEFAULT_PAGE;
+        $content = $this->documentationProvider->getPage($product, $version, $page);
 
         // ensure page has content
         if (empty($content)) {
-            Log::warning("Documentation page ({$page}) for {$product->getName()} has no content.", ['product' => $product]);
+            $this->logger->warning(
+                sprintf('Documentation page (%s) for %s has no content.', $page, $product->getName()),
+                ['product' => $product]
+            );
             abort(404);
         }
 
@@ -139,17 +145,17 @@ class DocumentationController
         $section = '';
 
         // ensure section exists
-        if ($this->docs->sectionExists($product, $version, $page)) {
+        if ($this->documentationProvider->sectionExists($product, $version, $page)) {
             $section .= "/${page}";
         } elseif (!empty($page)) {
             // section does not exist, go to version index
-            return redirect()->route($routeNames['product_page'], [$product->key, $version]);
+            return redirect()->route($routeNames['product_page'], [$product->getKey(), $version]);
         }
 
         // set canonical
         $canonical = null;
-        if ($this->docs->sectionExists($product, $defaultVersion, $page)) {
-            $canonical = route($routeNames['product_page'], [$product->key, $defaultVersion, $page]);
+        if ($this->documentationProvider->sectionExists($product, $defaultVersion, $page)) {
+            $canonical = route($routeNames['product_page'], [$product->getKey(), $defaultVersion, $page]);
         }
 
         return view('docweaver::page', [
@@ -158,12 +164,10 @@ class DocumentationController
             'currentProduct' => $product,
             'currentSection' => $section,
             'currentVersion' => $version,
-            'index' => $this->docs->getIndex($product, $version),
+            'index' => $this->documentationProvider->getPage($product, $version),
             'page' => $page,
-            'routeConfig' => $routeConfig,
             'title' => count($title) ? $title->text() : null,
             'versions' => $product->getVersions(),
-            'viewTemplateInfo' => $this->viewTemplateInfo,
         ]);
     }
 }
