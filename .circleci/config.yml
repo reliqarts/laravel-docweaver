@@ -40,11 +40,11 @@ jobs:
 
       # store artifacts
       - store_artifacts:
-        path:  build/coverage.xml
+          path:  build/coverage.xml
 
       # upload coverage
       - codecov/upload:
-        file: build/coverage.xml
+          file: build/coverage.xml
 
 workflows:
   version: 2.1
