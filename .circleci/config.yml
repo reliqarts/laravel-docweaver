@@ -1,7 +1,8 @@
-# PHP CircleCI 2.0 configuration file
+# PHP CircleCI 2.1 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-php/ for more details
 #
+
 version: 2.1
 orbs:
   codecov: codecov/codecov@1.0.4
@@ -44,3 +45,9 @@ jobs:
       # upload coverage
       - codecov/upload:
         file: build/coverage.xml
+
+workflows:
+  version: 2.1
+  build_and_test:
+    jobs:
+      - build
