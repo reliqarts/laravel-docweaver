@@ -20,7 +20,7 @@ final class PublishTest extends TestCase
     public function testPublishDoc()
     {
         $docIndex = $this->configProvider->getRoutePrefix();
-        $productName = 'Docweaver';
+        $productName = 'Test Product';
 
         // publish Docweaver docs
         Artisan::call('docweaver:publish', [
@@ -33,12 +33,5 @@ final class PublishTest extends TestCase
         $this->visit($docIndex)
             ->see($productName)
             ->see('master');
-
-        // remove docs directory
-        $this->assertTrue(
-            $this->filesystem->deleteDirectory(
-                realpath($this->app->basePath(sprintf('/tests/resources/docs/%s', $productName)))
-            )
-        );
     }
 }

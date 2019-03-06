@@ -7,7 +7,7 @@ version: 2.1
 orbs:
   codecov: codecov/codecov@1.0.4
 jobs:
-  build:
+  test:
     docker:
       # specify the version you desire here
       - image: circleci/php:7.2-browsers
@@ -48,6 +48,6 @@ jobs:
 
 workflows:
   version: 2.1
-  build_and_test:
+  test:
     jobs:
       - build

@@ -19,8 +19,6 @@ final class AvailabilityTest extends TestCase
     {
         $docIndex = $this->configProvider->getRoutePrefix();
 
-        var_dump($this->configProvider->getTemplateConfig());
-
         $this->visit($docIndex)
             ->assertViewHas('docweaverConfigProvider');
     }
