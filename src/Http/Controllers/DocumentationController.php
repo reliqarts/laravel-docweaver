@@ -113,9 +113,6 @@ class DocumentationController
      */
     public function show(string $productKey, string $version, string $page = null)
     {
-        $routeConfig = $this->configProvider->getRouteConfig();
-        $routeNames = $routeConfig['names'];
-
         // ensure product exists
         $product = $this->productFinder->findProduct($productKey);
         if (empty($product)) {
@@ -125,7 +122,10 @@ class DocumentationController
         // get default version for product
         $defaultVersion = $product->getDefaultVersion();
         if (!$product->hasVersion($version)) {
-            return redirect(route($routeNames['product_page'], [$product->getKey(), $defaultVersion]), 301);
+            return redirect(route(
+                $this->configProvider->getProductPageRouteName(),
+                [$product->getKey(), $defaultVersion]
+            ), 301);
         }
 
         // get page content
@@ -149,13 +149,16 @@ class DocumentationController
             $section .= "/${page}";
         } elseif (!empty($page)) {
             // section does not exist, go to version index
-            return redirect()->route($routeNames['product_page'], [$product->getKey(), $version]);
+            return redirect()->route($this->configProvider->getProductPageRouteName(), [$product->getKey(), $version]);
         }
 
         // set canonical
         $canonical = null;
         if ($this->documentationProvider->sectionExists($product, $defaultVersion, $page)) {
-            $canonical = route($routeNames['product_page'], [$product->getKey(), $defaultVersion, $page]);
+            $canonical = route(
+                $this->configProvider->getProductPageRouteName(),
+                [$product->getKey(), $defaultVersion, $page]
+            );
         }
 
         return view('docweaver::page', [

@@ -3,7 +3,6 @@
 namespace ReliQArts\Docweaver\Tests\Feature;
 
 use Illuminate\Support\Facades\Artisan;
-use ReliQArts\Docweaver\Helpers\Config;
 use ReliQArts\Docweaver\Tests\TestCase as TestCase;
 
 /**
@@ -16,12 +15,11 @@ final class PublishTest extends TestCase
      * Test the ability to publish documentation.
      *
      * @covers \ReliQArts\Docweaver\Console\Commands\Publish
-     * @covers \ReliQArts\Docweaver\Services\DocumentationPublisher::publish
+     * @covers \ReliQArts\Docweaver\Services\Documentation\Publisher::publish
      */
     public function testPublishDoc()
     {
-        $routeConfig = Config::getRouteConfig();
-        $docIndex = $routeConfig['prefix'];
+        $docIndex = $this->configProvider->getRoutePrefix();
         $productName = 'Docweaver';
 
         // publish Docweaver docs
@@ -36,10 +34,10 @@ final class PublishTest extends TestCase
             ->see($productName)
             ->see('master');
 
-        // remove Docweaver docs directory
+        // remove docs directory
         $this->assertTrue(
-            $this->files->deleteDirectory(
-                realpath($this->app->basePath("/tests/resources/docs/${productName}"))
+            $this->filesystem->deleteDirectory(
+                realpath($this->app->basePath(sprintf('/tests/resources/docs/%s', $productName)))
             )
         );
     }

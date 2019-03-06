@@ -236,7 +236,7 @@ class ServiceProvider extends BaseServiceProvider
         $configProvider = resolve(Contracts\ConfigProvider::class);
 
         ViewFacade::composer(
-            ['docweaver::index', 'docweaver::page'],
+            '*',
             function (View $view) use ($configProvider): void {
                 $view->with('docweaverConfigProvider', $configProvider);
             }

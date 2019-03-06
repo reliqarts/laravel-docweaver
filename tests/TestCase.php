@@ -6,6 +6,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\View;
 use Orchestra\Testbench\BrowserKit\TestCase as BaseTestCase;
+use ReliQArts\Docweaver\Contracts\ConfigProvider;
 use ReliQArts\Docweaver\ServiceProvider;
 
 abstract class TestCase extends BaseTestCase
@@ -15,14 +16,19 @@ abstract class TestCase extends BaseTestCase
      *
      * @var Filesystem
      */
-    protected $files;
+    protected $filesystem;
 
     /**
-     * Clean up the testing environment before the next test.
+     * @var ConfigProvider
      */
-    protected function tearDown()
+    protected $configProvider;
+
+    protected function setUp()
     {
-        parent::tearDown();
+        parent::setUp();
+
+        $this->filesystem = resolve(Filesystem::class);
+        $this->configProvider = resolve(ConfigProvider::class);
     }
 
     /**
@@ -41,7 +47,7 @@ abstract class TestCase extends BaseTestCase
         $app['config']->set('docweaver.versions.allow_worded_default', true);
         $app['config']->set('docweaver.view', [
             'accents' => [],
-            'master_template' => 'test::layout',
+            'master_template' => 'docweaver::test',
             'master_section' => 'content',
             'docs_intro' => 'Oh my! Docs!',
         ]);
@@ -57,11 +63,8 @@ abstract class TestCase extends BaseTestCase
         // setup routes
         $this->setupRoutes($app);
 
-        // grab filesystem instance
-        $this->files = resolve(Filesystem::class);
-
         // add views
-        View::addNamespace('test', realpath($app->basePath('/tests/resources/views')));
+        View::addNamespace('docweaver', realpath($app->basePath('/tests/resources/views')));
     }
 
     /**

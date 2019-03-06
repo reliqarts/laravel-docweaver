@@ -68,9 +68,11 @@ interface ConfigProvider
     public function getCacheKey(): string;
 
     /**
+     * Page used as content index (or Table of Contents) for product documentation.
+     *
      * @return string
      */
-    public function getIndexPageName(): string;
+    public function getContentIndexPageName(): string;
 
     /**
      * @return TemplateConfig

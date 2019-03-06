@@ -2,13 +2,15 @@
 #
 # Check https://circleci.com/docs/2.0/language-php/ for more details
 #
-version: 2
+version: 2.1
+orbs:
+  codecov: codecov/codecov@1.0.4
 jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/php:7.1-browsers
-      
+      - image: circleci/php:7.2-browsers
+
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -22,16 +24,23 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "composer.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "composer.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
 
       - run: composer install -n --prefer-dist
-
       - save_cache:
           paths:
             - ./vendor
           key: v1-dependencies-{{ checksum "composer.json" }}
-        
+
       # run tests!
       - run: vendor/bin/phpunit --verbose
+
+      # store artifacts
+      - store_artifacts:
+        path:  build/coverage.xml
+
+      # upload coverage
+      - codecov/upload:
+        file: build/coverage.xml

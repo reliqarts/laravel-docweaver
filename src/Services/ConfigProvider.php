@@ -14,7 +14,7 @@ class ConfigProvider implements ConfigProviderContract
     private const NAMESPACE = 'docweaver';
     private const KEY_CACHE_KEY = 'cache.key';
     private const KEY_DEBUG = 'debug';
-    private const KEY_INDEX_PAGE_NAME = 'doc.index';
+    private const KEY_TABLE_OF_CONTENTS_PAGE_NAME = 'doc.index';
     private const KEY_VERSIONS_ALLOW_WORDED_DEFAULT = 'versions.allow_worded_default';
     private const KEY_VIEW_MASTER_TEMPLATE = 'view.master_template';
     private const KEY_ROUTE = 'route';
@@ -36,7 +36,7 @@ class ConfigProvider implements ConfigProviderContract
     private const DEFAULT_PRODUCT_PAGE_ROUTE_NAME = 'docs.show';
     private const DEFAULT_ROUTE_PREFIX = 'docs';
     private const DEFAULT_CACHE_KEY = 'docweaver.docs';
-    private const DEFAULT_INDEX_PAGE_NAME = 'documentation';
+    private const DEFAULT_TABLE_OF_CONTENTS_PAGE_NAME = 'documentation';
     private const DEFAULT_INDEX_TITLE = 'Documentation';
 
     /**
@@ -57,7 +57,7 @@ class ConfigProvider implements ConfigProviderContract
 
         $masterTemplate = $this->get(self::KEY_VIEW_MASTER_TEMPLATE);
 
-        if (!view()->exists($masterTemplate)) {
+        if (!view()->exists($masterTemplate) && app()->environment() !== 'testing') {
             throw new BadImplementation(
                 sprintf('Master template view `%s` does not exist.', $masterTemplate)
             );
@@ -111,7 +111,7 @@ class ConfigProvider implements ConfigProviderContract
      */
     public function getRouteGroupBindings(array $bindings = []): array
     {
-        $defaults = ['prefix' => self::getRoutePrefix()];
+        $defaults = ['prefix' => $this->getRoutePrefix()];
         $bindings = array_merge($this->get(self::KEY_ROUTE_BINDINGS, []), $bindings);
 
         return array_merge($defaults, $bindings);
@@ -163,11 +163,13 @@ class ConfigProvider implements ConfigProviderContract
     }
 
     /**
+     * Page used as content index (or Table of Contents) for product documentation.
+     *
      * @return string
      */
-    public function getIndexPageName(): string
+    public function getContentIndexPageName(): string
     {
-        return $this->get(self::KEY_INDEX_PAGE_NAME, self::DEFAULT_INDEX_PAGE_NAME);
+        return $this->get(self::KEY_TABLE_OF_CONTENTS_PAGE_NAME, self::DEFAULT_TABLE_OF_CONTENTS_PAGE_NAME);
     }
 
     /**
@@ -177,10 +179,10 @@ class ConfigProvider implements ConfigProviderContract
     {
         $masterTemplate = $this->get(self::KEY_VIEW_MASTER_TEMPLATE);
         $masterSection = $this->get(self::KEY_VIEW_MASTER_SECTION);
-        $styleStack = $this->get(self::KEY_VIEW_STYLE_STACK);
-        $scriptStack = $this->get(self::KEY_VIEW_SCRIPT_STACK);
+        $styleStack = $this->get(self::KEY_VIEW_STYLE_STACK, '');
+        $scriptStack = $this->get(self::KEY_VIEW_SCRIPT_STACK, '');
         $indexTitle = $this->get(self::KEY_VIEW_INDEX_TITLE, self::DEFAULT_INDEX_TITLE);
-        $indexIntro = $this->get(self::KEY_VIEW_INDEX_INTRO);
+        $indexIntro = $this->get(self::KEY_VIEW_INDEX_INTRO, '');
         $showProductLine = $this->get(self::KEY_VIEW_ACCENTS_PRODUCT_LINE, true);
         $showFootnotes = $this->get(self::KEY_VIEW_ACCENTS_FOOTNOTES, true);
 
