@@ -50,4 +50,4 @@ workflows:
   version: 2.1
   test:
     jobs:
-      - build
+      - test
