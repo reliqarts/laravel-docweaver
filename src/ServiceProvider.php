@@ -6,7 +6,7 @@ namespace ReliQArts\Docweaver;
 
 use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Foundation\AliasLoader;
-use Illuminate\Support\Facades\View as ViewFacade;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Illuminate\View\View;
 use Monolog\Handler\StreamHandler;
@@ -14,7 +14,7 @@ use Monolog\Handler\StreamHandler;
 /**
  *  ServiceProvider.
  */
-class ServiceProvider extends BaseServiceProvider
+final class ServiceProvider extends BaseServiceProvider
 {
     private const LOGGER_NAME = 'Docweaver';
     private const LOG_FILENAME = 'docweaver';
@@ -173,6 +173,11 @@ class ServiceProvider extends BaseServiceProvider
     private function registerBindings(): self
     {
         $this->app->bind(
+            Contracts\Filesystem::class,
+            Services\Filesystem::class
+        );
+
+        $this->app->bind(
             Contracts\Documentation\Publisher::class,
             Services\Documentation\Publisher::class
         );
@@ -210,7 +215,9 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->singleton(
             Contracts\ConfigProvider::class,
             function (): Contracts\ConfigProvider {
-                return new Services\ConfigProvider(resolve(Config::class));
+                return new Services\ConfigProvider(
+                    resolve(Config::class)
+                );
             }
         );
 
@@ -234,8 +241,9 @@ class ServiceProvider extends BaseServiceProvider
     private function addViewComposers(): self
     {
         $configProvider = resolve(Contracts\ConfigProvider::class);
+        $viewFactory = resolve(ViewFactory::class);
 
-        ViewFacade::composer(
+        $viewFactory->composer(
             '*',
             function (View $view) use ($configProvider): void {
                 $view->with('docweaverConfigProvider', $configProvider);

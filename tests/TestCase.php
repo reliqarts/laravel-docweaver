@@ -2,34 +2,25 @@
 
 namespace ReliQArts\Docweaver\Tests;
 
-use Illuminate\Filesystem\Filesystem;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\View;
 use Orchestra\Testbench\BrowserKit\TestCase as BaseTestCase;
+use Prophecy\Prophecy\ObjectProphecy;
 use ReliQArts\Docweaver\Contracts\ConfigProvider;
 use ReliQArts\Docweaver\ServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {
     /**
-     * Filesystem.
-     *
-     * @var Filesystem
+     * @var Filesystem|ObjectProphecy
      */
     protected $filesystem;
 
     /**
-     * @var ConfigProvider
+     * @var ConfigProvider|ObjectProphecy
      */
     protected $configProvider;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->filesystem = resolve(Filesystem::class);
-        $this->configProvider = resolve(ConfigProvider::class);
-    }
 
     /**
      * Define environment setup.

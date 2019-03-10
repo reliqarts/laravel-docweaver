@@ -17,9 +17,17 @@
     },
     "devDependencies": {
         "compass-sass-mixins": "^0.12.7",
-        "cross-env": "^5.0.5",
-        "foundation-sites": "^6.4.4-rc1",
-        "laravel-mix": "^2.1.14"
+        "cross-env": "^5.2.0",
+        "foundation-sites": "^6.5.3",
+        "jquery": "^3.3.1",
+        "laravel-mix": "^4.0.14",
+        "resolve-url-loader": "^2.3.1",
+        "sass": "^1.17.2",
+        "sass-loader": "^7.1.0",
+        "vue-template-compiler": "^2.6.8",
+        "what-input": "^5.1.4"
     },
-    "dependencies": {}
+    "dependencies": {
+        "npm": "^6.9.0"
+    }
 }

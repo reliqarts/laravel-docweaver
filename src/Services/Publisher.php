@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ReliQArts\Docweaver\Services;
 
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\Logger;
 use ReliQArts\Docweaver\Contracts\Publisher as PublisherContract;
 
@@ -51,18 +51,6 @@ abstract class Publisher implements PublisherContract
         $this->filesystem = $filesystem;
         $this->logger = $logger;
         $this->startTime = microtime(true);
-    }
-
-    /**
-     * Convert <br/> to newlines.
-     *
-     * @param string $text
-     *
-     * @return string
-     */
-    protected function br2nl($text)
-    {
-        return preg_replace('/<br[\\/]?>/', "\n", $text);
     }
 
     /**

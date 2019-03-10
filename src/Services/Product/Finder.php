@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ReliQArts\Docweaver\Services\Product;
 
-use Illuminate\Filesystem\Filesystem;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\ConfigProvider;
 use ReliQArts\Docweaver\Contracts\Exception;
 use ReliQArts\Docweaver\Contracts\Logger;

@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace ReliQArts\Docweaver\Services;
 
-use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Config\Repository as Config;
 use ReliQArts\Docweaver\Contracts\ConfigProvider as ConfigProviderContract;
-use ReliQArts\Docweaver\Exceptions\BadImplementation;
 use ReliQArts\Docweaver\Models\TemplateConfig;
 
-class ConfigProvider implements ConfigProviderContract
+final class ConfigProvider implements ConfigProviderContract
 {
     private const NAMESPACE = 'docweaver';
     private const KEY_CACHE_KEY = 'cache.key';
@@ -40,28 +39,18 @@ class ConfigProvider implements ConfigProviderContract
     private const DEFAULT_INDEX_TITLE = 'Documentation';
 
     /**
-     * @var Repository
+     * @var Config
      */
     private $config;
 
     /**
      * ConfigProvider constructor.
      *
-     * @param Repository $config
-     *
-     * @throws BadImplementation
+     * @param Config $config
      */
-    public function __construct(Repository $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
-
-        $masterTemplate = $this->get(self::KEY_VIEW_MASTER_TEMPLATE);
-
-        if (!view()->exists($masterTemplate) && app()->environment() !== 'testing') {
-            throw new BadImplementation(
-                sprintf('Master template view `%s` does not exist.', $masterTemplate)
-            );
-        }
     }
 
     /**
@@ -204,7 +193,7 @@ class ConfigProvider implements ConfigProviderContract
      *
      * @return mixed
      */
-    protected function get(?string $key, $default = null)
+    private function get(?string $key, $default = null)
     {
         if (empty($key)) {
             return $this->config->get(self::NAMESPACE, []);

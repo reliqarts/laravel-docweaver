@@ -7,10 +7,10 @@ namespace ReliQArts\Docweaver\Models;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\ConfigProvider;
 use ReliQArts\Docweaver\Contracts\Exception;
-use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
 use ReliQArts\Docweaver\Exceptions\ParsingFailed;
 use ReliQArts\Docweaver\Exceptions\Product\AssetPublicationFailed;
 use ReliQArts\Docweaver\Exceptions\Product\InvalidAssetDirectory;
@@ -103,19 +103,15 @@ class Product implements Arrayable, Jsonable
      * @param ConfigProvider $configProvider
      * @param string         $directory
      *
-     * @throws Exception if directory is invalid or meta could not be parsed
+     * @throws Exception if meta file could not be parsed
      */
     public function __construct(Filesystem $filesystem, ConfigProvider $configProvider, string $directory)
     {
-        if (!$filesystem->isDirectory($directory)) {
-            throw InvalidDirectory::forDirectory($directory);
-        }
-
         $this->filesystem = $filesystem;
         $this->configProvider = $configProvider;
-        $this->name = title_case(basename($directory));
+        $this->name = Str::title(basename($directory));
         $this->key = strtolower($this->name);
-        $this->directory = realpath($directory);
+        $this->directory = $directory;
         $this->meta = [];
         $this->versions = [];
 
@@ -345,7 +341,7 @@ class Product implements Arrayable, Jsonable
      *
      * @param string $version Version to load configuration from. (optional)
      *
-     * @throws Exception
+     * @throws Exception if meta file could not be parsed
      */
     private function loadMeta(string $version = null): void
     {
@@ -387,18 +383,17 @@ class Product implements Arrayable, Jsonable
         $versions = [];
 
         if ($this->key) {
-            if ($this->filesystem->isDirectory($this->directory)) {
-                $versionDirs = $this->filesystem->directories($this->directory);
-                // add versions to version array
-                foreach ($versionDirs as $ver) {
-                    $versionTag = basename($ver);
-                    $versionName = title_case($versionTag);
-                    $versions[$versionTag] = $versionName;
-                }
+            $versionDirs = $this->filesystem->directories($this->directory);
 
-                // update last modified
-                $this->lastModified = $this->filesystem->lastModified($this->directory);
+            // add versions to version array
+            foreach ($versionDirs as $ver) {
+                $versionTag = basename($ver);
+                $versionName = Str::title($versionTag);
+                $versions[$versionTag] = $versionName;
             }
+
+            // update last modified
+            $this->lastModified = $this->filesystem->lastModified($this->directory);
 
             // sort versions
             krsort($versions);

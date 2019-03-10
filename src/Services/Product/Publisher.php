@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ReliQArts\Docweaver\Services\Product;
 
-use Illuminate\Filesystem\Filesystem;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\Exception;
 use ReliQArts\Docweaver\Contracts\Logger;
 use ReliQArts\Docweaver\Contracts\Product\Publisher as PublisherContract;
@@ -67,10 +67,9 @@ final class Publisher extends BasePublisher implements PublisherContract
         if (!$this->filesystem->isDirectory($masterDirectory)) {
             $this->publishVersion($product, $source, Product::VERSION_MASTER);
             $versionsPublished[] = Product::VERSION_MASTER;
-        } elseif ($this->updateVersion($product, Product::VERSION_MASTER)) {
-            $versionsUpdated[] = Product::VERSION_MASTER;
         } else {
-            throw PublicationFailed::forProduct($product);
+            $this->updateVersion($product, Product::VERSION_MASTER);
+            $versionsUpdated[] = Product::VERSION_MASTER;
         }
 
         $tagResult = $this->publishTags($product, $source);
@@ -79,11 +78,12 @@ final class Publisher extends BasePublisher implements PublisherContract
         $versionsPublished = array_merge($versionsPublished, $tagData->tagsPublished ?? []);
 
         if ($result->isSuccess()) {
-            return $result->setMessage(sprintf('%s was successfully published.', $product->getName()))
+            $result = $result->setMessage(sprintf('%s was successfully published.', $product->getName()))
                 ->setData((object)[
                     'versions' => $versions,
                     'versionsPublished' => $versionsPublished,
                     'versionsUpdated' => $versionsUpdated,
+                    'executionTime' => $this->getExecutionTime(),
                 ]);
         }
 
@@ -96,24 +96,17 @@ final class Publisher extends BasePublisher implements PublisherContract
      * @param string  $version
      *
      * @return bool
+     * @throws Exception
      */
-    public function publishVersion(Product $product, string $source, string $version): bool
+    private function publishVersion(Product $product, string $source, string $version): bool
     {
         try {
             $this->vcsCommandRunner->clone($source, $version, $product->getDirectory());
         } catch (ProcessFailedException $e) {
-            return false;
+            throw PublicationFailed::forProductVersion($product, $version);
         }
 
-        try {
-            $product->publishAssets($version);
-        } catch (Exception $exception) {
-            if ($exception instanceof InvalidAssetDirectory) {
-                $this->logger->info($exception->getMessage());
-            } else {
-                $this->logger->error($exception->getMessage());
-            }
-        }
+        $this->publishProductAssets($product, $version);
 
         return true;
     }
@@ -130,13 +123,18 @@ final class Publisher extends BasePublisher implements PublisherContract
         $versionsUpdated = [];
 
         foreach (array_keys($versions) as $version) {
-            if ($this->updateVersion($product, $version)) {
+            try {
+                $this->updateVersion($product, $version);
                 $versionsUpdated[] = $version;
+            } catch (Exception $exception) {
+                // expected when version is a tag
+                // TODO: enhancement; determine whether version is tag in advance
+                $this->logger->info($exception->getMessage());
             }
         }
 
         if ($result->isSuccess()) {
-            return $result->setMessage(sprintf('%s was successfully updated.', $product->getName()))
+            $result = $result->setMessage(sprintf('%s was successfully updated.', $product->getName()))
                 ->setData((object)[
                     'versions' => $versions,
                     'versionsUpdated' => $versionsUpdated,
@@ -151,24 +149,23 @@ final class Publisher extends BasePublisher implements PublisherContract
      * @param string  $version
      *
      * @return bool
+     * @throws Exception
      */
-    public function updateVersion(Product $product, string $version): bool
+    private function updateVersion(Product $product, string $version): bool
     {
         try {
             $this->vcsCommandRunner->pull(sprintf('%s/%s', $product->getDirectory(), $version));
         } catch (ProcessFailedException $e) {
-            return false;
+            throw new PublicationFailed(
+                sprintf(
+                    'Failed to update version `%s` of product `%s`. It may be a tag.',
+                    $version,
+                    $product->getName()
+                )
+            );
         }
 
-        try {
-            $product->publishAssets($version);
-        } catch (Exception $exception) {
-            if ($exception instanceof InvalidAssetDirectory) {
-                $this->logger->info($exception->getMessage());
-            } else {
-                $this->logger->error($exception->getMessage());
-            }
-        }
+        $this->publishProductAssets($product, $version);
 
         return true;
     }
@@ -200,7 +197,7 @@ final class Publisher extends BasePublisher implements PublisherContract
                     $result = $result->addMessage($message);
                 }
             }
-        } catch (ProcessFailedException $e) {
+        } catch (Exception $e) {
             $errorMessage = $e->getMessage();
 
             return $result->setMessage($errorMessage)->setError($errorMessage);
@@ -210,5 +207,22 @@ final class Publisher extends BasePublisher implements PublisherContract
             'tags' => $tags,
             'tagsPublished' => $tagsPublished,
         ]);
+    }
+
+    /**
+     * @param Product $product
+     * @param string  $version
+     */
+    private function publishProductAssets(Product $product, string $version): void
+    {
+        try {
+            $product->publishAssets($version);
+        } catch (Exception $exception) {
+            if ($exception instanceof InvalidAssetDirectory) {
+                $this->logger->info($exception->getMessage());
+            } else {
+                $this->logger->error($exception->getMessage());
+            }
+        }
     }
 }

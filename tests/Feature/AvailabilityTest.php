@@ -1,8 +1,8 @@
 <?php
 
-namespace ReliQArts\Docweaver\Tests\Feature;
+declare(strict_types=1);
 
-use ReliQArts\Docweaver\Tests\TestCase as TestCase;
+namespace ReliQArts\Docweaver\Tests\Feature;
 
 /**
  * @internal
@@ -13,7 +13,9 @@ final class AvailabilityTest extends TestCase
     /**
      * Ensure views have required data.
      *
+     * @covers ::__construct
      * @covers ::index
+     * @small
      */
     public function testViewData()
     {
@@ -26,8 +28,10 @@ final class AvailabilityTest extends TestCase
     /**
      * Ensure project(s) are visible and accessible via UI.
      *
+     * @covers ::__construct
      * @covers ::productIndex
      * @covers ::show
+     * @small
      */
     public function testProjectAvailability()
     {

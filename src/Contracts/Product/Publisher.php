@@ -24,15 +24,6 @@ interface Publisher extends BasePublisher
     public function publish(Product $product, string $source): Result;
 
     /**
-     * @param Product $product
-     * @param string  $source
-     * @param string  $version
-     *
-     * @return bool
-     */
-    public function publishVersion(Product $product, string $source, string $version): bool;
-
-    /**
      * Update product documentation (all versions).
      *
      * @param Product $product
@@ -40,14 +31,4 @@ interface Publisher extends BasePublisher
      * @return Result
      */
     public function update(Product $product): Result;
-
-    /**
-     * Update product version.
-     *
-     * @param Product $product
-     * @param string  $version
-     *
-     * @return bool
-     */
-    public function updateVersion(Product $product, string $version): bool;
 }

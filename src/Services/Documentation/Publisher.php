@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ReliQArts\Docweaver\Services\Documentation;
 
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\ConfigProvider;
 use ReliQArts\Docweaver\Contracts\Documentation\Publisher as PublisherContract;
 use ReliQArts\Docweaver\Contracts\Exception;
@@ -73,7 +73,7 @@ final class Publisher extends BasePublisher implements PublisherContract
         if (!$this->readyResourceDirectory($this->workingDirectory)) {
             throw new BadImplementation(
                 sprintf(
-                    'Could not ready document resource directory (%s). Please ensure file system is writable.',
+                    'Could not ready document resource directory `%s`. Please ensure file system is writable.',
                     $this->documentationDirectory
                 )
             );
@@ -160,7 +160,6 @@ final class Publisher extends BasePublisher implements PublisherContract
         $this->callingCommand = $callingCommand;
         $result = new Result();
         $productDirectories = $this->filesystem->directories($this->workingDirectory);
-        $productResults = [];
         $productsUpdated = 0;
 
         $this->setExecutionStartTime();
@@ -171,7 +170,6 @@ final class Publisher extends BasePublisher implements PublisherContract
             $this->tell(sprintf('Updating %s...', $productName), self::TELL_DIRECTION_FLAT);
 
             $productResult = $this->update($productName, $callingCommand);
-            $productResults[$productName] = $productResult;
 
             if ($productResult->isSuccess()) {
                 ++$productsUpdated;

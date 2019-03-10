@@ -18,16 +18,18 @@ class PublicationFailed extends Exception
     protected $product;
 
     /**
-     * AssetPublicationFailed constructor.
-     *
      * @param Product        $product
-     * @param null|Exception $previous
+     * @param string         $version
+     * @param Exception|null $previous
      *
      * @return ExceptionContract
      */
-    public static function forProduct(Product $product, Exception $previous = null): ExceptionContract
-    {
-        $message = sprintf('Failed to publish product (%s).', $product->getName());
+    public static function forProductVersion(
+        Product $product,
+        string $version,
+        Exception $previous = null
+    ): ExceptionContract {
+        $message = sprintf('Failed to publish version `%s` of product `%s`.', $version, $product->getName());
         $self = new self($message, self::CODE, $previous);
         $self->product = $product;
 
