@@ -8,6 +8,7 @@ EOF;
 
 $finder = PhpCsFixer\Finder::create()
     ->exclude([
+        'build',
         'public',
         'resources',
     ])

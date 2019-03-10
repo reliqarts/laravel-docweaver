@@ -40,10 +40,6 @@ final class Filesystem extends IlluminateFilesystem implements FilesystemContrac
             unlink($file);
         }
 
-        if ($preserve) {
-            return true;
-        }
-
-        return rmdir($directory);
+        return $preserve ?: rmdir($directory);
     }
 }
