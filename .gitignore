@@ -5,6 +5,7 @@
 !/tests/resources/docs/Sand/
 /storage
 /vendor
+!.gitkeep
 npm-debug.log
 yarn-error.log
 .DS_Store
