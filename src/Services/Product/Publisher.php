@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ReliQArts\Docweaver\Services\Product;
 
-use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\Exception;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\Logger;
 use ReliQArts\Docweaver\Contracts\Product\Publisher as PublisherContract;
 use ReliQArts\Docweaver\Contracts\VCSCommandRunner;

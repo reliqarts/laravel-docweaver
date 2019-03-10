@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace ReliQArts\Docweaver\Services\Documentation;
 
 use Illuminate\Console\Command;
-use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\ConfigProvider;
 use ReliQArts\Docweaver\Contracts\Documentation\Publisher as PublisherContract;
 use ReliQArts\Docweaver\Contracts\Exception;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\Logger;
 use ReliQArts\Docweaver\Contracts\Product\Maker as ProductFactory;
 use ReliQArts\Docweaver\Contracts\Product\Publisher as ProductPublisher;
