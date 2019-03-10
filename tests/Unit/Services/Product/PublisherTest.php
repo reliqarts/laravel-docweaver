@@ -8,19 +8,21 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use ReliQArts\Docweaver\Contracts\Exception;
 use ReliQArts\Docweaver\Contracts\Logger;
+use ReliQArts\Docweaver\Contracts\VCSCommandRunner;
 use ReliQArts\Docweaver\Exceptions\Product\AssetPublicationFailed;
 use ReliQArts\Docweaver\Exceptions\Product\InvalidAssetDirectory;
-use ReliQArts\Docweaver\Services\Product\Publisher;
-use ReliQArts\Docweaver\Contracts\VCSCommandRunner;
 use ReliQArts\Docweaver\Models\Product;
+use ReliQArts\Docweaver\Services\Product\Publisher;
 use ReliQArts\Docweaver\Tests\Unit\TestCase;
 use ReliQArts\Docweaver\VO\Result;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
- * Class PublisherTest
+ * Class PublisherTest.
  *
  * @coversDefaultClass \ReliQArts\Docweaver\Services\Product\Publisher
+ *
+ * @internal
  */
 final class PublisherTest extends TestCase
 {
@@ -30,7 +32,7 @@ final class PublisherTest extends TestCase
     private $logger;
 
     /**
-     * @var Product|ObjectProphecy
+     * @var ObjectProphecy|Product
      */
     private $product;
 
@@ -40,7 +42,7 @@ final class PublisherTest extends TestCase
     private $subject;
 
     /**
-     * @var VCSCommandRunner|ObjectProphecy
+     * @var ObjectProphecy|VCSCommandRunner
      */
     private $vcsCommandRunner;
 
@@ -60,15 +62,16 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::__construct
+     * @covers ::getExecutionTime
      * @covers ::publish
+     * @covers ::publishProductAssets
+     * @covers ::publishTags
+     * @covers ::publishVersion
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
-     * @covers ::getExecutionTime
-     * @covers ::publishVersion
-     * @covers ::publishTags
-     * @covers ::publishProductAssets
-     * @covers ::__construct
      * @medium
+     *
      * @throws Exception
      */
     public function testPublish(): void
@@ -95,16 +98,17 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::__construct
+     * @covers ::getExecutionTime
      * @covers ::publish
+     * @covers ::publishProductAssets
+     * @covers ::publishTags
+     * @covers ::publishVersion
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
-     * @covers ::getExecutionTime
      * @covers ::updateVersion
-     * @covers ::publishVersion
-     * @covers ::publishTags
-     * @covers ::publishProductAssets
-     * @covers ::__construct
      * @small
+     *
      * @throws Exception
      */
     public function testPublishWhenMasterExists(): void
@@ -131,16 +135,17 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::__construct
+     * @covers ::getExecutionTime
      * @covers ::publish
+     * @covers ::publishProductAssets
+     * @covers ::publishTags
+     * @covers ::publishVersion
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
-     * @covers ::getExecutionTime
      * @covers ::updateVersion
-     * @covers ::publishVersion
-     * @covers ::publishTags
-     * @covers ::publishProductAssets
-     * @covers ::__construct
      * @small
+     *
      * @throws Exception
      */
     public function testPublishWhenAssetDirectoryIsInvalid(): void
@@ -169,17 +174,18 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::__construct
+     * @covers ::getExecutionTime
      * @covers ::publish
+     * @covers ::publishProductAssets
+     * @covers ::publishTags
+     * @covers ::publishVersion
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
-     * @covers ::getExecutionTime
      * @covers ::updateVersion
-     * @covers ::publishVersion
-     * @covers ::publishTags
-     * @covers ::publishProductAssets
-     * @covers ::__construct
      * @covers \ReliQArts\Docweaver\Exceptions\Product\PublicationFailed::forProductVersion
      * @small
+     *
      * @throws Exception
      */
     public function testPublishWhenAVersionPublicationFails(): void
@@ -214,16 +220,17 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::__construct
+     * @covers ::getExecutionTime
      * @covers ::publish
+     * @covers ::publishProductAssets
+     * @covers ::publishTags
+     * @covers ::publishVersion
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
-     * @covers ::getExecutionTime
      * @covers ::updateVersion
-     * @covers ::publishVersion
-     * @covers ::publishTags
-     * @covers ::publishProductAssets
-     * @covers ::__construct
      * @small
+     *
      * @throws Exception
      */
     public function testPublishWhenAssetPublicationFails(): void
@@ -252,10 +259,10 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::__construct
      * @covers ::publish
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
-     * @covers ::__construct
      * @small
      */
     public function testPublishFailsIfProductDirectoryIsNotWritable(): void
@@ -281,18 +288,19 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::__construct
      * @covers ::publish
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
      * @covers ::updateVersion
-     * @covers ::__construct
      * @covers \ReliQArts\Docweaver\Exceptions\Product\PublicationFailed::forProductVersion
      * @small
-     * @expectedException \ReliQArts\Docweaver\Exceptions\Product\PublicationFailed
-     * @expectedExceptionMessage Failed to update version `master` of product `Product 24`
      */
     public function testPublishThrowsExceptionIfMasterFailsToUpdate(): void
     {
+        $this->expectException(\ReliQArts\Docweaver\Exceptions\Product\PublicationFailed::class);
+        $this->expectExceptionMessage('Failed to update version `master` of product `Product 24`');
+
         $productName = 'Product 24';
         $productDirectory = 'product';
         $source = 'http://product.source';
@@ -313,9 +321,9 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::__construct
      * @covers ::update
      * @covers ::updateVersion
-     * @covers ::__construct
      * @small
      */
     public function testUpdate(): void
@@ -343,9 +351,9 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::__construct
      * @covers ::update
      * @covers ::updateVersion
-     * @covers ::__construct
      * @small
      */
     public function testUpdateWhenAVersionUpdateFails(): void
@@ -395,12 +403,12 @@ final class PublisherTest extends TestCase
         }
     }
 
-    /* @noinspection PhpTooManyParametersInspection */
+    /** @noinspection PhpTooManyParametersInspection */
+
     /**
      * @param array  $tags
      * @param string $productDirectory
      * @param string $source
-     *
      * @param array  $tagExistenceMap
      *
      * @throws Exception
@@ -417,7 +425,7 @@ final class PublisherTest extends TestCase
         foreach ($tags as $tag) {
             $tagExists = false;
             if (array_key_exists($tag, $tagExistenceMap)) {
-                $tagExists = (bool) $tagExistenceMap[$tag];
+                $tagExists = (bool)$tagExistenceMap[$tag];
             }
             $tagDirectory = sprintf('%s/%s', $productDirectory, $tag);
             $this->filesystem->isDirectory($tagDirectory)->shouldBeCalledTimes(1)->willReturn($tagExists);

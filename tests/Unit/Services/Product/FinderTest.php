@@ -14,9 +14,11 @@ use ReliQArts\Docweaver\Services\Product\Finder;
 use ReliQArts\Docweaver\Tests\Unit\TestCase;
 
 /**
- * Class FinderTest
+ * Class FinderTest.
  *
  * @coversDefaultClass \ReliQArts\Docweaver\Services\Product\Finder
+ *
+ * @internal
  */
 final class FinderTest extends TestCase
 {
@@ -26,7 +28,7 @@ final class FinderTest extends TestCase
     private $logger;
 
     /**
-     * @var ProductFactory|ObjectProphecy
+     * @var ObjectProphecy|ProductFactory
      */
     private $productFactory;
 
@@ -51,11 +53,10 @@ final class FinderTest extends TestCase
     }
 
     /**
-     * @covers ::listProducts
      * @covers ::__construct
+     * @covers ::listProducts
      * @small
      *
-     * @return void
      * @throws Exception
      */
     public function testListProducts(): void
@@ -73,7 +74,7 @@ final class FinderTest extends TestCase
         foreach ($productDirectories as $productDirectory) {
             $key = basename($productDirectory);
             /**
-             * @var Product|ObjectProphecy $product
+             * @var ObjectProphecy|Product
              */
             $product = $this->prophesize(Product::class);
             $product->getDefaultVersion()->willReturn('1.0');
@@ -120,7 +121,7 @@ final class FinderTest extends TestCase
         foreach ($productDirectories as $productDirectory) {
             $key = strtolower(basename($productDirectory));
             /**
-             * @var Product|ObjectProphecy $product
+             * @var ObjectProphecy|Product
              */
             $product = $this->prophesize(Product::class);
             $product->getDefaultVersion()->willReturn('1.0');

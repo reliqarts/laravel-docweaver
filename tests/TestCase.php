@@ -2,12 +2,12 @@
 
 namespace ReliQArts\Docweaver\Tests;
 
-use ReliQArts\Docweaver\Contracts\Filesystem;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\View;
 use Orchestra\Testbench\BrowserKit\TestCase as BaseTestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use ReliQArts\Docweaver\Contracts\ConfigProvider;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\ServiceProvider;
 
 abstract class TestCase extends BaseTestCase

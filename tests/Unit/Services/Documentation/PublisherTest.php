@@ -19,9 +19,11 @@ use ReliQArts\Docweaver\VO\Result;
 use stdClass;
 
 /**
- * Class PublisherTest
+ * Class PublisherTest.
  *
  * @coversDefaultClass \ReliQArts\Docweaver\Services\Documentation\Publisher
+ *
+ * @internal
  */
 final class PublisherTest extends TestCase
 {
@@ -31,7 +33,7 @@ final class PublisherTest extends TestCase
     private $logger;
 
     /**
-     * @var ProductPublisher|ObjectProphecy
+     * @var ObjectProphecy|ProductPublisher
      */
     private $productPublisher;
 
@@ -46,7 +48,7 @@ final class PublisherTest extends TestCase
     private $workingDirectory;
 
     /**
-     * @var ProductFactory|ObjectProphecy
+     * @var ObjectProphecy|ProductFactory
      */
     private $productFactory;
 
@@ -86,12 +88,12 @@ final class PublisherTest extends TestCase
      * @covers ::readyResourceDirectory
      * @covers                   \ReliQArts\Docweaver\Services\Publisher::__construct
      * @small
-     *
-     * @expectedException \ReliQArts\Docweaver\Exceptions\BadImplementation
-     * @expectedExceptionMessage Could not ready document resource directory `docs`
      */
     public function testExceptionIsThrownIfDocumentationDirectoryIsInvalid(): void
     {
+        $this->expectException(\ReliQArts\Docweaver\Exceptions\BadImplementation::class);
+        $this->expectExceptionMessage('Could not ready document resource directory `docs`');
+
         $directory = $this->workingDirectory;
 
         $this->filesystem->isDirectory($directory)->shouldBeCalled()->willReturn(false);
@@ -108,11 +110,11 @@ final class PublisherTest extends TestCase
     }
 
     /**
-     * @covers ::publish
-     * @covers ::setExecutionStartTime
-     * @covers ::readyResourceDirectory
-     * @covers ::tell
      * @covers ::getExecutionTime
+     * @covers ::publish
+     * @covers ::readyResourceDirectory
+     * @covers ::setExecutionStartTime
+     * @covers ::tell
      * @small
      *
      * @throws Exception
@@ -126,7 +128,7 @@ final class PublisherTest extends TestCase
         $messages = ['Test message 1', 'Test message 2'];
 
         /**
-         * @var Result|ObjectProphecy $productPublisherResult
+         * @var ObjectProphecy|Result
          */
         $productPublisherResult = $this->prophesize(Result::class);
         $productPublisherResult->getMessages()->shouldBeCalledTimes(2)->willReturn($messages);
@@ -149,11 +151,12 @@ final class PublisherTest extends TestCase
     }
 
     /**
-     * @covers ::publish
-     * @covers ::setExecutionStartTime
-     * @covers ::readyResourceDirectory
      * @covers ::getExecutionTime
+     * @covers ::publish
+     * @covers ::readyResourceDirectory
+     * @covers ::setExecutionStartTime
      * @small
+     *
      * @throws Exception
      */
     public function testPublishWhenProductDirectoryIsNotWritable(): void
@@ -175,11 +178,11 @@ final class PublisherTest extends TestCase
     }
 
     /**
-     * @covers ::update
-     * @covers ::setExecutionStartTime
-     * @covers ::readyResourceDirectory
      * @covers ::getExecutionTime
+     * @covers ::readyResourceDirectory
+     * @covers ::setExecutionStartTime
      * @covers ::tell
+     * @covers ::update
      * @small
      *
      * @throws Exception
@@ -192,7 +195,7 @@ final class PublisherTest extends TestCase
         $messages = ['Successfully updated X'];
 
         /**
-         * @var Result|ObjectProphecy $productPublisherResult
+         * @var ObjectProphecy|Result
          */
         $productPublisherResult = $this->prophesize(Result::class);
         $productPublisherResult->getMessages()->shouldBeCalledTimes(2)->willReturn($messages);
@@ -215,11 +218,12 @@ final class PublisherTest extends TestCase
     }
 
     /**
-     * @covers ::update
-     * @covers ::setExecutionStartTime
-     * @covers ::readyResourceDirectory
      * @covers ::getExecutionTime
+     * @covers ::readyResourceDirectory
+     * @covers ::setExecutionStartTime
+     * @covers ::update
      * @small
+     *
      * @throws Exception
      */
     public function testUpdateWhenProductDirectoryIsNotWritable(): void
@@ -240,12 +244,12 @@ final class PublisherTest extends TestCase
     }
 
     /**
-     * @covers ::updateAll
-     * @covers ::update
-     * @covers ::setExecutionStartTime
-     * @covers ::readyResourceDirectory
-     * @covers ::tell
      * @covers ::getExecutionTime
+     * @covers ::readyResourceDirectory
+     * @covers ::setExecutionStartTime
+     * @covers ::tell
+     * @covers ::update
+     * @covers ::updateAll
      * @dataProvider updateAllDataProvider
      * @small
      *
@@ -260,7 +264,7 @@ final class PublisherTest extends TestCase
         $messages = ['Successfully updated X'];
 
         /**
-         * @var Result|ObjectProphecy $productPublisherResult
+         * @var ObjectProphecy|Result
          */
         $productPublisherResult = $this->prophesize(Result::class);
         $productPublisherResult->getMessages()->shouldBeCalledTimes($productDirectoryCount)->willReturn($messages);
@@ -287,16 +291,23 @@ final class PublisherTest extends TestCase
         }
 
         $result = $this->subject->updateAll();
+        $productsUpdated = $result->getData()->productsUpdated;
 
         $this->assertInstanceOf(Result::class, $result);
-        $this->assertSame($productDirectoryCount, $result->getData()->productsUpdated);
+        $this->assertCount($productDirectoryCount, $productsUpdated);
+
+        foreach ($productDirectories as $productDirectory) {
+            $productName = basename($productDirectory);
+
+            $this->assertContains($productName, $productsUpdated);
+        }
     }
 
     public function updateAllDataProvider(): array
     {
         return [
             'multiple products exists' => [
-                ['product 1', 'product 2', 'product 3'],
+                ['product 1', 'Product 2', 'product 3'],
             ],
             'no products exists' => [
                 [],

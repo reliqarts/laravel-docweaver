@@ -11,9 +11,11 @@ use ReliQArts\Docweaver\Models\Product;
 use ReliQArts\Docweaver\Tests\Unit\TestCase;
 
 /**
- * Class ProductMakerTest
+ * Class ProductMakerTest.
  *
  * @coversDefaultClass \ReliQArts\Docweaver\Factories\ProductMaker
+ *
+ * @internal
  */
 final class ProductMakerTest extends TestCase
 {
@@ -60,13 +62,13 @@ final class ProductMakerTest extends TestCase
      * @covers ::__construct
      * @covers ::create
      * @small
-     *
-     * @expectedException \ReliQArts\Docweaver\Contracts\Exception
-     * @expectedExceptionCode 4002
-     * @expectedExceptionMessage Invalid directory: `docs/product 1`.
      */
     public function testCreateThrowsExceptionIfDirectoryIsInvalid(): void
     {
+        $this->expectException(\ReliQArts\Docweaver\Contracts\Exception::class);
+        $this->expectExceptionMessage('Invalid directory: `docs/product 1`.');
+        $this->expectExceptionCode(4002);
+
         $directory = 'docs/product 1';
 
         $this->filesystem->isDirectory($directory)->shouldBeCalledTimes(1)->willReturn(false);

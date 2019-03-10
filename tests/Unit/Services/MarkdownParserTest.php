@@ -11,14 +11,16 @@ use ReliQArts\Docweaver\Services\MarkdownParser;
 use ReliQArts\Docweaver\Tests\Unit\TestCase;
 
 /**
- * Class ConfigProviderTest
+ * Class ConfigProviderTest.
  *
  * @coversDefaultClass \ReliQArts\Docweaver\Services\MarkdownParser
+ *
+ * @internal
  */
 final class MarkdownParserTest extends TestCase
 {
     /**
-     * @var ParsedownExtra|ObjectProphecy
+     * @var ObjectProphecy|ParsedownExtra
      */
     private $interpreter;
 
@@ -36,9 +38,10 @@ final class MarkdownParserTest extends TestCase
     }
 
     /**
-     * @covers ::parse
      * @covers ::__construct
+     * @covers ::parse
      * @dataProvider textProvider
+     *
      * @param string $text
      * @param string $expectedResult
      */

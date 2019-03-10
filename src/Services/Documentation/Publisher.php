@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace ReliQArts\Docweaver\Services\Documentation;
 
 use Illuminate\Console\Command;
-use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\ConfigProvider;
 use ReliQArts\Docweaver\Contracts\Documentation\Publisher as PublisherContract;
 use ReliQArts\Docweaver\Contracts\Exception;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\Logger;
 use ReliQArts\Docweaver\Contracts\Product\Maker as ProductFactory;
 use ReliQArts\Docweaver\Contracts\Product\Publisher as ProductPublisher;
@@ -160,7 +160,8 @@ final class Publisher extends BasePublisher implements PublisherContract
         $this->callingCommand = $callingCommand;
         $result = new Result();
         $productDirectories = $this->filesystem->directories($this->workingDirectory);
-        $productsUpdated = 0;
+        $products = [];
+        $productsUpdated = [];
 
         $this->setExecutionStartTime();
 
@@ -170,14 +171,15 @@ final class Publisher extends BasePublisher implements PublisherContract
             $this->tell(sprintf('Updating %s...', $productName), self::TELL_DIRECTION_FLAT);
 
             $productResult = $this->update($productName, $callingCommand);
+            $products[] = $productName;
 
             if ($productResult->isSuccess()) {
-                ++$productsUpdated;
+                $productsUpdated[] = $productName;
             }
         }
 
         return $result->setData((object)[
-            'products' => $productDirectories,
+            'products' => $products,
             'productsUpdated' => $productsUpdated,
             'executionTime' => $this->getExecutionTime(),
         ]);

@@ -22,8 +22,9 @@ final class Filesystem extends IlluminateFilesystem implements FilesystemContrac
         }
 
         /**
-         * @var string $pattern Pattern for finding all contained files/directories
-         *                      inclusive of hidden directories such as `.git`.
+         * @var string Pattern for finding all contained files/directories
+         *             inclusive of hidden directories such as `.git`.
+         *
          * @see https://stackoverflow.com/a/49031383/3466460 Pattern Source
          */
         $pattern = sprintf('%s/{*,.[!.]*,..?*}', $directory);
@@ -32,6 +33,7 @@ final class Filesystem extends IlluminateFilesystem implements FilesystemContrac
         foreach ($files as $file) {
             if (is_dir($file)) {
                 $this->deleteDirectory($file);
+
                 continue;
             }
             chmod($file, 0777);

@@ -9,7 +9,8 @@ interface Filesystem
     /**
      * Determine if a file or directory exists.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return bool
      */
     public function exists($path);
@@ -17,18 +18,20 @@ interface Filesystem
     /**
      * Get the contents of a file.
      *
-     * @param  string  $path
-     * @param  bool  $lock
-     * @return string
+     * @param string $path
+     * @param bool   $lock
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     *
+     * @return string
      */
     public function get($path, $lock = false);
 
     /**
      * Get contents of a file with shared access.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return string
      */
     public function sharedGet($path);
@@ -36,17 +39,19 @@ interface Filesystem
     /**
      * Get the returned value of a file.
      *
-     * @param  string  $path
-     * @return mixed
+     * @param string $path
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     *
+     * @return mixed
      */
     public function getRequire($path);
 
     /**
      * Require the given file once.
      *
-     * @param  string  $file
+     * @param string $file
+     *
      * @return mixed
      */
     public function requireOnce($file);
@@ -54,7 +59,8 @@ interface Filesystem
     /**
      * Get the MD5 hash of the file at the given path.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return string
      */
     public function hash($path);
@@ -62,9 +68,10 @@ interface Filesystem
     /**
      * Write the contents of a file.
      *
-     * @param  string  $path
-     * @param  string  $contents
-     * @param  bool  $lock
+     * @param string $path
+     * @param string $contents
+     * @param bool   $lock
+     *
      * @return int
      */
     public function put($path, $contents, $lock = false);
@@ -72,8 +79,9 @@ interface Filesystem
     /**
      * Prepend to a file.
      *
-     * @param  string  $path
-     * @param  string  $data
+     * @param string $path
+     * @param string $data
+     *
      * @return int
      */
     public function prepend($path, $data);
@@ -81,8 +89,9 @@ interface Filesystem
     /**
      * Append to a file.
      *
-     * @param  string  $path
-     * @param  string  $data
+     * @param string $path
+     * @param string $data
+     *
      * @return int
      */
     public function append($path, $data);
@@ -90,8 +99,9 @@ interface Filesystem
     /**
      * Get or set UNIX mode of a file or directory.
      *
-     * @param  string  $path
-     * @param  int  $mode
+     * @param string $path
+     * @param int    $mode
+     *
      * @return mixed
      */
     public function chmod($path, $mode = null);
@@ -99,7 +109,8 @@ interface Filesystem
     /**
      * Delete the file at a given path.
      *
-     * @param  string|array  $paths
+     * @param array|string $paths
+     *
      * @return bool
      */
     public function delete($paths);
@@ -107,8 +118,9 @@ interface Filesystem
     /**
      * Move a file to a new location.
      *
-     * @param  string  $path
-     * @param  string  $target
+     * @param string $path
+     * @param string $target
+     *
      * @return bool
      */
     public function move($path, $target);
@@ -116,8 +128,9 @@ interface Filesystem
     /**
      * Copy a file to a new location.
      *
-     * @param  string  $path
-     * @param  string  $target
+     * @param string $path
+     * @param string $target
+     *
      * @return bool
      */
     public function copy($path, $target);
@@ -125,16 +138,16 @@ interface Filesystem
     /**
      * Create a hard link to the target file or directory.
      *
-     * @param  string  $target
-     * @param  string  $link
-     * @return void
+     * @param string $target
+     * @param string $link
      */
     public function link($target, $link);
 
     /**
      * Extract the file name from a file path.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return string
      */
     public function name($path);
@@ -142,7 +155,8 @@ interface Filesystem
     /**
      * Extract the trailing name component from a file path.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return string
      */
     public function basename($path);
@@ -150,7 +164,8 @@ interface Filesystem
     /**
      * Extract the parent directory from a file path.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return string
      */
     public function dirname($path);
@@ -158,7 +173,8 @@ interface Filesystem
     /**
      * Extract the file extension from a file path.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return string
      */
     public function extension($path);
@@ -166,7 +182,8 @@ interface Filesystem
     /**
      * Get the file type of a given file.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return string
      */
     public function type($path);
@@ -174,15 +191,17 @@ interface Filesystem
     /**
      * Get the mime-type of a given file.
      *
-     * @param  string  $path
-     * @return string|false
+     * @param string $path
+     *
+     * @return false|string
      */
     public function mimeType($path);
 
     /**
      * Get the file size of a given file.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return int
      */
     public function size($path);
@@ -190,7 +209,8 @@ interface Filesystem
     /**
      * Get the file's last modification time.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return int
      */
     public function lastModified($path);
@@ -198,7 +218,8 @@ interface Filesystem
     /**
      * Determine if the given path is a directory.
      *
-     * @param  string  $directory
+     * @param string $directory
+     *
      * @return bool
      */
     public function isDirectory($directory);
@@ -206,7 +227,8 @@ interface Filesystem
     /**
      * Determine if the given path is readable.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return bool
      */
     public function isReadable($path);
@@ -214,7 +236,8 @@ interface Filesystem
     /**
      * Determine if the given path is writable.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return bool
      */
     public function isWritable($path);
@@ -222,7 +245,8 @@ interface Filesystem
     /**
      * Determine if the given path is a file.
      *
-     * @param  string  $file
+     * @param string $file
+     *
      * @return bool
      */
     public function isFile($file);
@@ -230,8 +254,9 @@ interface Filesystem
     /**
      * Find path names matching a given pattern.
      *
-     * @param  string  $pattern
-     * @param  int     $flags
+     * @param string $pattern
+     * @param int    $flags
+     *
      * @return array
      */
     public function glob($pattern, $flags = 0);
@@ -239,8 +264,9 @@ interface Filesystem
     /**
      * Get an array of all files in a directory.
      *
-     * @param  string  $directory
-     * @param  bool  $hidden
+     * @param string $directory
+     * @param bool   $hidden
+     *
      * @return \Symfony\Component\Finder\SplFileInfo[]
      */
     public function files($directory, $hidden = false);
@@ -248,8 +274,9 @@ interface Filesystem
     /**
      * Get all of the files from the given directory (recursive).
      *
-     * @param  string  $directory
-     * @param  bool  $hidden
+     * @param string $directory
+     * @param bool   $hidden
+     *
      * @return \Symfony\Component\Finder\SplFileInfo[]
      */
     public function allFiles($directory, $hidden = false);
@@ -257,20 +284,22 @@ interface Filesystem
     /**
      * Get all of the directories within a given directory.
      *
-     * @param  string  $directory
+     * @param string $directory
+     *
      * @return array
      */
     public function directories($directory);
 
+    /** @noinspection PhpTooManyParametersInspection */
 
-    /* @noinspection PhpTooManyParametersInspection */
     /**
      * Create a directory.
      *
-     * @param  string  $path
-     * @param  int     $mode
-     * @param  bool    $recursive
-     * @param  bool    $force
+     * @param string $path
+     * @param int    $mode
+     * @param bool   $recursive
+     * @param bool   $force
+     *
      * @return bool
      */
     public function makeDirectory($path, $mode = 0755, $recursive = false, $force = false);
@@ -278,9 +307,10 @@ interface Filesystem
     /**
      * Move a directory.
      *
-     * @param  string  $from
-     * @param  string  $to
-     * @param  bool  $overwrite
+     * @param string $from
+     * @param string $to
+     * @param bool   $overwrite
+     *
      * @return bool
      */
     public function moveDirectory($from, $to, $overwrite = false);
@@ -288,9 +318,10 @@ interface Filesystem
     /**
      * Copy a directory from one location to another.
      *
-     * @param  string  $directory
-     * @param  string  $destination
-     * @param  int     $options
+     * @param string $directory
+     * @param string $destination
+     * @param int    $options
+     *
      * @return bool
      */
     public function copyDirectory($directory, $destination, $options = null);
@@ -300,8 +331,9 @@ interface Filesystem
      *
      * The directory itself may be optionally preserved.
      *
-     * @param  string  $directory
-     * @param  bool    $preserve
+     * @param string $directory
+     * @param bool   $preserve
+     *
      * @return bool
      */
     public function deleteDirectory($directory, $preserve = false);
@@ -309,7 +341,8 @@ interface Filesystem
     /**
      * Remove all of the directories within a given directory.
      *
-     * @param  string  $directory
+     * @param string $directory
+     *
      * @return bool
      */
     public function deleteDirectories($directory);
@@ -317,7 +350,8 @@ interface Filesystem
     /**
      * Empty the specified directory of all files and folders.
      *
-     * @param  string  $directory
+     * @param string $directory
+     *
      * @return bool
      */
     public function cleanDirectory($directory);

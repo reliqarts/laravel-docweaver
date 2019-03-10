@@ -7,9 +7,9 @@ namespace ReliQArts\Docweaver\Services\Documentation;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Psr\SimpleCache\InvalidArgumentException;
-use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\ConfigProvider;
 use ReliQArts\Docweaver\Contracts\Documentation\Provider as ProviderContract;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\MarkdownParser;
 use ReliQArts\Docweaver\Exceptions\BadImplementation;
 use ReliQArts\Docweaver\Models\Product;
@@ -95,9 +95,10 @@ final class Provider implements ProviderContract
      * @param string      $version
      * @param null|string $page
      *
-     * @return string
      * @throws InvalidArgumentException
      * @throws FileNotFoundException
+     *
+     * @return string
      */
     public function getPage(Product $product, string $version, string $page = null): string
     {
@@ -173,8 +174,9 @@ final class Provider implements ProviderContract
      * @param string  $version
      * @param string  $page
      *
-     * @return string
      * @throws FileNotFoundException
+     *
+     * @return string
      */
     private function getPageContent(Product $product, string $version, string $page): string
     {

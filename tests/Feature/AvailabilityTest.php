@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace ReliQArts\Docweaver\Tests\Feature;
 
 /**
- * @internal
  * @coversDefaultClass \ReliQArts\Docweaver\Http\Controllers\DocumentationController
+ *
+ * @internal
  */
 final class AvailabilityTest extends TestCase
 {

@@ -20,7 +20,7 @@ class PublicationFailed extends Exception
     /**
      * @param Product        $product
      * @param string         $version
-     * @param Exception|null $previous
+     * @param null|Exception $previous
      *
      * @return ExceptionContract
      */

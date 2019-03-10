@@ -7,8 +7,9 @@ namespace ReliQArts\Docweaver\Tests\Feature;
 use Illuminate\Support\Facades\Artisan;
 
 /**
- * @internal
  * @coversNothing
+ *
+ * @internal
  */
 final class PublishTest extends TestCase
 {
@@ -22,6 +23,13 @@ final class PublishTest extends TestCase
         parent::setUp();
 
         $this->publishedProducts = [];
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removePublishedDocs();
+
+        parent::tearDown();
     }
 
     /**
@@ -49,13 +57,6 @@ final class PublishTest extends TestCase
             ->see('master');
 
         $this->publishedProducts[] = $productName;
-    }
-
-    protected function tearDown(): void
-    {
-        $this->removePublishedDocs();
-
-        parent::tearDown();
     }
 
     /**

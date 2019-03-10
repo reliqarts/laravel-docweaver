@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ReliQArts\Docweaver\Factories;
 
-use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\ConfigProvider;
 use ReliQArts\Docweaver\Contracts\Exception;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\Product\Maker;
 use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
 use ReliQArts\Docweaver\Models\Product;

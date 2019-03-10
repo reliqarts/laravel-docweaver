@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ReliQArts\Docweaver\Services\Product;
 
-use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\ConfigProvider;
 use ReliQArts\Docweaver\Contracts\Exception;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\Logger;
 use ReliQArts\Docweaver\Contracts\Product\Finder as FinderContract;
 use ReliQArts\Docweaver\Contracts\Product\Maker as ProductFactory;

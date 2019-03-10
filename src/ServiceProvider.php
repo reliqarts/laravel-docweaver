@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ReliQArts\Docweaver;
 
 use Illuminate\Contracts\Config\Repository as Config;
-use Illuminate\Foundation\AliasLoader;
 use Illuminate\Contracts\View\Factory as ViewFactory;
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Illuminate\View\View;
 use Monolog\Handler\StreamHandler;

@@ -16,9 +16,11 @@ use ReliQArts\Docweaver\Services\Documentation\Provider;
 use ReliQArts\Docweaver\Tests\Unit\TestCase;
 
 /**
- * Class ProviderTest
+ * Class ProviderTest.
  *
  * @coversDefaultClass \ReliQArts\Docweaver\Services\Documentation\Provider
+ *
+ * @internal
  */
 final class ProviderTest extends TestCase
 {
@@ -43,7 +45,7 @@ final class ProviderTest extends TestCase
     private $markdownParser;
 
     /**
-     * @var Product|ObjectProphecy
+     * @var ObjectProphecy|Product
      */
     private $product;
 
@@ -77,12 +79,12 @@ final class ProviderTest extends TestCase
     /**
      * @covers ::__construct
      * @small
-     *
-     * @expectedException \ReliQArts\Docweaver\Exceptions\BadImplementation
-     * @expectedExceptionMessage Documentation resource directory `docs` does not exist.
      */
     public function testExceptionIsThrownIfDocumentationDirectoryIsInvalid(): void
     {
+        $this->expectException(\ReliQArts\Docweaver\Exceptions\BadImplementation::class);
+        $this->expectExceptionMessage('Documentation resource directory `docs` does not exist.');
+
         $this->filesystem->isDirectory(base_path($this->documentationDirectory))->shouldBeCalled()->willReturn(false);
 
         new Provider(
@@ -94,11 +96,11 @@ final class ProviderTest extends TestCase
     }
 
     /**
+     * @covers ::__construct
+     * @covers ::getFilePathForProductPage
      * @covers ::getPage
      * @covers ::getPageContent
-     * @covers ::getFilePathForProductPage
      * @covers ::replaceLinks
-     * @covers ::__construct
      * @small
      *
      * @throws FileNotFoundException
@@ -132,8 +134,8 @@ final class ProviderTest extends TestCase
     }
 
     /**
-     * @covers ::getPage
      * @covers ::__construct
+     * @covers ::getPage
      * @small
      *
      * @throws FileNotFoundException
@@ -154,7 +156,7 @@ final class ProviderTest extends TestCase
         $this->cache->get($cacheKey)->shouldBeCalledTimes(1)->willReturn($pageContent);
         $this->filesystem->exists($filePath)->shouldNotBeCalled();
         $this->filesystem->get($filePath)->shouldNotBeCalled();
-        /* @noinspection PhpStrictTypeCheckingInspection */
+        // @noinspection PhpStrictTypeCheckingInspection
         $this->markdownParser->parse(Argument::type('string'))->shouldNotBeCalled();
         $this->configProvider->getRoutePrefix()->shouldNotBeCalled();
         $this->cache->put($cacheKey, $pageContent, Argument::type('int'))->shouldNotBeCalled();

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ReliQArts\Docweaver\Services\Product;
 
-use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\Exception;
+use ReliQArts\Docweaver\Contracts\Filesystem;
 use ReliQArts\Docweaver\Contracts\Logger;
 use ReliQArts\Docweaver\Contracts\Product\Publisher as PublisherContract;
 use ReliQArts\Docweaver\Contracts\VCSCommandRunner;
@@ -92,27 +92,6 @@ final class Publisher extends BasePublisher implements PublisherContract
 
     /**
      * @param Product $product
-     * @param string  $source
-     * @param string  $version
-     *
-     * @return bool
-     * @throws Exception
-     */
-    private function publishVersion(Product $product, string $source, string $version): bool
-    {
-        try {
-            $this->vcsCommandRunner->clone($source, $version, $product->getDirectory());
-        } catch (ProcessFailedException $e) {
-            throw PublicationFailed::forProductVersion($product, $version);
-        }
-
-        $this->publishProductAssets($product, $version);
-
-        return true;
-    }
-
-    /**
-     * @param Product $product
      *
      * @return Result
      */
@@ -146,10 +125,33 @@ final class Publisher extends BasePublisher implements PublisherContract
 
     /**
      * @param Product $product
+     * @param string  $source
      * @param string  $version
      *
-     * @return bool
      * @throws Exception
+     *
+     * @return bool
+     */
+    private function publishVersion(Product $product, string $source, string $version): bool
+    {
+        try {
+            $this->vcsCommandRunner->clone($source, $version, $product->getDirectory());
+        } catch (ProcessFailedException $e) {
+            throw PublicationFailed::forProductVersion($product, $version);
+        }
+
+        $this->publishProductAssets($product, $version);
+
+        return true;
+    }
+
+    /**
+     * @param Product $product
+     * @param string  $version
+     *
+     * @throws Exception
+     *
+     * @return bool
      */
     private function updateVersion(Product $product, string $version): bool
     {

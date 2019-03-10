@@ -12,9 +12,11 @@ use ReliQArts\Docweaver\Services\ConfigProvider;
 use ReliQArts\Docweaver\Tests\Unit\TestCase;
 
 /**
- * Class ConfigProviderTest
+ * Class ConfigProviderTest.
  *
  * @coversDefaultClass \ReliQArts\Docweaver\Services\ConfigProvider
+ *
+ * @internal
  */
 final class ConfigProviderTest extends TestCase
 {
@@ -38,9 +40,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @covers ::getDocumentationDirectory
-     * @covers ::get
      * @covers ::__construct
+     * @covers ::get
+     * @covers ::getDocumentationDirectory
      */
     public function testGetDocumentationDirectory(): void
     {
@@ -54,9 +56,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @covers ::getRouteConfig
-     * @covers ::get
      * @covers ::__construct
+     * @covers ::get
+     * @covers ::getRouteConfig
      */
     public function testGetRouteConfig(): void
     {
@@ -67,9 +69,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @covers ::getRoutePrefix
-     * @covers ::get
      * @covers ::__construct
+     * @covers ::get
+     * @covers ::getRoutePrefix
      */
     public function testGetRoutePrefix(): void
     {
@@ -80,9 +82,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @covers ::getRouteGroupBindings
-     * @covers ::get
      * @covers ::__construct
+     * @covers ::get
+     * @covers ::getRouteGroupBindings
      */
     public function testGetRouteGroupBindings(): void
     {
@@ -94,9 +96,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @covers ::isDebug
-     * @covers ::get
      * @covers ::__construct
+     * @covers ::get
+     * @covers ::isDebug
      */
     public function testIsDebug(): void
     {
@@ -107,9 +109,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @covers ::isWordedDefaultVersionAllowed
-     * @covers ::get
      * @covers ::__construct
+     * @covers ::get
+     * @covers ::isWordedDefaultVersionAllowed
      */
     public function testIsWordedDefaultVersionAllowed(): void
     {
@@ -120,9 +122,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @covers ::getIndexRouteName
-     * @covers ::get
      * @covers ::__construct
+     * @covers ::get
+     * @covers ::getIndexRouteName
      */
     public function testGetIndexRouteName(): void
     {
@@ -133,9 +135,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @covers ::getProductIndexRouteName
-     * @covers ::get
      * @covers ::__construct
+     * @covers ::get
+     * @covers ::getProductIndexRouteName
      */
     public function testGetProductIndexRouteName(): void
     {
@@ -146,9 +148,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @covers ::getProductPageRouteName
-     * @covers ::get
      * @covers ::__construct
+     * @covers ::get
+     * @covers ::getProductPageRouteName
      */
     public function testGetProductPageRouteName(): void
     {
@@ -159,9 +161,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @covers ::getCacheKey
-     * @covers ::get
      * @covers ::__construct
+     * @covers ::get
+     * @covers ::getCacheKey
      */
     public function testGetCacheKey(): void
     {
@@ -172,9 +174,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @covers ::getContentIndexPageName
-     * @covers ::get
      * @covers ::__construct
+     * @covers ::get
+     * @covers ::getContentIndexPageName
      */
     public function testGetContentIndexPageName(): void
     {
@@ -185,9 +187,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @covers ::getTemplateConfig
-     * @covers ::get
      * @covers ::__construct
+     * @covers ::get
+     * @covers ::getTemplateConfig
      * @covers \ReliQArts\Docweaver\Models\TemplateConfig
      */
     public function testGetTemplateConfig(): void
