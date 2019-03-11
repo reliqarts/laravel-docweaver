@@ -37,6 +37,7 @@ final class FilesystemTest extends AspectMockedTestCase
     public function testDeleteDirectoryWithAspectMock(): void
     {
         $directory = 'foo';
+        $fakeDirectory = 'bar';
         $files = ['file 1', 'file 2', 'dir 1', 'dir 2', 'file 3'];
         $fileCount = count($files);
         $glob = Test::func($this->namespace, 'glob', function ($pattern) use ($directory, $files) {
@@ -45,13 +46,16 @@ final class FilesystemTest extends AspectMockedTestCase
         $isDir = Test::func($this->namespace, 'is_dir', function ($file) {
             return stripos($file, 'dir') !== false;
         });
-        $parentIsDir = Test::func($this->parentNamespace, 'is_dir', true);
+        $parentIsDir = Test::func($this->parentNamespace, 'is_dir', function ($file) use ($fakeDirectory) {
+            return $file !== $fakeDirectory;
+        });
         $rmDir = Test::func($this->namespace, 'rmdir', true);
         $chmod = Test::func($this->namespace, 'chmod', true);
         $unlink = Test::func($this->namespace, 'unlink', true);
         $subdirectoryCount = 0;
 
-        $result = $this->filesystem->deleteDirectory($directory);
+        $result1 = $this->filesystem->deleteDirectory($directory);
+        $result2 = $this->filesystem->deleteDirectory($fakeDirectory);
 
         foreach ($files as $file) {
             if (stripos($file, 'dir') !== false) {
@@ -62,13 +66,16 @@ final class FilesystemTest extends AspectMockedTestCase
         $glob->verifyInvokedMultipleTimes($subdirectoryCount + 1);
         $isDir->verifyInvokedMultipleTimes($fileCount);
         $parentIsDir->verifyInvokedOnce([$directory]);
+        $parentIsDir->verifyInvokedOnce([$fakeDirectory]);
         $chmod->verifyInvokedMultipleTimes($fileCount - $subdirectoryCount);
         $unlink->verifyInvokedMultipleTimes($fileCount - $subdirectoryCount);
-        $parentIsDir->verifyInvokedMultipleTimes($subdirectoryCount + 1);
+        $parentIsDir->verifyInvokedMultipleTimes($subdirectoryCount + 2);
         $rmDir->verifyInvokedMultipleTimes($subdirectoryCount + 1);
         $rmDir->verifyInvokedOnce([$directory]);
 
-        $this->assertIsBool($result);
-        $this->assertTrue($result);
+        $this->assertIsBool($result1);
+        $this->assertIsBool($result2);
+        $this->assertTrue($result1);
+        $this->assertFalse($result2);
     }
 }
