@@ -8,6 +8,6 @@ $kernel = \AspectMock\Kernel::getInstance();
 $kernel->init([
     'debug' => true,
     'cacheDir' => __DIR__ . '/../build/cache',
-    'includePaths' => [__DIR__ . '/../src'],
+    'includePaths' => [__DIR__ . '/../src', __DIR__ . '/../vendor/symfony/process'],
     'excludePaths' => [__DIR__],
 ]);

@@ -26,7 +26,6 @@ final class FilesystemTest extends AspectMockedTestCase
         $this->filesystem = new Filesystem();
     }
 
-
     /**
      * @covers ::deleteDirectory
      * @small
