@@ -9,7 +9,7 @@ interface Exception
     /**
      * @param string $message
      *
-     * @return self
+     * @return Exception
      */
-    public function withMessage(string $message): self;
+    public function withMessage(string $message): Exception;
 }

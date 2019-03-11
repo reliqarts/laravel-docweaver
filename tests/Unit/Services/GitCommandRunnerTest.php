@@ -46,6 +46,9 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
 
     /**
      * @covers ::clone
+     * @small
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
      *
      * @throws Exception
      */
@@ -64,7 +67,10 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
 
     /**
      * @covers ::getTags
-     * @dataProvider tagListProvider
+     * @dataProvider        tagListProvider
+     * @small
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
      *
      * @param string $tagList
      *
@@ -92,6 +98,9 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
 
     /**
      * @covers ::pull
+     * @small
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
      *
      * @throws Exception
      */

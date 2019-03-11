@@ -29,11 +29,10 @@ final class FilesystemTest extends AspectMockedTestCase
     /**
      * @covers ::deleteDirectory
      * @small
-     * @group aspectMock
-     * @runInSeparateProcess
      * @preserveGlobalState disabled
+     * @runInSeparateProcess
      */
-    public function testDeleteDirectoryWithAspectMock(): void
+    public function testDeleteDirectory(): void
     {
         $directory = 'foo';
         $fakeDirectory = 'bar';

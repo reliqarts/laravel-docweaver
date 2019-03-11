@@ -18,6 +18,15 @@ abstract class AspectMockedTestCase extends TestCase
      */
     protected $parentNamespace;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $group = 'aspectMock';
+
+        $this->setGroups(array_merge($this->getGroups(), [$group]));
+    }
+
     protected function tearDown(): void
     {
         Test::clean();

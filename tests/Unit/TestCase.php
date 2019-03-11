@@ -14,7 +14,10 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        $group = 'unit';
         $this->filesystem = $this->prophesize(Filesystem::class);
         $this->configProvider = $this->prophesize(ConfigProvider::class);
+
+        $this->setGroups(array_merge($this->getGroups(), [$group]));
     }
 }

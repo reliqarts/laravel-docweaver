@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ReliQArts\Docweaver\Services;
 
 use Illuminate\Console\Command;
-use ReliQArts\Docweaver\Contracts\Filesystem;
-use ReliQArts\Docweaver\Contracts\Logger;
+use ReliQArts\Docweaver\Contracts\Filesystem as FilesystemContract;
+use ReliQArts\Docweaver\Contracts\Logger as LoggerContract;
 use ReliQArts\Docweaver\Contracts\Publisher as PublisherContract;
 
 abstract class Publisher implements PublisherContract
@@ -26,12 +26,12 @@ abstract class Publisher implements PublisherContract
     protected $callingCommand;
 
     /**
-     * @var Filesystem
+     * @var FilesystemContract
      */
     protected $filesystem;
 
     /**
-     * @var Logger
+     * @var LoggerContract
      */
     protected $logger;
 
@@ -43,10 +43,10 @@ abstract class Publisher implements PublisherContract
     /**
      * Publisher constructor.
      *
-     * @param Filesystem $filesystem
-     * @param Logger     $logger
+     * @param FilesystemContract $filesystem
+     * @param LoggerContract     $logger
      */
-    public function __construct(Filesystem $filesystem, Logger $logger)
+    public function __construct(FilesystemContract $filesystem, LoggerContract $logger)
     {
         $this->filesystem = $filesystem;
         $this->logger = $logger;
