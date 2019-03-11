@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace ReliQArts\Docweaver\Tests\Unit\Services;
 
 use AspectMock\Test;
-use ReliQArts\Docweaver\Contracts\Filesystem as FilesystemContract;
 use ReliQArts\Docweaver\Services\Filesystem;
-use ReliQArts\Docweaver\Tests\Unit\TestCase;
+use ReliQArts\Docweaver\Tests\Unit\AspectMockedTestCase;
 
 /**
  * Class FilesystemTest.
@@ -16,45 +15,26 @@ use ReliQArts\Docweaver\Tests\Unit\TestCase;
  *
  * @internal
  */
-final class FilesystemTest extends TestCase
+final class FilesystemTest extends AspectMockedTestCase
 {
-    /**
-     * @var FilesystemContract
-     */
-    private $subject;
-
-    /**
-     * @var string
-     */
-    private $namespace;
-
-    /**
-     * @var string
-     */
-    private $parentNamespace;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->namespace = 'ReliQArts\Docweaver\Services';
-        $this->parentNamespace = 'Illuminate\Filesystem';
-        $this->subject = new Filesystem();
+        $this->namespace = '\ReliQArts\Docweaver\Services';
+        $this->parentNamespace = '\Illuminate\Filesystem';
+        $this->filesystem = new Filesystem();
     }
 
-    protected function tearDown(): void
-    {
-        Test::clean();
-
-        parent::tearDown();
-    }
 
     /**
      * @covers ::deleteDirectory
      * @small
      * @group aspectMock
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
-    public function testDeleteDirectory(): void
+    public function testDeleteDirectoryWithAspectMock(): void
     {
         $directory = 'foo';
         $files = ['file 1', 'file 2', 'dir 1', 'dir 2', 'file 3'];
@@ -71,7 +51,7 @@ final class FilesystemTest extends TestCase
         $unlink = Test::func($this->namespace, 'unlink', true);
         $subdirectoryCount = 0;
 
-        $result = $this->subject->deleteDirectory($directory);
+        $result = $this->filesystem->deleteDirectory($directory);
 
         foreach ($files as $file) {
             if (stripos($file, 'dir') !== false) {
