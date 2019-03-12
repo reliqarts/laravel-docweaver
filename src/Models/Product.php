@@ -102,8 +102,6 @@ class Product implements Arrayable, Jsonable
      * @param Filesystem     $filesystem
      * @param ConfigProvider $configProvider
      * @param string         $directory
-     *
-     * @throws Exception if meta file could not be parsed
      */
     public function __construct(Filesystem $filesystem, ConfigProvider $configProvider, string $directory)
     {
@@ -114,8 +112,17 @@ class Product implements Arrayable, Jsonable
         $this->directory = $directory;
         $this->meta = [];
         $this->versions = [];
+    }
 
-        $this->populate();
+    /**
+     * Populate product.
+     *
+     * @throws Exception if meta file could not be parsed
+     */
+    public function populate(): void
+    {
+        $this->loadVersions();
+        $this->loadMeta();
     }
 
     /**
@@ -179,7 +186,7 @@ class Product implements Arrayable, Jsonable
     /**
      * Get product description.
      *
-     * @return string
+     * @return null|string
      */
     public function getDescription(): ?string
     {
@@ -189,37 +196,11 @@ class Product implements Arrayable, Jsonable
     /**
      * Get product image url.
      *
-     * @return string
+     * @return null|string
      */
     public function getImageUrl(): ?string
     {
         return $this->imageUrl;
-    }
-
-    /**
-     * Set product image url.
-     *
-     * @param array|string $meta    meta or straight url to use
-     * @param string       $version
-     */
-    public function setImageUrl($meta, string $version = null): void
-    {
-        $url = '';
-        $version = empty($version) ? $this->getDefaultVersion() : $version;
-
-        if (is_array($meta)) {
-            if (!empty($meta['image_url'])) {
-                $url = $meta['image_url'];
-            } elseif (!empty($meta['imageUrl'])) {
-                $url = $meta['imageUrl'];
-            } elseif ((!empty($meta['image']))) {
-                $url = $meta['image'];
-            }
-        } elseif (is_string($meta)) {
-            $url = $meta;
-        }
-
-        $this->imageUrl = $this->getAssetUrl($url, $version);
     }
 
     /**
@@ -403,13 +384,28 @@ class Product implements Arrayable, Jsonable
     }
 
     /**
-     * Populate product versions and information.
+     * Set product image url.
      *
-     * @throws Exception
+     * @param array|string $meta    meta or straight url to use
+     * @param string       $version
      */
-    private function populate(): void
+    private function setImageUrl($meta, string $version = null): void
     {
-        $this->loadVersions();
-        $this->loadMeta();
+        $url = '';
+        $version = empty($version) ? $this->getDefaultVersion() : $version;
+
+        if (is_array($meta)) {
+            if (!empty($meta['image_url'])) {
+                $url = $meta['image_url'];
+            } elseif (!empty($meta['imageUrl'])) {
+                $url = $meta['imageUrl'];
+            } elseif ((!empty($meta['image']))) {
+                $url = $meta['image'];
+            }
+        } elseif (is_string($meta)) {
+            $url = $meta;
+        }
+
+        $this->imageUrl = $this->getAssetUrl($url, $version);
     }
 }

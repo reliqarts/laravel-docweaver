@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace ReliQArts\Docweaver\Contracts;
 
+/**
+ * Interface Exception.
+ */
 interface Exception
 {
     /**

@@ -48,6 +48,9 @@ final class ProductMaker implements Maker
             throw InvalidDirectory::forDirectory($directory);
         }
 
-        return new Product($this->filesystem, $this->configProvider, $directory);
+        $product = new Product($this->filesystem, $this->configProvider, $directory);
+        $product->populate();
+
+        return $product;
     }
 }

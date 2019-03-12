@@ -16,5 +16,8 @@ abstract class TestCase extends BaseTestCase
 
         $this->filesystem = resolve(Filesystem::class);
         $this->configProvider = resolve(ConfigProvider::class);
+        $group = 'feature';
+
+        $this->setGroups(array_merge($this->getGroups(), [$group]));
     }
 }

@@ -145,8 +145,6 @@ final class PublisherTest extends TestCase
      * @covers ::setExecutionStartTime
      * @covers ::updateVersion
      * @small
-     *
-     * @throws Exception
      */
     public function testPublishWhenAssetDirectoryIsInvalid(): void
     {

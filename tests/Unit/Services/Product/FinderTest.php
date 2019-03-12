@@ -9,6 +9,7 @@ use ReliQArts\Docweaver\Contracts\Exception;
 use ReliQArts\Docweaver\Contracts\Logger;
 use ReliQArts\Docweaver\Contracts\Product\Finder as FinderContract;
 use ReliQArts\Docweaver\Contracts\Product\Maker as ProductFactory;
+use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
 use ReliQArts\Docweaver\Models\Product;
 use ReliQArts\Docweaver\Services\Product\Finder;
 use ReliQArts\Docweaver\Tests\Unit\TestCase;
@@ -56,13 +57,12 @@ final class FinderTest extends TestCase
      * @covers ::__construct
      * @covers ::listProducts
      * @small
-     *
-     * @throws Exception
      */
     public function testListProducts(): void
     {
         $documentationDirectory = 'docs';
-        $productDirectories = ['Product 1', 'product 2'];
+        $productDirectories = ['Product 1', 'product 2', 'invalid product', 'product that is invalid'];
+        $failedCount = 0;
 
         $this->configProvider->getDocumentationDirectory()
             ->shouldBeCalledTimes(1)
@@ -80,14 +80,22 @@ final class FinderTest extends TestCase
             $product->getDefaultVersion()->willReturn('1.0');
             $product->getKey()->willReturn($key);
 
-            $this->productFactory->create($productDirectory)
-                ->shouldBeCalledTimes(1)->willReturn($product->reveal());
+            if (stripos($key, 'invalid') !== false) {
+                $exceptionMessage = sprintf('Test: invalid directory %s', $key);
+                $this->productFactory->create($productDirectory)
+                    ->shouldBeCalledTimes(1)->willThrow(new InvalidDirectory($exceptionMessage));
+                $this->logger->error($exceptionMessage, [])->shouldBeCalledTimes(1);
+                ++$failedCount;
+            } else {
+                $this->productFactory->create($productDirectory)
+                    ->shouldBeCalledTimes(1)->willReturn($product->reveal());
+            }
         }
 
         $results = $this->subject->listProducts();
 
         $this->assertIsArray($results);
-        $this->assertCount(count($productDirectories), $results);
+        $this->assertCount(count($productDirectories) - $failedCount, $results);
 
         foreach ($results as $result) {
             $this->assertInstanceOf(Product::class, $result);
