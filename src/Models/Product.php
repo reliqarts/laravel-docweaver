@@ -25,7 +25,12 @@ class Product implements Arrayable, Jsonable
     public const VERSION_MASTER = 'master';
     public const VERSION_UNKNOWN = 'unknown';
 
-    private const ASSET_URL_PLACEHOLDERS = ['{{docs}}', '{{doc}}'];
+    private const ASSET_URL_PLACEHOLDER_1 = '{{docs}}';
+    private const ASSET_URL_PLACEHOLDER_2 = '{{doc}}';
+    private const ASSET_URL_PLACEHOLDERS = [
+        self::ASSET_URL_PLACEHOLDER_1,
+        self::ASSET_URL_PLACEHOLDER_2,
+    ];
     private const META_FILE = '.docweaver.yml';
 
     /**
@@ -298,23 +303,21 @@ class Product implements Arrayable, Jsonable
      *
      * @return string
      */
-    private function getAssetUrl(string $url = null, string $version = null): string
+    private function getAssetUrl(string $url, string $version): string
     {
-        $url = empty($url) ? self::ASSET_URL_PLACEHOLDERS[0] : $url;
-        $version = empty($version) ? $this->getDefaultVersion() : $version;
+        $url = empty($url) ? self::ASSET_URL_PLACEHOLDER_1 : $url;
 
-        // if url contains schema, ignore it
-        if (strpos('http://', $url) === false && strpos('https://', $url) === false) {
-            // build asset url
-            $url = str_replace(
+        if (stripos($url, 'http') === 0) {
+            return $url;
+        }
+
+        return asset(
+            str_replace(
                 self::ASSET_URL_PLACEHOLDERS,
                 sprintf('storage/%s/%s/%s', $this->configProvider->getRoutePrefix(), $this->key, $version),
                 $url
-            );
-            $url = asset($url);
-        }
-
-        return $url;
+            )
+        );
     }
 
     /**
@@ -343,7 +346,7 @@ class Product implements Arrayable, Jsonable
                 $this->description = $meta['description'];
             }
 
-            $this->setImageUrl($meta, $version);
+            $this->imageUrl = $this->getAssetUrl($meta['image_url'] ?? '', $version);
             $this->meta = $meta;
         } catch (ParseException $exception) {
             $message = sprintf(
@@ -381,31 +384,5 @@ class Product implements Arrayable, Jsonable
         }
 
         $this->versions = $versions;
-    }
-
-    /**
-     * Set product image url.
-     *
-     * @param array|string $meta    meta or straight url to use
-     * @param string       $version
-     */
-    private function setImageUrl($meta, string $version = null): void
-    {
-        $url = '';
-        $version = empty($version) ? $this->getDefaultVersion() : $version;
-
-        if (is_array($meta)) {
-            if (!empty($meta['image_url'])) {
-                $url = $meta['image_url'];
-            } elseif (!empty($meta['imageUrl'])) {
-                $url = $meta['imageUrl'];
-            } elseif ((!empty($meta['image']))) {
-                $url = $meta['image'];
-            }
-        } elseif (is_string($meta)) {
-            $url = $meta;
-        }
-
-        $this->imageUrl = $this->getAssetUrl($url, $version);
     }
 }

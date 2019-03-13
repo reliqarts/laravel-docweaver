@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c5fecb2e009a96c6c3291d8a3e9242e7",
+    "content-hash": "43e240849305b3033d1138f4cde39e13",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -325,16 +325,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.8.3",
+            "version": "v5.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "d36d74acd3added5abbe7e7a84342b54bb0b0521"
+                "reference": "d651f8bd25c6baf7ae4913bc51f02849fad4e925"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/d36d74acd3added5abbe7e7a84342b54bb0b0521",
-                "reference": "d36d74acd3added5abbe7e7a84342b54bb0b0521",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/d651f8bd25c6baf7ae4913bc51f02849fad4e925",
+                "reference": "d651f8bd25c6baf7ae4913bc51f02849fad4e925",
                 "shasum": ""
             },
             "require": {
@@ -468,7 +468,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2019-03-05T13:51:19+00:00"
+            "time": "2019-03-12T13:33:14+00:00"
         },
         {
             "name": "league/flysystem",
@@ -2994,16 +2994,16 @@
         },
         {
             "name": "laravel/browser-kit-testing",
-            "version": "v5.1.1",
+            "version": "v5.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/browser-kit-testing.git",
-                "reference": "55914a585f451f3fa03de434db5e699c52bbdb18"
+                "reference": "1189b899411a534f7f334db57a4966d08c568c73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/browser-kit-testing/zipball/55914a585f451f3fa03de434db5e699c52bbdb18",
-                "reference": "55914a585f451f3fa03de434db5e699c52bbdb18",
+                "url": "https://api.github.com/repos/laravel/browser-kit-testing/zipball/1189b899411a534f7f334db57a4966d08c568c73",
+                "reference": "1189b899411a534f7f334db57a4966d08c568c73",
                 "shasum": ""
             },
             "require": {
@@ -3050,7 +3050,7 @@
                 "laravel",
                 "testing"
             ],
-            "time": "2019-02-16T09:34:03+00:00"
+            "time": "2019-03-12T15:31:08+00:00"
         },
         {
             "name": "mockery/mockery",

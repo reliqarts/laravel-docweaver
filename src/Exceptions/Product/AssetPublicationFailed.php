@@ -37,12 +37,4 @@ final class AssetPublicationFailed extends PublicationFailed
 
         return $self;
     }
-
-    /**
-     * @return null|string
-     */
-    public function getAssetType(): ?string
-    {
-        return $this->assetType;
-    }
 }

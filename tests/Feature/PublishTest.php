@@ -42,7 +42,7 @@ final class PublishTest extends TestCase
     public function testPublishDoc()
     {
         $docIndex = $this->configProvider->getRoutePrefix();
-        $productName = 'Product 45';
+        $productName = 'Product 450';
 
         // publish Docweaver docs
         Artisan::call('docweaver:publish', [

@@ -115,6 +115,7 @@ final class PublisherTest extends TestCase
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
      * @covers ::tell
+     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
      * @small
      *
      * @throws Exception
@@ -155,6 +156,7 @@ final class PublisherTest extends TestCase
      * @covers ::publish
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
+     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
      * @small
      *
      * @throws Exception
@@ -183,6 +185,7 @@ final class PublisherTest extends TestCase
      * @covers ::setExecutionStartTime
      * @covers ::tell
      * @covers ::update
+     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
      * @small
      *
      * @throws Exception
@@ -222,6 +225,7 @@ final class PublisherTest extends TestCase
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
      * @covers ::update
+     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
      * @small
      *
      * @throws Exception
@@ -250,6 +254,7 @@ final class PublisherTest extends TestCase
      * @covers ::tell
      * @covers ::update
      * @covers ::updateAll
+     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
      * @dataProvider updateAllDataProvider
      * @small
      *

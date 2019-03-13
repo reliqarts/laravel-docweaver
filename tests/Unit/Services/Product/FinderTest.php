@@ -56,6 +56,7 @@ final class FinderTest extends TestCase
     /**
      * @covers ::__construct
      * @covers ::listProducts
+     * @covers \ReliQArts\Docweaver\Exceptions\InvalidDirectory::forDirectory
      * @small
      */
     public function testListProducts(): void
@@ -81,10 +82,13 @@ final class FinderTest extends TestCase
             $product->getKey()->willReturn($key);
 
             if (stripos($key, 'invalid') !== false) {
-                $exceptionMessage = sprintf('Test: invalid directory %s', $key);
+                /**
+                 * @var InvalidDirectory|\Exception $exception
+                 */
+                $exception = InvalidDirectory::forDirectory($productDirectory);
                 $this->productFactory->create($productDirectory)
-                    ->shouldBeCalledTimes(1)->willThrow(new InvalidDirectory($exceptionMessage));
-                $this->logger->error($exceptionMessage, [])->shouldBeCalledTimes(1);
+                    ->shouldBeCalledTimes(1)->willThrow($exception);
+                $this->logger->error($exception->getMessage(), [])->shouldBeCalledTimes(1);
                 ++$failedCount;
             } else {
                 $this->productFactory->create($productDirectory)

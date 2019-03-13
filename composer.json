@@ -1,7 +1,7 @@
 {
     "name": "reliqarts/docweaver",
     "description": "Highly configurable Laravel 5.x package for product documentation.",
-    "version": "v2.0.0-beta",
+    "version": "v2.0.0-beta.1",
     "keywords": [
         "doc",
         "package",
@@ -23,7 +23,7 @@
     },
     "require": {
         "php": ">=7.1.3",
-        "illuminate/support": "5.*",
+        "illuminate/support": "^5.7",
         "erusev/parsedown": "1.7.1",
         "erusev/parsedown-extra": "^0.7.1",
         "monolog/monolog": "~1.11",
