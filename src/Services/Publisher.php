@@ -1,362 +1,135 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ReliQArts\Docweaver\Services;
 
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
-use Log;
-use ReliQArts\Docweaver\Exceptions\BadImplementation;
-use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
-use ReliQArts\Docweaver\Helpers\Config;
-use ReliQArts\Docweaver\Models\Product;
-use ReliQArts\Docweaver\Traits\HandlesFiles;
-use ReliQArts\Docweaver\Traits\HasVariableOutput;
-use ReliQArts\Docweaver\Traits\Timed;
-use ReliQArts\Docweaver\ViewModels\Result;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
+use ReliQArts\Docweaver\Contracts\Filesystem as FilesystemContract;
+use ReliQArts\Docweaver\Contracts\Logger as LoggerContract;
+use ReliQArts\Docweaver\Contracts\Publisher as PublisherContract;
 
-/**
- * Publisher service. For publishing or updating documentation.
- */
-class Publisher
+abstract class Publisher implements PublisherContract
 {
-    use HandlesFiles, Timed, HasVariableOutput;
+    protected const TELL_DIRECTION_OUT = 'out';
+    protected const TELL_DIRECTION_IN = 'in';
+    protected const TELL_DIRECTION_FLAT = 'flat';
+    protected const TELL_DIRECTION_NONE = 'none';
+
+    private const DIRECTORY_READY_MODE = 0777;
 
     /**
-     * Result of operation.
+     * Calling command if running in console.
      *
-     * @var \ReliQArts\Scavenger\ViewModels\Result
+     * @var Command
      */
-    public $result;
+    protected $callingCommand;
 
     /**
-     * Documentation configuration array.
-     *
-     * @var Cache
+     * @var FilesystemContract
      */
-    protected $config;
+    protected $filesystem;
 
     /**
-     * Documentation resource directory.
-     *
-     * @var string
+     * @var LoggerContract
      */
-    protected $docsDir;
+    protected $logger;
 
     /**
-     * Working directory.
-     *
-     * @var string
+     * @var float
      */
-    protected $workingDir;
+    private $startTime;
 
     /**
-     * Create a new Publisher.
+     * Publisher constructor.
      *
-     * @param Filesystem $files
+     * @param FilesystemContract $filesystem
+     * @param LoggerContract     $logger
      */
-    public function __construct(Filesystem $files)
+    public function __construct(FilesystemContract $filesystem, LoggerContract $logger)
     {
-        $this->files = $files;
-        $this->result = new Result();
-        $this->config = Config::getConfig();
-        $this->docsDir = Config::getDocsDir();
-        $this->workingDir = base_path($this->docsDir);
-
-        if (!$this->readyResourceDir()) {
-            throw new BadImplementation("Could not ready document resource directory ({$this->docsDir}). Please ensure file system is writable.");
-        }
+        $this->filesystem = $filesystem;
+        $this->logger = $logger;
+        $this->startTime = microtime(true);
     }
 
     /**
-     * Publish documentation for a particular product.
-     *
-     * @param string  $name
-     * @param string  $source         Git Repository
-     * @param Command $callingCommand
-     *
-     * @return Result
+     * @return string
      */
-    public function publish(string $name, string $source, Command &$callingCommand = null): Result
+    protected function getExecutionTime(): string
     {
-        $result = $this->result;
-        $startTime = microtime(true);
-        $productDir = "{$this->workingDir}/${name}";
-
-        if ($this->readyResourceDir($productDir)) {
-            $result = $this->publishVersions($productDir, $source, $callingCommand);
-        } else {
-            $result->error = "Product directory {$productDir} is not writable.";
-        }
-
-        // add identity to result error
-        if ($result->error) {
-            $result->error = "Could not publish product ({$name}) because:\n{$result->error}";
-        }
-
-        // finalize extra details
-        if (empty($result->extra)) {
-            $result->extra = (object) [];
-        }
-        $result->extra->executionTime = $this->secondsSince($startTime) . 's';
-
-        return $result;
+        return sprintf('%ss', $this->secondsSince($this->startTime));
     }
 
     /**
-     * Update documentation for a particular product.
+     * Print to console or screen.
      *
-     * @param string  $name
-     * @param Command $callingCommand
+     * @param string $text
+     * @param string $direction in|out
      *
-     * @return Result
+     * @return string
      */
-    public function update(string $name, Command &$callingCommand = null): Result
+    protected function tell($text, $direction = self::TELL_DIRECTION_OUT)
     {
-        $result = $this->result;
-        $startTime = microtime(true);
-        $productDir = "{$this->workingDir}/${name}";
-
-        if ($this->readyResourceDir($productDir)) {
-            $result = $this->updateVersions($productDir, $callingCommand);
-        } else {
-            $result->error = "Product directory {$productDir} is not writable.";
+        $direction = strtolower($direction);
+        $nl = app()->runningInConsole() ? "\n" : '<br/>';
+        $dirSymbol = ($direction === self::TELL_DIRECTION_IN
+            ? '>> '
+            : ($direction === self::TELL_DIRECTION_FLAT ? '-- ' : '<< '));
+        if ($direction === self::TELL_DIRECTION_NONE) {
+            $dirSymbol = '';
         }
 
-        // add identity to result error
-        if ($result->error) {
-            $result->error = "Could not update product ({$name}) because:\n{$result->error}";
-        }
+        if (app()->runningInConsole() && $this->callingCommand) {
+            $line = sprintf('%s%s', $dirSymbol, $text);
 
-        // finalize extra details
-        if (empty($result->extra)) {
-            $result->extra = (object) [];
-        }
-        $result->extra->executionTime = $this->secondsSince($startTime) . 's';
-
-        return $result;
-    }
-
-    /**
-     * Update all products.
-     *
-     * @param Command $callingCommand
-     *
-     * @return Result
-     */
-    public function updateAll(Command &$callingCommand = null): Result
-    {
-        $result = $this->result;
-        $result->extra = (object) [];
-        $startTime = microtime(true);
-        $productDirs = $this->files->directories($this->workingDir);
-        $productResults = [];
-        $productsUpdated = 0;
-
-        foreach ($productDirs as $productDir) {
-            $productName = basename($productDir);
-            $this->tell("Updating ${productName} ", 'flat');
-            $productResult = $this->update($productName, $callingCommand);
-            $productResults[$productName] = $productResult;
-
-            if ($productResult->success) {
-                ++$productsUpdated;
-            }
-        }
-
-        // add extra details
-        $result->extra = (object) [
-            'products' => count($productDirs),
-            'productsUpdated' => $productsUpdated,
-        ];
-        $result->extra->executionTime = $this->secondsSince($startTime) . 's';
-
-        return $result;
-    }
-
-    /**
-     * Publish doc versions of a product.
-     *
-     * @param string  $dir            Product Directory
-     * @param string  $source         Documentation source
-     * @param Command $callingCommand
-     *
-     * @return Result
-     */
-    private function publishVersions(string $dir, string $source, Command &$callingCommand = null): Result
-    {
-        $this->callingCommand = $callingCommand;
-        $result = $this->result;
-        $masterExists = false;
-
-        if ($productDir = realpath($dir)) {
-            $masterDir = "{$productDir}/master";
-            $versionsPublished = $versionsUpdated = 0;
-
-            // ensure master exists
-            if ($this->files->isDirectory($masterDir)) {
-                $masterExists = true;
-                $product = new Product($productDir);
-                if ($this->updateProductVersion($product, 'master')) {
-                    ++$versionsUpdated;
-                }
-            } else {
-                $cloneMaster = new Process("git clone --branch master \"{$source}\" master");
-                $cloneMaster->setWorkingDirectory($productDir);
-
-                try {
-                    $cloneMaster->mustRun();
-                    $this->tell('Successfully published master.');
-                    $masterExists = true;
-                    ++$versionsPublished;
-                } catch (ProcessFailedException $e) {
-                    $result->message = $result->error = $e->getMessage();
-                }
+            if ($direction === self::TELL_DIRECTION_OUT) {
+                $line = sprintf('<info>%s</info>', $line);
             }
 
-            // master must exist to proceed
-            if ($masterExists) {
-                $product = empty($product) ? new Product($productDir) : $product;
-                $product->publishAssets('master');
-                $tags = [];
-                // publish the different tags
-                $listTags = new Process('git tag -l', $masterDir);
-
-                try {
-                    $listTags->mustRun();
-                    if ($splitTags = preg_split("/[\n\r]/", $listTags->getOutput())) {
-                        $tags = array_map('trim', $splitTags);
-                    }
-                    $result->messages = [];
-
-                    // publish each tag
-                    foreach ($tags as $tag) {
-                        if (!empty($tag)) {
-                            if (!$this->files->isDirectory("${masterDir}/../${tag}")) {
-                                $cloneTag = new Process("git clone --branch ${tag} \"{$source}\" ../${tag}", $masterDir);
-                                $cloneTag->mustRun();
-                                // publish assets
-                                $product->publishAssets($tag);
-                                $this->tell("Successfully published tag ${tag}.");
-                                // increment
-                                ++$versionsPublished;
-                            } else {
-                                $message = "Version ${tag} already exists.";
-                                $result->messages[] = $message;
-                                Log::info($message, ['state' => $this, 'product' => $product]);
-                                $this->tell($message);
-                            }
-                        }
-                    }
-                } catch (ProcessFailedException $e) {
-                    $result->message = $result->error = $e->getMessage();
-                }
-
-                // success check
-                if (!$result->error) {
-                    $result->success = true;
-                    $result->message = "{$product->getName()} was successfully published.";
-                    $result->extra = (object) [
-                        'versions' => count($tags) + 1,
-                        'versionsPublished' => $versionsPublished,
-                        'versionsUpdated' => $versionsUpdated,
-                    ];
-                }
-            }
+            $this->callingCommand->line($line);
         } else {
-            $result->error = "Product directory ({$dir}) is not writable.";
+            echo "{$nl}{$dirSymbol}{$text}";
         }
 
-        return $result;
-    }
-
-    /**
-     * Update a particular product version.
-     *
-     * @param Product $product
-     * @param string  $version version to update
-     *
-     * @return bool
-     */
-    private function updateProductVersion(Product $product, string $version): bool
-    {
-        $updated = true;
-
-        try {
-            $updateVer = new Process('git pull', "{$product->getDir()}/${version}");
-            $updateVer->mustRun();
-            $this->tell("Successfully updated version ${version}.");
-        } catch (ProcessFailedException $e) {
-            $this->tell("Assets republished for version ${version}.");
-        }
-
-        // publish assets
-        $product->publishAssets($version);
-
-        return $updated;
-    }
-
-    /**
-     * Publish doc versions of a product.
-     *
-     * @param string  $dir            product directory
-     * @param Command $callingCommand
-     *
-     * @return Result
-     */
-    private function updateVersions(string $dir, Command &$callingCommand = null): Result
-    {
-        $this->callingCommand = $callingCommand;
-        $result = $this->result;
-
-        if ($productDir = realpath($dir)) {
-            try {
-                $product = new Product($productDir);
-                $versions = $product->getVersions();
-                $result->messages = [];
-                $versionsUpdated = 0;
-
-                foreach ($versions as $version) {
-                    if ($this->updateProductVersion($product, $version)) {
-                        ++$versionsUpdated;
-                    }
-                }
-
-                // success check
-                if (!$result->error) {
-                    $result->success = true;
-                    $result->message = "{$product->getName()} was successfully updated.";
-                    $result->extra = (object) [
-                        'versions' => count($versions),
-                        'versionsUpdated' => $versionsUpdated,
-                    ];
-                }
-            } catch (InvalidDirectory $e) {
-                $result->error = "Failed to initialize product from ({$productDir}).";
-            }
-        } else {
-            $result->error = "Product directory ({$dir}) is not writable.";
-        }
-
-        return $result;
+        return $text;
     }
 
     /**
      * Ensure documentation resource directory exists and is writable.
      *
-     * @param string $dir
+     * @param string $directory
      *
      * @return bool
      */
-    private function readyResourceDir(string $dir = null): bool
+    protected function readyResourceDirectory(string $directory): bool
     {
-        $dir = empty($dir) ? $this->workingDir : $dir;
-
-        if (!$this->files->isDirectory($dir)) {
-            $this->files->makeDirectory($dir, 0777, true);
+        if (!$this->filesystem->isDirectory($directory)) {
+            $this->filesystem->makeDirectory($directory, self::DIRECTORY_READY_MODE, true);
         }
 
-        return $this->files->isWritable($dir);
+        return $this->filesystem->isWritable($directory);
+    }
+
+    protected function setExecutionStartTime(): void
+    {
+        $this->startTime = microtime(true);
+    }
+
+    /**
+     * Get seconds since a micro-time start-time.
+     *
+     * @param float $startTime start time in microseconds
+     *
+     * @return string seconds since, to 2 decimal places
+     */
+    private function secondsSince(float $startTime): string
+    {
+        $duration = microtime(true) - $startTime;
+        $hours = (int)($duration / 60 / 60);
+        $minutes = (int)($duration / 60) - $hours * 60;
+        $seconds = $duration - $hours * 60 * 60 - $minutes * 60;
+
+        return number_format((float)$seconds, 2, '.', '');
     }
 }

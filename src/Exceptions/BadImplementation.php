@@ -1,12 +1,12 @@
 <?php
 
-namespace ReliQArts\Docweaver\Exceptions;
+declare(strict_types=1);
 
-use Exception;
+namespace ReliQArts\Docweaver\Exceptions;
 
 /**
  * {@inheritdoc}
  */
-class BadImplementation extends Exception
+final class BadImplementation extends Exception
 {
 }

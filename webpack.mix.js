@@ -41,5 +41,5 @@ mix.webpackConfig({
 
 // start mixing:
 mix
-    .js('resources/assets/js/docweaver.js', assetFolders.scripts)
-    .sass('resources/assets/sass/docweaver.scss', assetFolders.styles)
+    .js('resources/js/docweaver.js', assetFolders.scripts)
+    .sass('resources/sass/docweaver.scss', assetFolders.styles);

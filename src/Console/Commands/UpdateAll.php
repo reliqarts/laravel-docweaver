@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ReliQArts\Docweaver\Console\Commands;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use ReliQArts\Docweaver\Services\Publisher;
+use ReliQArts\Docweaver\Contracts\Documentation\Publisher;
 
 class UpdateAll extends Command
 {
@@ -25,12 +27,14 @@ class UpdateAll extends Command
     protected $description = 'Update documentation for all products';
 
     /**
-     * Publisher instance.
+     * @var Publisher
      */
     protected $publisher;
 
     /**
      * Create a new command instance.
+     *
+     * @param Publisher $publisher
      */
     public function __construct(Publisher $publisher)
     {
@@ -41,33 +45,35 @@ class UpdateAll extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $skipConfirmation = $this->option('y');
+        $confirmationMessage = 'This command will attempt to update documentation for all products.'
+            . "\nPlease ensure your internet connection is stable. Ready?";
 
-        $this->comment(PHP_EOL . "<info>♣♣♣</info> Docweaver Publisher \nHelp is here, try: php artisan docweaver:update-all --help");
+        $this->comment(PHP_EOL
+            . "<info>♣♣♣</info> Docweaver DocumentationPublisher \n"
+            . 'Help is here, try: php artisan docweaver:update-all --help');
 
-        if ($skipConfirmation || $this->confirm("This command will attempt to update documentation for all products. \nPlease ensure your internet connection is stable. Ready?")) {
+        if ($skipConfirmation || $this->confirm($confirmationMessage)) {
             $this->info("Updating products.\nT: " . Carbon::now()->toCookieString() . "\n----------");
 
-            // Seek
-            $update = $this->publisher->updateAll($this);
+            $result = $this->publisher->updateAll($this);
 
-            if ($update->success) {
+            if ($result->isSuccess()) {
                 $this->info(PHP_EOL . '----------');
-                $this->comment("<info>✔</info> Done. {$update->message}");
+                $this->comment("<info>✔</info> Done. {$result->getMessage()}");
 
                 // Display results
                 $this->line('');
                 $headers = ['Time', 'Products', 'Updated'];
-                $data = [[$update->extra->executionTime, $update->extra->products, $update->extra->productsUpdated]];
-                $this->table($headers, $data);
+                $data = $result->getData();
+                $rows = [[$data->executionTime, count($data->products), count($data->productsUpdated)]];
+                $this->table($headers, $rows);
                 $this->line(PHP_EOL);
             } else {
-                $this->line(PHP_EOL . "<error>✘</error> {$update->error}");
+                $this->line(PHP_EOL . "<error>✘</error> {$result->getError()}");
             }
         }
     }

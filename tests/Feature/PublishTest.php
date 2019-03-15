@@ -1,28 +1,51 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ReliQArts\Docweaver\Tests\Feature;
 
-use Artisan;
-use DocweaverConfig;
-use ReliQArts\Docweaver\Tests\TestCase as TestCase;
+use Illuminate\Support\Facades\Artisan;
 
 /**
- * @internal
  * @coversNothing
+ *
+ * @internal
  */
 final class PublishTest extends TestCase
 {
     /**
-     * Test the ability to publish documentation.
+     * @var array
      */
-    public function testPublishDoc()
+    private $publishedProducts;
+
+    protected function setUp(): void
     {
-        $routeConfig = DocweaverConfig::getRouteConfig();
-        $docIndex = $routeConfig['prefix'];
-        $productName = 'Docweaver';
+        parent::setUp();
+
+        $this->publishedProducts = [];
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removePublishedDocs();
+
+        parent::tearDown();
+    }
+
+    /**
+     * Test the ability to publish documentation.
+     *
+     * @covers \ReliQArts\Docweaver\Console\Commands\Publish
+     * @covers \ReliQArts\Docweaver\Services\Documentation\Publisher::publish
+     * @large
+     */
+    public function testPublishDocumentation()
+    {
+        $docIndex = $this->configProvider->getRoutePrefix();
+        $productName = 'Product 450';
 
         // publish Docweaver docs
-        $exitCode = Artisan::call('docweaver:publish', [
+        Artisan::call('docweaver:publish', [
             'product' => $productName,
             'source' => 'https://github.com/reliqarts/docweaver-docs.git',
             '--y' => true,
@@ -33,11 +56,21 @@ final class PublishTest extends TestCase
             ->see($productName)
             ->see('master');
 
-        // remove Docweaver docs directory
-        $this->assertTrue(
-            $this->files->deleteDirectory(
-                realpath($this->app->basePath("/tests/resources/docs/${productName}"))
-            )
-        );
+        $this->publishedProducts[] = $productName;
+    }
+
+    /**
+     * Remove published documentation folders.
+     */
+    private function removePublishedDocs(): void
+    {
+        $documentationDirectory = $this->configProvider->getDocumentationDirectory();
+
+        foreach ($this->publishedProducts as $productName) {
+            $directory = base_path(
+                sprintf('%s/%s', $documentationDirectory, strtolower($productName))
+            );
+            $this->filesystem->deleteDirectory($directory);
+        }
     }
 }

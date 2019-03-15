@@ -1,38 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ReliQArts\Docweaver\Tests\Feature;
 
-use DocweaverConfig;
-use ReliQArts\Docweaver\Tests\TestCase as TestCase;
-
 /**
+ * @coversDefaultClass \ReliQArts\Docweaver\Http\Controllers\DocumentationController
+ *
  * @internal
- * @coversNothing
  */
 final class AvailabilityTest extends TestCase
 {
     /**
      * Ensure views have required data.
+     *
+     * @covers ::__construct
+     * @covers ::index
+     * @small
      */
     public function testViewData()
     {
-        $routeConfig = DocweaverConfig::getRouteConfig();
-        $docIndex = $routeConfig['prefix'];
+        $docIndex = $this->configProvider->getRoutePrefix();
 
         $this->visit($docIndex)
-            ->assertViewHas('viewTemplateInfo');
-
-        $this->visit($docIndex)
-            ->assertViewHas('viewTemplateInfo');
+            ->assertViewHas('docweaverConfigProvider');
     }
 
     /**
      * Ensure project(s) are visible and accessible via UI.
+     *
+     * @covers ::__construct
+     * @covers ::productIndex
+     * @covers ::show
+     * @small
      */
     public function testProjectAvailability()
     {
-        $routeConfig = DocweaverConfig::getRouteConfig();
-        $docIndex = $routeConfig['prefix'];
+        $docIndex = $this->configProvider->getRoutePrefix();
 
         $this->visit($docIndex)
             ->see('Sandy')

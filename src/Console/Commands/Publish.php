@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ReliQArts\Docweaver\Console\Commands;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use ReliQArts\Docweaver\Services\Publisher;
+use ReliQArts\Docweaver\Contracts\Documentation\Publisher;
+use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
 
 class Publish extends Command
 {
@@ -27,12 +30,14 @@ class Publish extends Command
     protected $description = 'Publish documentation for product';
 
     /**
-     * Publisher instance.
+     * @var Publisher
      */
     protected $publisher;
 
     /**
      * Create a new command instance.
+     *
+     * @param Publisher $publisher
      */
     public function __construct(Publisher $publisher)
     {
@@ -44,38 +49,47 @@ class Publish extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @throws InvalidDirectory
      */
-    public function handle()
+    public function handle(): void
     {
         $productName = $this->argument('product');
         $productSource = $this->argument('source');
         $skipConfirmation = $this->option('y');
+        $confirmationMessage = sprintf(
+            "This command will attempt to pull documentation for product (%s) from %s}. \n"
+            . 'Please ensure your internet connection is stable. Ready?',
+            $productName,
+            $productSource
+        );
 
-        $this->comment(PHP_EOL . "<info>♣♣♣</info> Docweaver Publisher \nHelp is here, try: php artisan docweaver:publish --help");
+        $this->comment(PHP_EOL
+            . "<info>♣♣♣</info> Docweaver DocumentationPublisher \n"
+            . 'Help is here, try: php artisan docweaver:publish --help');
 
-        if ($skipConfirmation || $this->confirm("This command will attempt to pull documentation for product ({$productName}) from {$productSource}. \nPlease ensure your internet connection is stable. Ready?")) {
+        if ($skipConfirmation || $this->confirm($confirmationMessage)) {
             $this->info("Publishing {$productName}.\nT: " . Carbon::now()->toCookieString() . "\n----------");
 
-            // Seek
-            $publish = $this->publisher->publish($productName, $productSource, $this);
-            if ($publish->success) {
+            $result = $this->publisher->publish($productName, $productSource, $this);
+
+            if ($result->isSuccess()) {
                 $this->info(PHP_EOL . '----------');
-                $this->comment("<info>✔</info> Done. {$publish->message}");
+                $this->comment("<info>✔</info> Done. {$result->getMessage()}");
 
                 // Display results
                 $this->line('');
                 $headers = ['Time', 'Versions', 'Published', 'Updated'];
-                $data = [[
-                    $publish->extra->executionTime,
-                    $publish->extra->versions,
-                    $publish->extra->versionsPublished,
-                    $publish->extra->versionsUpdated,
+                $data = $result->getData();
+                $rows = [[
+                    $data->executionTime,
+                    count($data->versions),
+                    count($data->versionsPublished),
+                    count($data->versionsUpdated),
                 ]];
-                $this->table($headers, $data);
+                $this->table($headers, $rows);
                 $this->line(PHP_EOL);
             } else {
-                $this->line(PHP_EOL . "<error>✘</error> {$publish->error}");
+                $this->line(PHP_EOL . "<error>✘</error> {$result->getError()}");
             }
         }
     }

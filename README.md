@@ -5,11 +5,13 @@ A simple Laravel 5.x product documentation package.
 Docweaver is suitable for product documentation and/or knowledge bases. Converts folder(s) of .md files into full-bread complete documentation. Docweaver is inspired by Laravel's very own documentation.
 
 [![Built For Laravel](https://img.shields.io/badge/built%20for-laravel-red.svg?style=flat-square)](http://laravel.com)
-[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/reliqarts/docweaver.svg?style=flat-square)](https://circleci.com/gh/reliqarts/docweaver)
-[![Scrutinizer](https://img.shields.io/scrutinizer/g/reliqarts/docweaver.svg?style=flat-square)](https://scrutinizer-ci.com/g/reliqarts/docweaver/)
+[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/reliqarts/laravel-docweaver/master.svg?style=flat-square)](https://circleci.com/gh/reliqarts/laravel-docweaver/tree/master)
+[![Scrutinizer](https://img.shields.io/scrutinizer/g/reliqarts/laravel-docweaver.svg?style=flat-square)](https://scrutinizer-ci.com/g/reliqarts/laravel-docweaver/)
+[![Codecov](https://img.shields.io/codecov/c/github/reliqarts/laravel-docweaver.svg?style=flat-square)](https://codecov.io/gh/reliqarts/laravel-docweaver)
 [![License](https://poser.pugx.org/reliqarts/docweaver/license?format=flat-square)](https://packagist.org/packages/reliqarts/docweaver)
 [![Latest Stable Version](https://poser.pugx.org/reliqarts/docweaver/version?format=flat-square)](https://packagist.org/packages/reliqarts/docweaver)
 [![Latest Unstable Version](https://poser.pugx.org/reliqarts/docweaver/v/unstable?format=flat-square)](//packagist.org/packages/reliqarts/docweaver)
+[![check it out!](https://img.shields.io/badge/read-the%20docs-blue.svg?style=flat-square)](http://docweaver.reliqarts.com) 
 
 &nbsp;
 
@@ -18,7 +20,7 @@ Docweaver is suitable for product documentation and/or knowledge bases. Converts
 Docweaver provides the following features and more out of the box.
 
 - Multi-product support
-    - Doc Weaver supports multiple products out-the-box. Just create your product folders and drop in your documentation version directories.
+    - Docweaver supports multiple products out-the-box. Just create your product folders and drop in your documentation version directories.
 - Plug and play
     - Just install and configure and you're golden! *(approx. 2min)*
 
@@ -31,10 +33,10 @@ Install via composer; in console:
 composer require reliqarts/docweaver
 ``` 
 or require in *composer.json*:
-```js
+```json
 {
     "require": {
-        "reliqarts/docweaver": "^1.0"
+        "reliqarts/docweaver": "^2.0"
     }
 }
 ```
@@ -47,12 +49,12 @@ Once this has finished, you will need to add the service provider to the provide
 ReliQArts\Docweaver\DocweaverServiceProvider::class,
 ```
 
-Ensure that your applications public storage directory is linked and assessible via the browser.
+Ensure that your applications public storage directory is linked and accessible via the browser.
 
 ```bash 
 php artisan storage:link
 ```
-see: https://laravel.com/docs/5.5/filesystem
+see: https://laravel.com/docs/master/filesystem
 
 Finally, publish package resources and configuration:
 
@@ -64,8 +66,7 @@ You may opt to publish only configuration by using the `docweaver:config` tag:
 
 ```
 php artisan vendor:publish --provider="ReliQArts\Docweaver\DocweaverServiceProvider" --tag="docweaver:config"
-``` 
-You may publish migrations in a similar manner using the tag `migrations`.
+```
 
 ### Setup
 
@@ -87,7 +88,7 @@ The documentation directory is the place where you put your project documentatio
 
 Each project directory should contain seperate folders for each documented version. Each version must have at least two (2) markdown files, namely `documentation.md` and `installation.md`, which serve as the sidebar and initial documentation pages respectively.
 
-```bash
+```
 [doc dir]
     │
     └─── Project One

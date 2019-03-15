@@ -8,6 +8,7 @@ EOF;
 
 $finder = PhpCsFixer\Finder::create()
     ->exclude([
+        'build',
         'public',
         'resources',
     ])
@@ -29,6 +30,7 @@ $config = PhpCsFixer\Config::create()
         'combine_consecutive_unsets' => true,
         'comment_to_phpdoc' => true,
         'compact_nullable_typehint' => true,
+        'cast_spaces' => ['space' => 'none'],
         'concat_space' => ['spacing' => 'one'],
         'escape_implicit_backslashes' => true,
         'explicit_indirect_variable' => true,
@@ -77,8 +79,7 @@ $config = PhpCsFixer\Config::create()
         'string_line_ending' => true,
         'yoda_style' => false,
     ])
-    ->setFinder($finder)
-;
+    ->setFinder($finder);
 
 // special handling of fabbot.io service if it's using too old PHP CS Fixer version
 if (false !== getenv('FABBOT_IO')) {

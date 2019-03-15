@@ -1,11 +1,14 @@
+/build
 /node_modules
 /public/mix-manifest.json
 /tests/resources/docs/*
 !/tests/resources/docs/Sand/
 /storage
 /vendor
+!.gitkeep
 npm-debug.log
 yarn-error.log
 .DS_Store
 .vscode
+.idea
 *cache
