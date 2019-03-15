@@ -33,10 +33,10 @@ Install via composer; in console:
 composer require reliqarts/docweaver
 ``` 
 or require in *composer.json*:
-```js
+```json
 {
     "require": {
-        "reliqarts/docweaver": "^1.0"
+        "reliqarts/docweaver": "^2.0"
     }
 }
 ```
@@ -49,12 +49,12 @@ Once this has finished, you will need to add the service provider to the provide
 ReliQArts\Docweaver\DocweaverServiceProvider::class,
 ```
 
-Ensure that your applications public storage directory is linked and assessible via the browser.
+Ensure that your applications public storage directory is linked and accessible via the browser.
 
 ```bash 
 php artisan storage:link
 ```
-see: https://laravel.com/docs/5.5/filesystem
+see: https://laravel.com/docs/master/filesystem
 
 Finally, publish package resources and configuration:
 
@@ -88,7 +88,7 @@ The documentation directory is the place where you put your project documentatio
 
 Each project directory should contain seperate folders for each documented version. Each version must have at least two (2) markdown files, namely `documentation.md` and `installation.md`, which serve as the sidebar and initial documentation pages respectively.
 
-```bash
+```
 [doc dir]
     │
     └─── Project One
