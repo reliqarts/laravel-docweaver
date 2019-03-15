@@ -74,15 +74,15 @@ Set the desired environment variables so the package knows your image model, con
 
 Example environment config:
 ```
-DOC_WEAVER_ROUTE_PREFIX=docs
-DOC_WEAVER_DIR=resources/docs
+DOCWEAVER_ROUTE_PREFIX=docs
+DOCWEAVER_DIR=resources/docs
 ```
 
 These variables, and more are explained within the [config](https://github.com/ReliQArts/laravel-docweaver/blob/master/src/config/config.php) file.
 
 ### Documentation Directory
 
-The documentation directory is the place where you put your project documentation directories. It may be changed with the config key `docweaver.storage.dir` or the environment variable `DOC_WEAVER_DIR`. The default documentation directory is `resources/docs`.
+The documentation directory is the place where you put your project documentation directories. It may be changed with the config key `docweaver.storage.dir` or the environment variable `DOCWEAVER_DIR`. The default documentation directory is `resources/docs`.
 
 #### Structure
 
