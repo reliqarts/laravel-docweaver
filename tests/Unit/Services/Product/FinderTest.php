@@ -82,9 +82,7 @@ final class FinderTest extends TestCase
             $product->getKey()->willReturn($key);
 
             if (stripos($key, 'invalid') !== false) {
-                /**
-                 * @var InvalidDirectory|\Exception $exception
-                 */
+                /** @var \Exception|InvalidDirectory $exception */
                 $exception = InvalidDirectory::forDirectory($productDirectory);
                 $this->productFactory->create($productDirectory)
                     ->shouldBeCalledTimes(1)->willThrow($exception);

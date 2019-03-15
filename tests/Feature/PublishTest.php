@@ -39,7 +39,7 @@ final class PublishTest extends TestCase
      * @covers \ReliQArts\Docweaver\Services\Documentation\Publisher::publish
      * @large
      */
-    public function testPublishDoc()
+    public function testPublishDocumentation()
     {
         $docIndex = $this->configProvider->getRoutePrefix();
         $productName = 'Product 450';
