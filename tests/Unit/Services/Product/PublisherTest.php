@@ -82,6 +82,7 @@ final class PublisherTest extends TestCase
         $source = 'http://product.source';
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $this->product->getName()->willReturn($productName);
         $product = $this->product->reveal();
         $tags = ['1.0', '1.1', '3.7', '3.8'];
@@ -120,6 +121,7 @@ final class PublisherTest extends TestCase
         $source = 'http://product.source';
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $this->product->getName()->willReturn($productName);
         $product = $this->product->reveal();
         $tags = ['1.0', '1.1'];
@@ -156,6 +158,7 @@ final class PublisherTest extends TestCase
         $source = 'http://product.source';
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $this->product->getName()->willReturn($productName);
         $product = $this->product->reveal();
         $tags = ['1.0', '2.0'];
@@ -197,6 +200,7 @@ final class PublisherTest extends TestCase
         $source = 'http://product.source';
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $this->product->getName()->willReturn($productName);
         $product = $this->product->reveal();
         $tag = '1.1';
@@ -208,7 +212,7 @@ final class PublisherTest extends TestCase
         $this->filesystem->isDirectory($masterDirectory)->shouldBeCalledTimes(1)->willReturn(false);
         $this->vcsCommandRunner->clone($source, Product::VERSION_MASTER, $productDirectory)->shouldBeCalledTimes(1);
         $this->product->publishAssets(Product::VERSION_MASTER)->shouldBeCalledTimes(1);
-        $this->vcsCommandRunner->getTags($masterDirectory)->shouldBeCalledTimes(1)->willReturn($tags);
+        $this->vcsCommandRunner->listTags($masterDirectory)->shouldBeCalledTimes(1)->willReturn($tags);
         $this->filesystem->isDirectory($tagDirectory)->shouldBeCalledTimes(1)->willReturn(false);
         $this->vcsCommandRunner->clone($source, $tag, $productDirectory)
             ->shouldBeCalledTimes(1)->willThrow(ProcessFailedException::class);
@@ -243,6 +247,7 @@ final class PublisherTest extends TestCase
         $source = 'http://product.source';
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $this->product->getName()->willReturn($productName);
         $product = $this->product->reveal();
         $tags = ['1.0'];
@@ -275,6 +280,7 @@ final class PublisherTest extends TestCase
         $source = 'http://product.source';
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $product = $this->product->reveal();
 
         $this->filesystem->isDirectory($productDirectory)->shouldBeCalledTimes(1)->willReturn(true);
@@ -282,7 +288,7 @@ final class PublisherTest extends TestCase
         $this->filesystem->isDirectory($masterDirectory)->shouldNotBeCalled();
         $this->vcsCommandRunner->clone($source, Product::VERSION_MASTER, $productDirectory)->shouldNotBeCalled();
         $this->product->publishAssets(Product::VERSION_MASTER)->shouldNotBeCalled();
-        $this->vcsCommandRunner->getTags($masterDirectory)->shouldNotBeCalled();
+        $this->vcsCommandRunner->listTags($masterDirectory)->shouldNotBeCalled();
 
         $result = $this->subject->publish($product, $source);
         $this->assertInstanceOf(Result::class, $result);
@@ -312,6 +318,7 @@ final class PublisherTest extends TestCase
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getName()->willReturn($productName);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $product = $this->product->reveal();
 
         $this->filesystem->isDirectory($productDirectory)->shouldBeCalledTimes(1)->willReturn(true);
@@ -320,13 +327,15 @@ final class PublisherTest extends TestCase
         $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, Product::VERSION_MASTER))
             ->shouldBeCalledTimes(1)->willThrow(ProcessFailedException::class);
         $this->product->publishAssets(Product::VERSION_MASTER)->shouldNotBeCalled();
-        $this->vcsCommandRunner->getTags($masterDirectory)->shouldNotBeCalled();
+        $this->vcsCommandRunner->listTags($masterDirectory)->shouldNotBeCalled();
 
         $this->subject->publish($product, $source);
     }
 
     /**
      * @covers ::__construct
+     * @covers ::getProductSource
+     * @covers ::listAvailableProductTags
      * @covers ::update
      * @covers ::updateVersion
      * @small
@@ -336,8 +345,10 @@ final class PublisherTest extends TestCase
         $productName = 'Product 28';
         $productVersions = ['master' => 'Master', '1.0' => '1.0'];
         $productDirectory = 'product 28';
+        $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getName()->willReturn($productName);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $this->product->getVersions()->willReturn($productVersions);
         $product = $this->product->reveal();
 
@@ -366,8 +377,10 @@ final class PublisherTest extends TestCase
         $productName = 'Product 29';
         $productVersions = ['master' => 'Master', '1.0' => '1.0'];
         $productDirectory = 'product 29';
+        $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getName()->willReturn($productName);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $this->product->getVersions()->willReturn($productVersions);
         $product = $this->product->reveal();
 
@@ -425,7 +438,7 @@ final class PublisherTest extends TestCase
         array $tagExistenceMap = []
     ): void {
         $masterDirectory = sprintf('%s/master', $productDirectory);
-        $this->vcsCommandRunner->getTags($masterDirectory)->shouldBeCalledTimes(1)->willReturn($tags);
+        $this->vcsCommandRunner->listTags($masterDirectory)->shouldBeCalledTimes(1)->willReturn($tags);
 
         foreach ($tags as $tag) {
             $tagExists = false;

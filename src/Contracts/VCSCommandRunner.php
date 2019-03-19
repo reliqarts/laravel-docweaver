@@ -29,5 +29,15 @@ interface VCSCommandRunner
      *
      * @return array
      */
-    public function getTags(string $workingDirectory): array;
+    public function listTags(string $workingDirectory): array;
+
+    /**
+     * @param string      $workingDirectory
+     * @param null|string $remoteName
+     *
+     * @throws ProcessFailedException
+     *
+     * @return string
+     */
+    public function getRemoteUrl(string $workingDirectory, ?string $remoteName = null): string;
 }

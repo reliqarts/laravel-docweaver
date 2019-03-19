@@ -55,7 +55,7 @@ final class Publisher extends BasePublisher implements PublisherContract
         $versionsPublished = [];
         $versionsUpdated = [];
         $productDirectory = $product->getDirectory();
-        $masterDirectory = sprintf('%s/master', $productDirectory);
+        $masterDirectory = $product->getMasterDirectory();
 
         $this->setExecutionStartTime();
 
@@ -98,29 +98,47 @@ final class Publisher extends BasePublisher implements PublisherContract
     public function update(Product $product): Result
     {
         $result = new Result();
-        $versions = $product->getVersions();
+        $publishedVersions = array_keys($product->getVersions());
+        $versions = [];
+        $versionsPublished = [];
         $versionsUpdated = [];
 
-        foreach (array_keys($versions) as $version) {
-            try {
+        try {
+            $availableTags = $this->listAvailableProductTags($product);
+            $source = $this->getProductSource($product);
+            $branches = array_filter($publishedVersions, function (string $version) use ($availableTags) {
+                return !in_array($version, $availableTags, true);
+            });
+            $unpublishedTags = array_filter($availableTags, function (string $tag) use ($publishedVersions) {
+                return !in_array($tag, $publishedVersions, true);
+            });
+            $versions = array_unique(array_merge($publishedVersions, $availableTags));
+            $versionsPublished = [];
+            $versionsUpdated = [];
+
+            foreach ($branches as $version) {
                 $this->updateVersion($product, $version);
                 $versionsUpdated[] = $version;
-            } catch (Exception $exception) {
-                // expected when version is a tag
-                // TODO: enhancement; determine whether version is tag in advance
-                $this->logger->info($exception->getMessage());
             }
+
+            $tagResult = $this->publishTags($product, $source, $unpublishedTags);
+            $tagData = $tagResult->getData();
+            $versionsPublished = array_merge($versionsPublished, $tagData->tagsPublished ?? []);
+        } catch (Exception | ProcessFailedException $exception) {
+            $this->logger->error($exception->getMessage(), [$exception]);
+
+            $result = $result->setError($exception->getMessage());
         }
 
         if ($result->isSuccess()) {
-            $result = $result->setMessage(sprintf('%s was successfully updated.', $product->getName()))
-                ->setData((object)[
-                    'versions' => $versions,
-                    'versionsUpdated' => $versionsUpdated,
-                ]);
+            $result = $result->setMessage(sprintf('%s was successfully updated.', $product->getName()));
         }
 
-        return $result;
+        return $result->setData((object)[
+            'versions' => $versions,
+            'versionsPublished' => $versionsPublished,
+            'versionsUpdated' => $versionsUpdated,
+        ]);
     }
 
     /**
@@ -160,7 +178,7 @@ final class Publisher extends BasePublisher implements PublisherContract
         } catch (ProcessFailedException $e) {
             throw new PublicationFailed(
                 sprintf(
-                    'Failed to update version `%s` of product `%s`. It may be a tag.',
+                    'Failed to update version `%s` of product `%s`.',
                     $version,
                     $product->getName()
                 )
@@ -175,17 +193,17 @@ final class Publisher extends BasePublisher implements PublisherContract
     /**
      * @param Product $product
      * @param string  $source
+     * @param array   $tags
      *
      * @return Result
      */
-    private function publishTags(Product $product, string $source): Result
+    private function publishTags(Product $product, string $source, array $tags = []): Result
     {
         $result = new Result();
-        $masterDirectory = sprintf('%s/%s', $product->getDirectory(), Product::VERSION_MASTER);
         $tagsPublished = [];
 
         try {
-            $tags = $this->vcsCommandRunner->getTags($masterDirectory);
+            $tags = empty($tags) ? $this->listAvailableProductTags($product) : $tags;
 
             foreach ($tags as $tag) {
                 $tagDirectory = sprintf('%s/%s', $product->getDirectory(), $tag);
@@ -226,5 +244,29 @@ final class Publisher extends BasePublisher implements PublisherContract
                 $this->logger->error($exception->getMessage());
             }
         }
+    }
+
+    /**
+     * @param Product $product
+     *
+     * @throws ProcessFailedException
+     *
+     * @return array
+     */
+    private function listAvailableProductTags(Product $product): array
+    {
+        return $this->vcsCommandRunner->listTags($product->getMasterDirectory());
+    }
+
+    /**
+     * @param Product $product
+     *
+     * @throws ProcessFailedException
+     *
+     * @return string
+     */
+    private function getProductSource(Product $product): string
+    {
+        return $this->vcsCommandRunner->getRemoteUrl($product->getMasterDirectory());
     }
 }

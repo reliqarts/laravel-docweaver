@@ -10,6 +10,8 @@ use Symfony\Component\Process\Process;
 
 final class GitCommandRunner implements VCSCommandRunner
 {
+    private const DEFAULT_REMOTE_NAME = 'origin';
+
     /**
      * @param string $source
      * @param string $branch
@@ -17,7 +19,9 @@ final class GitCommandRunner implements VCSCommandRunner
      */
     public function clone(string $source, string $branch, string $workingDirectory): void
     {
-        $clone = new Process(sprintf('git clone --branch %s "%s" %s', $branch, $source, $branch), $workingDirectory);
+        $command = ['git', 'clone', '--branch', $branch, sprintf('%s', $source), $branch];
+
+        $clone = new Process($command, $workingDirectory);
         $clone->mustRun();
     }
 
@@ -28,9 +32,11 @@ final class GitCommandRunner implements VCSCommandRunner
      *
      * @return array
      */
-    public function getTags(string $workingDirectory): array
+    public function listTags(string $workingDirectory): array
     {
-        $listTags = new Process('git tag -l', $workingDirectory);
+        $this->fetch($workingDirectory);
+
+        $listTags = new Process(['git', 'tag', '-l'], $workingDirectory);
         $listTags->mustRun();
 
         if ($splitTags = preg_split("/[\n\r]/", $listTags->getOutput())) {
@@ -47,7 +53,35 @@ final class GitCommandRunner implements VCSCommandRunner
      */
     public function pull(string $workingDirectory): void
     {
-        $pull = new Process('git pull', $workingDirectory);
+        $pull = new Process(['git', 'pull'], $workingDirectory);
+        $pull->mustRun();
+    }
+
+    /**
+     * @param string      $workingDirectory
+     * @param null|string $remoteName
+     *
+     * @throws ProcessFailedException
+     *
+     * @return string
+     */
+    public function getRemoteUrl(string $workingDirectory, ?string $remoteName = null): string
+    {
+        $remoteName = $remoteName ?? self::DEFAULT_REMOTE_NAME;
+        $command = ['git', 'config', '--get', sprintf('remote.%s.url', $remoteName)];
+
+        $getUrl = new Process($command, $workingDirectory);
+        $getUrl->mustRun();
+
+        return trim($getUrl->getOutput());
+    }
+
+    /**
+     * @param string $workingDirectory
+     */
+    private function fetch(string $workingDirectory): void
+    {
+        $pull = new Process(['git', 'fetch'], $workingDirectory);
         $pull->mustRun();
     }
 }
