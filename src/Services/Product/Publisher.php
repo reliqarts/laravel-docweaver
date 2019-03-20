@@ -99,36 +99,28 @@ final class Publisher extends BasePublisher implements PublisherContract
     {
         $result = new Result();
         $publishedVersions = array_keys($product->getVersions());
-        $versions = [];
+        $availableTags = $this->listAvailableProductTags($product);
+        $source = $this->getProductSource($product);
+        $branches = array_diff($publishedVersions, $availableTags);
+        $unpublishedTags = array_diff($availableTags, $publishedVersions);
+        $versions = array_unique(array_merge($publishedVersions, $availableTags));
         $versionsPublished = [];
         $versionsUpdated = [];
 
-        try {
-            $availableTags = $this->listAvailableProductTags($product);
-            $source = $this->getProductSource($product);
-            $branches = array_filter($publishedVersions, function (string $version) use ($availableTags) {
-                return !in_array($version, $availableTags, true);
-            });
-            $unpublishedTags = array_filter($availableTags, function (string $tag) use ($publishedVersions) {
-                return !in_array($tag, $publishedVersions, true);
-            });
-            $versions = array_unique(array_merge($publishedVersions, $availableTags));
-            $versionsPublished = [];
-            $versionsUpdated = [];
-
-            foreach ($branches as $version) {
+        foreach ($branches as $version) {
+            try {
                 $this->updateVersion($product, $version);
                 $versionsUpdated[] = $version;
+            } catch (Exception $exception) {
+                $this->logger->info($exception->getMessage(), [$exception]);
+
+                $result = $result->addMessage($exception->getMessage());
             }
-
-            $tagResult = $this->publishTags($product, $source, $unpublishedTags);
-            $tagData = $tagResult->getData();
-            $versionsPublished = array_merge($versionsPublished, $tagData->tagsPublished ?? []);
-        } catch (Exception | ProcessFailedException $exception) {
-            $this->logger->error($exception->getMessage(), [$exception]);
-
-            $result = $result->setError($exception->getMessage());
         }
+
+        $tagResult = $this->publishTags($product, $source, $unpublishedTags);
+        $tagData = $tagResult->getData();
+        $versionsPublished = array_merge($versionsPublished, $tagData->tagsPublished ?? []);
 
         if ($result->isSuccess()) {
             $result = $result->setMessage(sprintf('%s was successfully updated.', $product->getName()));
