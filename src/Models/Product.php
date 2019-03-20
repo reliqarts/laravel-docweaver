@@ -296,6 +296,14 @@ class Product implements Arrayable, Jsonable
     }
 
     /**
+     * @return string
+     */
+    public function getMasterDirectory(): string
+    {
+        return sprintf('%s/%s', $this->getDirectory(), Product::VERSION_MASTER);
+    }
+
+    /**
      * Convert url string to asset url relative to current product.
      *
      * @param string $url

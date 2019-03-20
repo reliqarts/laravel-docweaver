@@ -82,6 +82,7 @@ final class PublisherTest extends TestCase
         $source = 'http://product.source';
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $this->product->getName()->willReturn($productName);
         $product = $this->product->reveal();
         $tags = ['1.0', '1.1', '3.7', '3.8'];
@@ -120,6 +121,7 @@ final class PublisherTest extends TestCase
         $source = 'http://product.source';
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $this->product->getName()->willReturn($productName);
         $product = $this->product->reveal();
         $tags = ['1.0', '1.1'];
@@ -156,6 +158,7 @@ final class PublisherTest extends TestCase
         $source = 'http://product.source';
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $this->product->getName()->willReturn($productName);
         $product = $this->product->reveal();
         $tags = ['1.0', '2.0'];
@@ -197,6 +200,7 @@ final class PublisherTest extends TestCase
         $source = 'http://product.source';
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $this->product->getName()->willReturn($productName);
         $product = $this->product->reveal();
         $tag = '1.1';
@@ -208,7 +212,7 @@ final class PublisherTest extends TestCase
         $this->filesystem->isDirectory($masterDirectory)->shouldBeCalledTimes(1)->willReturn(false);
         $this->vcsCommandRunner->clone($source, Product::VERSION_MASTER, $productDirectory)->shouldBeCalledTimes(1);
         $this->product->publishAssets(Product::VERSION_MASTER)->shouldBeCalledTimes(1);
-        $this->vcsCommandRunner->getTags($masterDirectory)->shouldBeCalledTimes(1)->willReturn($tags);
+        $this->vcsCommandRunner->listTags($masterDirectory)->shouldBeCalledTimes(1)->willReturn($tags);
         $this->filesystem->isDirectory($tagDirectory)->shouldBeCalledTimes(1)->willReturn(false);
         $this->vcsCommandRunner->clone($source, $tag, $productDirectory)
             ->shouldBeCalledTimes(1)->willThrow(ProcessFailedException::class);
@@ -243,6 +247,7 @@ final class PublisherTest extends TestCase
         $source = 'http://product.source';
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $this->product->getName()->willReturn($productName);
         $product = $this->product->reveal();
         $tags = ['1.0'];
@@ -275,6 +280,7 @@ final class PublisherTest extends TestCase
         $source = 'http://product.source';
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $product = $this->product->reveal();
 
         $this->filesystem->isDirectory($productDirectory)->shouldBeCalledTimes(1)->willReturn(true);
@@ -282,7 +288,7 @@ final class PublisherTest extends TestCase
         $this->filesystem->isDirectory($masterDirectory)->shouldNotBeCalled();
         $this->vcsCommandRunner->clone($source, Product::VERSION_MASTER, $productDirectory)->shouldNotBeCalled();
         $this->product->publishAssets(Product::VERSION_MASTER)->shouldNotBeCalled();
-        $this->vcsCommandRunner->getTags($masterDirectory)->shouldNotBeCalled();
+        $this->vcsCommandRunner->listTags($masterDirectory)->shouldNotBeCalled();
 
         $result = $this->subject->publish($product, $source);
         $this->assertInstanceOf(Result::class, $result);
@@ -312,6 +318,7 @@ final class PublisherTest extends TestCase
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $this->product->getName()->willReturn($productName);
         $this->product->getDirectory()->willReturn($productDirectory);
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
         $product = $this->product->reveal();
 
         $this->filesystem->isDirectory($productDirectory)->shouldBeCalledTimes(1)->willReturn(true);
@@ -320,13 +327,17 @@ final class PublisherTest extends TestCase
         $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, Product::VERSION_MASTER))
             ->shouldBeCalledTimes(1)->willThrow(ProcessFailedException::class);
         $this->product->publishAssets(Product::VERSION_MASTER)->shouldNotBeCalled();
-        $this->vcsCommandRunner->getTags($masterDirectory)->shouldNotBeCalled();
+        $this->vcsCommandRunner->listTags($masterDirectory)->shouldNotBeCalled();
 
         $this->subject->publish($product, $source);
     }
 
     /**
      * @covers ::__construct
+     * @covers ::getProductSource
+     * @covers ::listAvailableProductTags
+     * @covers ::publishTags
+     * @covers ::publishVersion
      * @covers ::update
      * @covers ::updateVersion
      * @small
@@ -334,29 +345,57 @@ final class PublisherTest extends TestCase
     public function testUpdate(): void
     {
         $productName = 'Product 28';
-        $productVersions = ['master' => 'Master', '1.0' => '1.0'];
+        $productSource = 'product.src';
+        $publishedVersions = ['master' => 'Master', '1.0' => '1.0'];
+        $publishedVersionKeys = array_keys($publishedVersions);
+        $availableTags = ['1.0', '1.1', '2.0'];
+        $branches = array_diff($publishedVersionKeys, $availableTags);
+        $unpublishedTags = array_diff($availableTags, $publishedVersionKeys);
         $productDirectory = 'product 28';
+        $masterDirectory = sprintf('%s/master', $productDirectory);
+
+        $this->vcsCommandRunner->listTags($masterDirectory)
+            ->shouldBeCalledTimes(1)->willReturn($availableTags);
+        $this->vcsCommandRunner->getRemoteUrl($masterDirectory)
+            ->shouldBeCalledTimes(1)->willReturn($productSource);
         $this->product->getName()->willReturn($productName);
         $this->product->getDirectory()->willReturn($productDirectory);
-        $this->product->getVersions()->willReturn($productVersions);
-        $product = $this->product->reveal();
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
+        $this->product->getVersions()->willReturn($publishedVersions);
 
-        foreach ($productVersions as $versionTag => $version) {
-            $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, $versionTag))->shouldBeCalledTimes(1);
-            $this->product->publishAssets($versionTag)->shouldBeCalledTimes(1);
+        foreach ($branches as $version) {
+            $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, $version))->shouldBeCalledTimes(1);
+            $this->product->publishAssets($version)->shouldBeCalledTimes(1);
         }
 
-        $result = $this->subject->update($product);
+        foreach ($unpublishedTags as $tag) {
+            $tagDirectory = sprintf('%s/%s', $productDirectory, $tag);
+            $this->filesystem->isDirectory($tagDirectory)
+                ->shouldBeCalledTimes(1)->willReturn(false);
+            $this->vcsCommandRunner->clone($productSource, $tag, $productDirectory)
+                ->shouldBeCalledTimes(1);
+            $this->product->publishAssets($tag)->shouldBeCalledTimes(1);
+        }
+
+        $result = $this->subject->update($this->product->reveal());
         $this->assertInstanceOf(Result::class, $result);
         $this->assertTrue($result->isSuccess());
 
-        foreach ($productVersions as $versionTag => $version) {
-            $this->assertContains($versionTag, $result->getData()->versionsUpdated);
+        foreach ($branches as $version) {
+            $this->assertContains($version, $result->getData()->versionsUpdated);
+        }
+
+        foreach ($unpublishedTags as $version) {
+            $this->assertContains($version, $result->getData()->versionsPublished);
         }
     }
 
     /**
      * @covers ::__construct
+     * @covers ::getProductSource
+     * @covers ::listAvailableProductTags
+     * @covers ::publishTags
+     * @covers ::publishVersion
      * @covers ::update
      * @covers ::updateVersion
      * @small
@@ -364,30 +403,34 @@ final class PublisherTest extends TestCase
     public function testUpdateWhenAVersionUpdateFails(): void
     {
         $productName = 'Product 29';
-        $productVersions = ['master' => 'Master', '1.0' => '1.0'];
+        $productSource = 'product.src';
+        $publishedVersions = ['master' => 'Master', '1.0' => '1.0'];
+        $availableTags = ['1.0', '2.0'];
         $productDirectory = 'product 29';
+        $masterDirectory = sprintf('%s/master', $productDirectory);
+        $expectedErrorMessage = sprintf('Failed to update version `%s` of product `%s`.', 'master', $productName);
+
         $this->product->getName()->willReturn($productName);
         $this->product->getDirectory()->willReturn($productDirectory);
-        $this->product->getVersions()->willReturn($productVersions);
-        $product = $this->product->reveal();
-
-        $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, 'master'))->shouldBeCalledTimes(1);
-        $this->product->publishAssets('master')->shouldBeCalledTimes(1);
-        $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, '1.0'))
+        $this->product->getMasterDirectory()->willReturn($masterDirectory);
+        $this->product->getVersions()->willReturn($publishedVersions);
+        $this->vcsCommandRunner->listTags($masterDirectory)
+            ->shouldBeCalledTimes(1)->willReturn($availableTags);
+        $this->vcsCommandRunner->getRemoteUrl($masterDirectory)
+            ->shouldBeCalledTimes(1)->willReturn($productSource);
+        $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, 'master'))
             ->shouldBeCalledTimes(1)->willThrow(ProcessFailedException::class);
-        $this->product->publishAssets('1.0')->shouldNotBeCalled();
-        $this->logger->info(
-            sprintf('Failed to update version `%s` of product `%s`. It may be a tag.', '1.0', $productName)
-        )->shouldBeCalledTimes(1);
+        $this->product->publishAssets('master')->shouldNotBeCalled();
+        $this->logger->info($expectedErrorMessage, Argument::type('array'))->shouldBeCalledTimes(1);
+        $this->vcsCommandRunner->clone($productSource, '2.0', $productDirectory)->shouldBeCalledTimes(1);
+        $this->product->publishAssets('2.0')->shouldBeCalledTimes(1);
 
-        $result = $this->subject->update($product);
+        $result = $this->subject->update($this->product->reveal());
         $this->assertInstanceOf(Result::class, $result);
         $this->assertTrue($result->isSuccess());
-        $this->assertContains('master', $result->getData()->versionsUpdated);
-
-        foreach ($productVersions as $versionTag => $version) {
-            $this->assertContains($version, $result->getData()->versions);
-        }
+        $this->assertNotContains('master', $result->getData()->versionsUpdated);
+        $this->assertContains('2.0', $result->getData()->versionsPublished);
+        $this->assertNotContains('1.0', $result->getData()->versionsPublished);
     }
 
     /**
@@ -425,7 +468,7 @@ final class PublisherTest extends TestCase
         array $tagExistenceMap = []
     ): void {
         $masterDirectory = sprintf('%s/master', $productDirectory);
-        $this->vcsCommandRunner->getTags($masterDirectory)->shouldBeCalledTimes(1)->willReturn($tags);
+        $this->vcsCommandRunner->listTags($masterDirectory)->shouldBeCalledTimes(1)->willReturn($tags);
 
         foreach ($tags as $tag) {
             $tagExists = false;

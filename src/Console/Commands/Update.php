@@ -72,9 +72,14 @@ class Update extends Command
 
                 // Display results
                 $this->line('');
-                $headers = ['Time', 'Versions', 'Updated'];
+                $headers = ['Time', 'Versions', 'Published', 'Updated'];
                 $data = $result->getData();
-                $rows = [[$data->executionTime, count($data->versions), count($data->versionsUpdated)]];
+                $rows = [[
+                    $data->executionTime,
+                    count($data->versions),
+                    count($data->versionsPublished),
+                    count($data->versionsUpdated),
+                ]];
                 $this->table($headers, $rows);
                 $this->line(PHP_EOL);
             } else {

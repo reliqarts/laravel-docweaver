@@ -66,7 +66,7 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
     }
 
     /**
-     * @covers ::getTags
+     * @covers ::listTags
      * @dataProvider        tagListProvider
      * @small
      * @preserveGlobalState disabled
@@ -86,9 +86,9 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
             ? array_filter(array_map('trim', preg_split("/[\n\r]/", $tagList)))
             : [];
 
-        $results = $this->subject->getTags($this->workingDirectory);
+        $results = $this->subject->listTags($this->workingDirectory);
 
-        $process->verifyInvokedMultipleTimes('mustRun', 1);
+        $process->verifyInvokedMultipleTimes('mustRun', 2);
         $process->verifyInvokedMultipleTimes('getOutput', 1);
         $pregSplit->verifyInvokedMultipleTimes(1);
 
