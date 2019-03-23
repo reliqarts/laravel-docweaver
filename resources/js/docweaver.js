@@ -8,7 +8,7 @@ require('./vendor/prism.js');
 // import core
 import Docweaver from './modules/core';
 
-$(function() {
+$(function () {
     // start
     new Docweaver;
 });

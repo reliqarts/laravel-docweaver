@@ -61,8 +61,8 @@ final class ServiceProvider extends BaseServiceProvider
      */
     public function register(): void
     {
-        $this->registerAliases();
-        $this->registerBindings();
+        $this->registerAliases()
+            ->registerBindings();
     }
 
     /**
@@ -152,8 +152,8 @@ final class ServiceProvider extends BaseServiceProvider
     }
 
     /**
-     * @return self
-     */
+ * @return self
+ */
     private function registerAliases(): self
     {
         $loader = AliasLoader::getInstance();
