@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Unit\Services\Documentation;
+namespace ReliqArts\Docweaver\Tests\Unit\Services\Documentation;
 
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\SimpleCache\InvalidArgumentException;
-use ReliQArts\Docweaver\Contracts\Documentation\Provider as ProviderContract;
-use ReliQArts\Docweaver\Contracts\MarkdownParser;
-use ReliQArts\Docweaver\Models\Product;
-use ReliQArts\Docweaver\Services\Documentation\Provider;
-use ReliQArts\Docweaver\Tests\Unit\TestCase;
+use ReliqArts\Docweaver\Contracts\Documentation\Provider as ProviderContract;
+use ReliqArts\Docweaver\Contracts\MarkdownParser;
+use ReliqArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Services\Documentation\Provider;
+use ReliqArts\Docweaver\Tests\Unit\TestCase;
 
 /**
  * Class ProviderTest.
  *
- * @coversDefaultClass \ReliQArts\Docweaver\Services\Documentation\Provider
+ * @coversDefaultClass \ReliqArts\Docweaver\Services\Documentation\Provider
  *
  * @internal
  */
@@ -82,7 +82,7 @@ final class ProviderTest extends TestCase
      */
     public function testExceptionIsThrownIfDocumentationDirectoryIsInvalid(): void
     {
-        $this->expectException(\ReliQArts\Docweaver\Exceptions\BadImplementation::class);
+        $this->expectException(\ReliqArts\Docweaver\Exceptions\BadImplementation::class);
         $this->expectExceptionMessage('Documentation resource directory `docs` does not exist.');
 
         $this->filesystem->isDirectory(base_path($this->documentationDirectory))->shouldBeCalled()->willReturn(false);

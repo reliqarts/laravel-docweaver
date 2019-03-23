@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Feature;
+namespace ReliqArts\Docweaver\Tests\Feature;
 
 /**
- * @coversDefaultClass \ReliQArts\Docweaver\Http\Controllers\DocumentationController
+ * @coversDefaultClass \ReliqArts\Docweaver\Http\Controllers\DocumentationController
  *
  * @internal
  */

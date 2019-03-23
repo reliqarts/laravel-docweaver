@@ -41,21 +41,21 @@
     },
     "autoload": {
         "psr-4": {
-            "ReliQArts\\Docweaver\\": "src/",
-            "ReliQArts\\Docweaver\\Tests\\": "tests/"
+            "ReliqArts\\Docweaver\\": "src/",
+            "ReliqArts\\Docweaver\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "ReliQArts\\Docweaver\\ServiceProvider"
+                "ReliqArts\\Docweaver\\ServiceProvider"
             ],
             "aliases": {
-                "DocweaverConfig": "ReliQArts\\Docweaver\\Helpers\\Config",
-                "DocweaverDocumentation": "ReliQArts\\Docweaver\\Models\\Documentation",
-                "DocweaverMarkdown": "ReliQArts\\Docweaver\\Helpers\\Markdown",
-                "DocweaverProduct": "ReliQArts\\Docweaver\\Models\\Product",
-                "DocweaverPublisher": "ReliQArts\\Docweaver\\Services\\Publisher"
+                "DocweaverConfig": "ReliqArts\\Docweaver\\Helpers\\Config",
+                "DocweaverDocumentation": "ReliqArts\\Docweaver\\Models\\Documentation",
+                "DocweaverMarkdown": "ReliqArts\\Docweaver\\Helpers\\Markdown",
+                "DocweaverProduct": "ReliqArts\\Docweaver\\Models\\Product",
+                "DocweaverPublisher": "ReliqArts\\Docweaver\\Services\\Publisher"
             }
         }
     }

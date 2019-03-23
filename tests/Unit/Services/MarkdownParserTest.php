@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Unit\Services;
+namespace ReliqArts\Docweaver\Tests\Unit\Services;
 
 use ParsedownExtra;
 use Prophecy\Prophecy\ObjectProphecy;
-use ReliQArts\Docweaver\Contracts\MarkdownParser as MarkdownParserContract;
-use ReliQArts\Docweaver\Services\MarkdownParser;
-use ReliQArts\Docweaver\Tests\Unit\TestCase;
+use ReliqArts\Docweaver\Contracts\MarkdownParser as MarkdownParserContract;
+use ReliqArts\Docweaver\Services\MarkdownParser;
+use ReliqArts\Docweaver\Tests\Unit\TestCase;
 
 /**
  * Class ConfigProviderTest.
  *
- * @coversDefaultClass \ReliQArts\Docweaver\Services\MarkdownParser
+ * @coversDefaultClass \ReliqArts\Docweaver\Services\MarkdownParser
  *
  * @internal
  */

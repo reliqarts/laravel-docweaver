@@ -46,7 +46,7 @@ Once this has finished, you will need to add the service provider to the provide
 *(n.b. This package supports Laravel's package auto-discovery; if you are using Laravel 5.5 or above you can skip this step.)*
 
 ```php
-ReliQArts\Docweaver\DocweaverServiceProvider::class,
+ReliqArts\Docweaver\ServiceProvider::class,
 ```
 
 Ensure that your applications public storage directory is linked and accessible via the browser.
@@ -59,13 +59,13 @@ see: https://laravel.com/docs/master/filesystem
 Finally, publish package resources and configuration:
 
 ```
-php artisan vendor:publish --provider="ReliQArts\Docweaver\DocweaverServiceProvider"
+php artisan vendor:publish --provider="ReliqArts\Docweaver\ServiceProvider"
 ``` 
 
-You may opt to publish only configuration by using the `docweaver:config` tag:
+You may opt to publish only configuration by using the `docweaver-config` tag:
 
 ```
-php artisan vendor:publish --provider="ReliQArts\Docweaver\DocweaverServiceProvider" --tag="docweaver:config"
+php artisan vendor:publish --provider="ReliqArts\Docweaver\ServiceProvider" --tag="docweaver-config"
 ```
 
 ### Setup
@@ -78,7 +78,7 @@ DOCWEAVER_ROUTE_PREFIX=docs
 DOCWEAVER_DIR=resources/docs
 ```
 
-These variables, and more are explained within the [config](https://github.com/ReliQArts/laravel-docweaver/blob/master/src/config/config.php) file.
+These variables, and more are explained within the [config](https://github.com/ReliqArts/laravel-docweaver/blob/master/src/config/config.php) file.
 
 ### Documentation Directory
 

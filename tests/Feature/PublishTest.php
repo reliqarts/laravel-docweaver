@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Feature;
+namespace ReliqArts\Docweaver\Tests\Feature;
 
 use Illuminate\Support\Facades\Artisan;
 
@@ -35,8 +35,8 @@ final class PublishTest extends TestCase
     /**
      * Test the ability to publish documentation.
      *
-     * @covers \ReliQArts\Docweaver\Console\Commands\Publish
-     * @covers \ReliQArts\Docweaver\Services\Documentation\Publisher::publish
+     * @covers \ReliqArts\Docweaver\Console\Commands\Publish
+     * @covers \ReliqArts\Docweaver\Services\Documentation\Publisher::publish
      * @large
      */
     public function testPublishDocumentation()

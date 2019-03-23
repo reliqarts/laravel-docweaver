@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Contracts\Product;
+namespace ReliqArts\Docweaver\Contracts\Product;
 
-use ReliQArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Models\Product;
 
 interface Finder
 {

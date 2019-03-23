@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Services;
+namespace ReliqArts\Docweaver\Services;
 
 use ParsedownExtra;
-use ReliQArts\Docweaver\Contracts\MarkdownParser as MDParser;
+use ReliqArts\Docweaver\Contracts\MarkdownParser as MDParser;
 
 /**
  * Docweaver markdown helper.

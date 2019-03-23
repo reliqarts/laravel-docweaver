@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Unit\Models;
+namespace ReliqArts\Docweaver\Tests\Unit\Models;
 
 use AspectMock\Test;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Prophecy\Argument;
-use ReliQArts\Docweaver\Contracts\Exception;
-use ReliQArts\Docweaver\Models\Product;
-use ReliQArts\Docweaver\Tests\Unit\AspectMockedTestCase;
+use ReliqArts\Docweaver\Contracts\Exception;
+use ReliqArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Tests\Unit\AspectMockedTestCase;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class ProductTest.
  *
- * @coversDefaultClass \ReliQArts\Docweaver\Models\Product
+ * @coversDefaultClass \ReliqArts\Docweaver\Models\Product
  *
  * @internal
  */
@@ -65,7 +65,7 @@ final class ProductTest extends AspectMockedTestCase
         parent::setUp();
 
         $this->routePrefix = 'docs';
-        $this->namespace = '\ReliQArts\Docweaver\Models';
+        $this->namespace = '\ReliqArts\Docweaver\Models';
         $this->productName = Str::title(basename(self::PRODUCT_DIRECTORY));
         $this->productKey = strtolower($this->productName);
         $this->lastModified = 123456789;
@@ -239,8 +239,8 @@ final class ProductTest extends AspectMockedTestCase
      * @covers ::loadMeta
      * @covers ::loadVersions
      * @covers ::populate
-     * @covers                   \ReliQArts\Docweaver\Exceptions\Exception::withMessage
-     * @covers                   \ReliQArts\Docweaver\Exceptions\ParsingFailed
+     * @covers                   \ReliqArts\Docweaver\Exceptions\Exception::withMessage
+     * @covers                   \ReliqArts\Docweaver\Exceptions\ParsingFailed
      * @small
      * @preserveGlobalState      disabled
      * @runInSeparateProcess
@@ -250,7 +250,7 @@ final class ProductTest extends AspectMockedTestCase
      */
     public function testPopulateWhenMetaIsInvalid(): void
     {
-        $this->expectException(\ReliQArts\Docweaver\Exceptions\ParsingFailed::class);
+        $this->expectException(\ReliqArts\Docweaver\Exceptions\ParsingFailed::class);
         $this->expectExceptionMessage('Failed to parse meta file `meta-file`. foo');
 
         $metaFile = 'meta-file';
@@ -291,12 +291,12 @@ final class ProductTest extends AspectMockedTestCase
 
     /**
      * @covers ::publishAssets
-     * @covers                   \ReliQArts\Docweaver\Exceptions\Product\InvalidAssetDirectory
+     * @covers                   \ReliqArts\Docweaver\Exceptions\Product\InvalidAssetDirectory
      * @small
      */
     public function testPublishAssetsWhenImageDirectoryIsInvalid(): void
     {
-        $this->expectException(\ReliQArts\Docweaver\Exceptions\Product\InvalidAssetDirectory::class);
+        $this->expectException(\ReliqArts\Docweaver\Exceptions\Product\InvalidAssetDirectory::class);
         $this->expectExceptionMessage('Invalid asset directory:');
 
         $version = '1.0';
@@ -313,12 +313,12 @@ final class ProductTest extends AspectMockedTestCase
 
     /**
      * @covers ::publishAssets
-     * @covers                   \ReliQArts\Docweaver\Exceptions\Product\AssetPublicationFailed
+     * @covers                   \ReliqArts\Docweaver\Exceptions\Product\AssetPublicationFailed
      * @small
      */
     public function testPublishAssetsWhenAssetPublicationFails(): void
     {
-        $this->expectException(\ReliQArts\Docweaver\Exceptions\Product\AssetPublicationFailed::class);
+        $this->expectException(\ReliqArts\Docweaver\Exceptions\Product\AssetPublicationFailed::class);
         $this->expectExceptionMessage('Failed to publish image assets for product `Alpha`');
 
         $version = '1.0';

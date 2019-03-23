@@ -1,6 +1,6 @@
 @php
     /**
-     * @var \ReliQArts\Docweaver\Services\ConfigProvider $docweaverConfigProvider
+     * @var \ReliqArts\Docweaver\Services\ConfigProvider $docweaverConfigProvider
      */
     $templateConfig = $docweaverConfigProvider->getTemplateConfig();
     $scripts = '<script type="text/javascript" src="/vendor/docweaver/js/docweaver.js"></script>';

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Services;
+namespace ReliqArts\Docweaver\Services;
 
 use Illuminate\Contracts\Config\Repository as Config;
-use ReliQArts\Docweaver\Contracts\ConfigProvider as ConfigProviderContract;
-use ReliQArts\Docweaver\Models\TemplateConfig;
+use ReliqArts\Docweaver\Contracts\ConfigProvider as ConfigProviderContract;
+use ReliqArts\Docweaver\Models\TemplateConfig;
 
 final class ConfigProvider implements ConfigProviderContract
 {

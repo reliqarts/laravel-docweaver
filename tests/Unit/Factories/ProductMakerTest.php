@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Unit\Factories;
+namespace ReliqArts\Docweaver\Tests\Unit\Factories;
 
 use Illuminate\Support\Str;
-use ReliQArts\Docweaver\Contracts\Exception;
-use ReliQArts\Docweaver\Factories\ProductMaker;
-use ReliQArts\Docweaver\Models\Product;
-use ReliQArts\Docweaver\Tests\Unit\TestCase;
+use ReliqArts\Docweaver\Contracts\Exception;
+use ReliqArts\Docweaver\Factories\ProductMaker;
+use ReliqArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Tests\Unit\TestCase;
 
 /**
  * Class ProductMakerTest.
  *
- * @coversDefaultClass \ReliQArts\Docweaver\Factories\ProductMaker
+ * @coversDefaultClass \ReliqArts\Docweaver\Factories\ProductMaker
  *
  * @internal
  */
@@ -65,7 +65,7 @@ final class ProductMakerTest extends TestCase
      */
     public function testCreateThrowsExceptionIfDirectoryIsInvalid(): void
     {
-        $this->expectException(\ReliQArts\Docweaver\Contracts\Exception::class);
+        $this->expectException(\ReliqArts\Docweaver\Contracts\Exception::class);
         $this->expectExceptionMessage('Invalid directory: `docs/product 1`.');
         $this->expectExceptionCode(4002);
 

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Http\Controllers;
+namespace ReliqArts\Docweaver\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use ReliQArts\Docweaver\Contracts\ConfigProvider;
-use ReliQArts\Docweaver\Contracts\Documentation\Provider;
-use ReliQArts\Docweaver\Contracts\Logger;
-use ReliQArts\Docweaver\Contracts\Product\Finder;
-use ReliQArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Contracts\ConfigProvider;
+use ReliqArts\Docweaver\Contracts\Documentation\Provider;
+use ReliqArts\Docweaver\Contracts\Logger;
+use ReliqArts\Docweaver\Contracts\Product\Finder;
+use ReliqArts\Docweaver\Models\Product;
 use Symfony\Component\DomCrawler\Crawler;
 
 class DocumentationController

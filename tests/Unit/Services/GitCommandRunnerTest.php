@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Unit\Services;
+namespace ReliqArts\Docweaver\Tests\Unit\Services;
 
 use AspectMock\Test;
 use Exception;
-use ReliQArts\Docweaver\Contracts\VCSCommandRunner;
-use ReliQArts\Docweaver\Services\GitCommandRunner;
-use ReliQArts\Docweaver\Tests\Unit\AspectMockedTestCase;
+use ReliqArts\Docweaver\Contracts\VCSCommandRunner;
+use ReliqArts\Docweaver\Services\GitCommandRunner;
+use ReliqArts\Docweaver\Tests\Unit\AspectMockedTestCase;
 use Symfony\Component\Process\Process;
 
 /**
  * Class GitCommandRunnerTest.
  *
- * @coversDefaultClass \ReliQArts\Docweaver\Services\GitCommandRunner
+ * @coversDefaultClass \ReliqArts\Docweaver\Services\GitCommandRunner
  *
  * @internal
  */
@@ -39,7 +39,7 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
     {
         parent::setUp();
 
-        $this->namespace = '\ReliQArts\Docweaver\Services';
+        $this->namespace = '\ReliqArts\Docweaver\Services';
         $this->subject = new GitCommandRunner();
         $this->workingDirectory = 'dir';
     }

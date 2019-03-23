@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Exceptions;
+namespace ReliqArts\Docweaver\Exceptions;
 
-use ReliQArts\Docweaver\Contracts\Exception as ExceptionContract;
+use ReliqArts\Docweaver\Contracts\Exception as ExceptionContract;
 
 class InvalidDirectory extends Exception
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Exceptions;
+namespace ReliqArts\Docweaver\Exceptions;
 
 /**
  * {@inheritdoc}

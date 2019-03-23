@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Models;
+namespace ReliqArts\Docweaver\Models;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Str;
-use ReliQArts\Docweaver\Contracts\ConfigProvider;
-use ReliQArts\Docweaver\Contracts\Exception;
-use ReliQArts\Docweaver\Contracts\Filesystem;
-use ReliQArts\Docweaver\Exceptions\ParsingFailed;
-use ReliQArts\Docweaver\Exceptions\Product\AssetPublicationFailed;
-use ReliQArts\Docweaver\Exceptions\Product\InvalidAssetDirectory;
+use ReliqArts\Docweaver\Contracts\ConfigProvider;
+use ReliqArts\Docweaver\Contracts\Exception;
+use ReliqArts\Docweaver\Contracts\Filesystem;
+use ReliqArts\Docweaver\Exceptions\ParsingFailed;
+use ReliqArts\Docweaver\Exceptions\Product\AssetPublicationFailed;
+use ReliqArts\Docweaver\Exceptions\Product\InvalidAssetDirectory;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 

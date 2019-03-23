@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Contracts;
+namespace ReliqArts\Docweaver\Contracts;
 
-use ReliQArts\Docweaver\Models\TemplateConfig;
+use ReliqArts\Docweaver\Models\TemplateConfig;
 
 interface ConfigProvider
 {

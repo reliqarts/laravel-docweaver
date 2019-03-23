@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Services;
+namespace ReliqArts\Docweaver\Services;
 
 use Illuminate\Console\Command;
-use ReliQArts\Docweaver\Contracts\Filesystem as FilesystemContract;
-use ReliQArts\Docweaver\Contracts\Logger as LoggerContract;
-use ReliQArts\Docweaver\Contracts\Publisher as PublisherContract;
+use ReliqArts\Docweaver\Contracts\Filesystem as FilesystemContract;
+use ReliqArts\Docweaver\Contracts\Logger as LoggerContract;
+use ReliqArts\Docweaver\Contracts\Publisher as PublisherContract;
 
 abstract class Publisher implements PublisherContract
 {

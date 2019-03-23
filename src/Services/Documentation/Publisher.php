@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Services\Documentation;
+namespace ReliqArts\Docweaver\Services\Documentation;
 
 use Illuminate\Console\Command;
-use ReliQArts\Docweaver\Contracts\ConfigProvider;
-use ReliQArts\Docweaver\Contracts\Documentation\Publisher as PublisherContract;
-use ReliQArts\Docweaver\Contracts\Exception;
-use ReliQArts\Docweaver\Contracts\Filesystem;
-use ReliQArts\Docweaver\Contracts\Logger;
-use ReliQArts\Docweaver\Contracts\Product\Maker as ProductFactory;
-use ReliQArts\Docweaver\Contracts\Product\Publisher as ProductPublisher;
-use ReliQArts\Docweaver\Exceptions\BadImplementation;
-use ReliQArts\Docweaver\Services\Publisher as BasePublisher;
-use ReliQArts\Docweaver\VO\Result;
+use ReliqArts\Docweaver\Contracts\ConfigProvider;
+use ReliqArts\Docweaver\Contracts\Documentation\Publisher as PublisherContract;
+use ReliqArts\Docweaver\Contracts\Exception;
+use ReliqArts\Docweaver\Contracts\Filesystem;
+use ReliqArts\Docweaver\Contracts\Logger;
+use ReliqArts\Docweaver\Contracts\Product\Maker as ProductFactory;
+use ReliqArts\Docweaver\Contracts\Product\Publisher as ProductPublisher;
+use ReliqArts\Docweaver\Exceptions\BadImplementation;
+use ReliqArts\Docweaver\Services\Publisher as BasePublisher;
+use ReliqArts\Docweaver\VO\Result;
 
 /**
  * Publishes and updates documentation.
