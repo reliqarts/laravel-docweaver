@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Unit\Services\Product;
+namespace ReliqArts\Docweaver\Tests\Unit\Services\Product;
 
 use Prophecy\Prophecy\ObjectProphecy;
-use ReliQArts\Docweaver\Contracts\Exception;
-use ReliQArts\Docweaver\Contracts\Logger;
-use ReliQArts\Docweaver\Contracts\Product\Finder as FinderContract;
-use ReliQArts\Docweaver\Contracts\Product\Maker as ProductFactory;
-use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
-use ReliQArts\Docweaver\Models\Product;
-use ReliQArts\Docweaver\Services\Product\Finder;
-use ReliQArts\Docweaver\Tests\Unit\TestCase;
+use ReliqArts\Docweaver\Contracts\Exception;
+use ReliqArts\Docweaver\Contracts\Logger;
+use ReliqArts\Docweaver\Contracts\Product\Finder as FinderContract;
+use ReliqArts\Docweaver\Contracts\Product\Maker as ProductFactory;
+use ReliqArts\Docweaver\Exceptions\InvalidDirectory;
+use ReliqArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Services\Product\Finder;
+use ReliqArts\Docweaver\Tests\Unit\TestCase;
 
 /**
  * Class FinderTest.
  *
- * @coversDefaultClass \ReliQArts\Docweaver\Services\Product\Finder
+ * @coversDefaultClass \ReliqArts\Docweaver\Services\Product\Finder
  *
  * @internal
  */
@@ -56,7 +56,7 @@ final class FinderTest extends TestCase
     /**
      * @covers ::__construct
      * @covers ::listProducts
-     * @covers \ReliQArts\Docweaver\Exceptions\InvalidDirectory::forDirectory
+     * @covers \ReliqArts\Docweaver\Exceptions\InvalidDirectory::forDirectory
      * @small
      */
     public function testListProducts(): void

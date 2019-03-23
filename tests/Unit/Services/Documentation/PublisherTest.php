@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Unit\Services\Documentation;
+namespace ReliqArts\Docweaver\Tests\Unit\Services\Documentation;
 
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use ReliQArts\Docweaver\Contracts\Documentation\Publisher as PublisherContract;
-use ReliQArts\Docweaver\Contracts\Exception;
-use ReliQArts\Docweaver\Contracts\Logger;
-use ReliQArts\Docweaver\Contracts\Product\Maker as ProductFactory;
-use ReliQArts\Docweaver\Contracts\Product\Publisher as ProductPublisher;
-use ReliQArts\Docweaver\Exceptions\BadImplementation;
-use ReliQArts\Docweaver\Models\Product;
-use ReliQArts\Docweaver\Services\Documentation\Publisher;
-use ReliQArts\Docweaver\Tests\Unit\TestCase;
-use ReliQArts\Docweaver\VO\Result;
+use ReliqArts\Docweaver\Contracts\Documentation\Publisher as PublisherContract;
+use ReliqArts\Docweaver\Contracts\Exception;
+use ReliqArts\Docweaver\Contracts\Logger;
+use ReliqArts\Docweaver\Contracts\Product\Maker as ProductFactory;
+use ReliqArts\Docweaver\Contracts\Product\Publisher as ProductPublisher;
+use ReliqArts\Docweaver\Exceptions\BadImplementation;
+use ReliqArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Services\Documentation\Publisher;
+use ReliqArts\Docweaver\Tests\Unit\TestCase;
+use ReliqArts\Docweaver\VO\Result;
 use stdClass;
 
 /**
  * Class PublisherTest.
  *
- * @coversDefaultClass \ReliQArts\Docweaver\Services\Documentation\Publisher
+ * @coversDefaultClass \ReliqArts\Docweaver\Services\Documentation\Publisher
  *
  * @internal
  */
@@ -86,12 +86,12 @@ final class PublisherTest extends TestCase
     /**
      * @covers ::__construct
      * @covers ::readyResourceDirectory
-     * @covers                   \ReliQArts\Docweaver\Services\Publisher::__construct
+     * @covers                   \ReliqArts\Docweaver\Services\Publisher::__construct
      * @small
      */
     public function testExceptionIsThrownIfDocumentationDirectoryIsInvalid(): void
     {
-        $this->expectException(\ReliQArts\Docweaver\Exceptions\BadImplementation::class);
+        $this->expectException(\ReliqArts\Docweaver\Exceptions\BadImplementation::class);
         $this->expectExceptionMessage('Could not ready document resource directory `docs`');
 
         $directory = $this->workingDirectory;
@@ -115,7 +115,7 @@ final class PublisherTest extends TestCase
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
      * @covers ::tell
-     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Services\Publisher::secondsSince
      * @small
      *
      * @throws Exception
@@ -156,7 +156,7 @@ final class PublisherTest extends TestCase
      * @covers ::publish
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
-     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Services\Publisher::secondsSince
      * @small
      *
      * @throws Exception
@@ -185,7 +185,7 @@ final class PublisherTest extends TestCase
      * @covers ::setExecutionStartTime
      * @covers ::tell
      * @covers ::update
-     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Services\Publisher::secondsSince
      * @small
      *
      * @throws Exception
@@ -225,7 +225,7 @@ final class PublisherTest extends TestCase
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
      * @covers ::update
-     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Services\Publisher::secondsSince
      * @small
      *
      * @throws Exception
@@ -254,7 +254,7 @@ final class PublisherTest extends TestCase
      * @covers ::tell
      * @covers ::update
      * @covers ::updateAll
-     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Services\Publisher::secondsSince
      * @dataProvider updateAllDataProvider
      * @small
      *

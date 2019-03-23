@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Contracts\Product;
+namespace ReliqArts\Docweaver\Contracts\Product;
 
-use ReliQArts\Docweaver\Contracts\Publisher as BasePublisher;
-use ReliQArts\Docweaver\Exceptions\Product\PublicationFailed;
-use ReliQArts\Docweaver\Models\Product;
-use ReliQArts\Docweaver\VO\Result;
+use ReliqArts\Docweaver\Contracts\Publisher as BasePublisher;
+use ReliqArts\Docweaver\Exceptions\Product\PublicationFailed;
+use ReliqArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\VO\Result;
 
 interface Publisher extends BasePublisher
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Exceptions\Product;
+namespace ReliqArts\Docweaver\Exceptions\Product;
 
-use ReliQArts\Docweaver\Contracts\Exception;
-use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
+use ReliqArts\Docweaver\Contracts\Exception;
+use ReliqArts\Docweaver\Exceptions\InvalidDirectory;
 
 final class InvalidAssetDirectory extends InvalidDirectory
 {

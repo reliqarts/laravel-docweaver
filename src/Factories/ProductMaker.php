@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Factories;
+namespace ReliqArts\Docweaver\Factories;
 
-use ReliQArts\Docweaver\Contracts\ConfigProvider;
-use ReliQArts\Docweaver\Contracts\Exception;
-use ReliQArts\Docweaver\Contracts\Filesystem;
-use ReliQArts\Docweaver\Contracts\Product\Maker;
-use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
-use ReliQArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Contracts\ConfigProvider;
+use ReliqArts\Docweaver\Contracts\Exception;
+use ReliqArts\Docweaver\Contracts\Filesystem;
+use ReliqArts\Docweaver\Contracts\Product\Maker;
+use ReliqArts\Docweaver\Exceptions\InvalidDirectory;
+use ReliqArts\Docweaver\Models\Product;
 
 final class ProductMaker implements Maker
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\VO;
+namespace ReliqArts\Docweaver\VO;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;

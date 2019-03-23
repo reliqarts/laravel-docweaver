@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver;
+namespace ReliqArts\Docweaver;
 
 use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Contracts\View\Factory as ViewFactory;
@@ -61,8 +61,8 @@ final class ServiceProvider extends BaseServiceProvider
      */
     public function register(): void
     {
-        $this->registerAliases();
-        $this->registerBindings();
+        $this->registerAliases()
+            ->registerBindings();
     }
 
     /**
@@ -98,7 +98,7 @@ final class ServiceProvider extends BaseServiceProvider
         $this->mergeConfigFrom($docWeaverConfig, 'docweaver');
 
         // allow publishing the config file, with tag: docweaver:config
-        $this->publishes([$docWeaverConfig => config_path('docweaver.php')], 'docweaver:config');
+        $this->publishes([$docWeaverConfig => config_path('docweaver.php')], 'docweaver-config');
 
         return $this;
     }
@@ -146,7 +146,7 @@ final class ServiceProvider extends BaseServiceProvider
         $this->loadViewsFrom($viewsDirectory, 'docweaver');
 
         // Allow publishing view files, with tag: views
-        $this->publishes([$viewsDirectory => base_path('resources/views/vendor/docweaver')], 'docweaver:views');
+        $this->publishes([$viewsDirectory => base_path('resources/views/vendor/docweaver')], 'docweaver-views');
 
         return $this;
     }

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Console\Commands;
+namespace ReliqArts\Docweaver\Console\Commands;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use ReliQArts\Docweaver\Contracts\Documentation\Publisher;
+use ReliqArts\Docweaver\Contracts\Documentation\Publisher;
 
 class Update extends Command
 {

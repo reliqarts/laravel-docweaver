@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Unit\Services\Product;
+namespace ReliqArts\Docweaver\Tests\Unit\Services\Product;
 
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use ReliQArts\Docweaver\Contracts\Exception;
-use ReliQArts\Docweaver\Contracts\Logger;
-use ReliQArts\Docweaver\Contracts\VCSCommandRunner;
-use ReliQArts\Docweaver\Exceptions\Product\AssetPublicationFailed;
-use ReliQArts\Docweaver\Exceptions\Product\InvalidAssetDirectory;
-use ReliQArts\Docweaver\Models\Product;
-use ReliQArts\Docweaver\Services\Product\Publisher;
-use ReliQArts\Docweaver\Tests\Unit\TestCase;
-use ReliQArts\Docweaver\VO\Result;
+use ReliqArts\Docweaver\Contracts\Exception;
+use ReliqArts\Docweaver\Contracts\Logger;
+use ReliqArts\Docweaver\Contracts\VCSCommandRunner;
+use ReliqArts\Docweaver\Exceptions\Product\AssetPublicationFailed;
+use ReliqArts\Docweaver\Exceptions\Product\InvalidAssetDirectory;
+use ReliqArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Services\Product\Publisher;
+use ReliqArts\Docweaver\Tests\Unit\TestCase;
+use ReliqArts\Docweaver\VO\Result;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
  * Class PublisherTest.
  *
- * @coversDefaultClass \ReliQArts\Docweaver\Services\Product\Publisher
+ * @coversDefaultClass \ReliqArts\Docweaver\Services\Product\Publisher
  *
  * @internal
  */
@@ -70,7 +70,7 @@ final class PublisherTest extends TestCase
      * @covers ::publishVersion
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
-     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Services\Publisher::secondsSince
      * @medium
      *
      * @throws Exception
@@ -109,7 +109,7 @@ final class PublisherTest extends TestCase
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
      * @covers ::updateVersion
-     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Services\Publisher::secondsSince
      * @small
      *
      * @throws Exception
@@ -148,7 +148,7 @@ final class PublisherTest extends TestCase
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
      * @covers ::updateVersion
-     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Services\Publisher::secondsSince
      * @small
      */
     public function testPublishWhenAssetDirectoryIsInvalid(): void
@@ -187,8 +187,8 @@ final class PublisherTest extends TestCase
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
      * @covers ::updateVersion
-     * @covers \ReliQArts\Docweaver\Exceptions\Product\PublicationFailed::forProductVersion
-     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Exceptions\Product\PublicationFailed::forProductVersion
+     * @covers \ReliqArts\Docweaver\Services\Publisher::secondsSince
      * @small
      *
      * @throws Exception
@@ -235,7 +235,7 @@ final class PublisherTest extends TestCase
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
      * @covers ::updateVersion
-     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Services\Publisher::secondsSince
      * @small
      *
      * @throws Exception
@@ -271,7 +271,7 @@ final class PublisherTest extends TestCase
      * @covers ::publish
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
-     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Services\Publisher::secondsSince
      * @small
      */
     public function testPublishFailsIfProductDirectoryIsNotWritable(): void
@@ -303,13 +303,13 @@ final class PublisherTest extends TestCase
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
      * @covers ::updateVersion
-     * @covers \ReliQArts\Docweaver\Exceptions\Product\PublicationFailed::forProductVersion
-     * @covers \ReliQArts\Docweaver\Services\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Exceptions\Product\PublicationFailed::forProductVersion
+     * @covers \ReliqArts\Docweaver\Services\Publisher::secondsSince
      * @small
      */
     public function testPublishThrowsExceptionIfMasterFailsToUpdate(): void
     {
-        $this->expectException(\ReliQArts\Docweaver\Exceptions\Product\PublicationFailed::class);
+        $this->expectException(\ReliqArts\Docweaver\Exceptions\Product\PublicationFailed::class);
         $this->expectExceptionMessage('Failed to update version `master` of product `Product 24`');
 
         $productName = 'Product 24';

@@ -1,14 +1,14 @@
 <?php
 
-namespace ReliQArts\Docweaver\Tests;
+namespace ReliqArts\Docweaver\Tests;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\View;
 use Orchestra\Testbench\BrowserKit\TestCase as BaseTestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use ReliQArts\Docweaver\Contracts\ConfigProvider;
-use ReliQArts\Docweaver\Contracts\Filesystem;
-use ReliQArts\Docweaver\ServiceProvider;
+use ReliqArts\Docweaver\Contracts\ConfigProvider;
+use ReliqArts\Docweaver\Contracts\Filesystem;
+use ReliqArts\Docweaver\ServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {

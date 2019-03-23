@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Contracts\Documentation;
+namespace ReliqArts\Docweaver\Contracts\Documentation;
 
 use Illuminate\Console\Command;
-use ReliQArts\Docweaver\Contracts\Publisher as BasePublisher;
-use ReliQArts\Docweaver\Exceptions\InvalidDirectory;
-use ReliQArts\Docweaver\VO\Result;
+use ReliqArts\Docweaver\Contracts\Publisher as BasePublisher;
+use ReliqArts\Docweaver\Exceptions\InvalidDirectory;
+use ReliqArts\Docweaver\VO\Result;
 
 interface Publisher extends BasePublisher
 {

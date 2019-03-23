@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Unit\Services;
+namespace ReliqArts\Docweaver\Tests\Unit\Services;
 
 use Illuminate\Contracts\Config\Repository as Config;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use ReliQArts\Docweaver\Models\TemplateConfig;
-use ReliQArts\Docweaver\Services\ConfigProvider;
-use ReliQArts\Docweaver\Tests\Unit\TestCase;
+use ReliqArts\Docweaver\Models\TemplateConfig;
+use ReliqArts\Docweaver\Services\ConfigProvider;
+use ReliqArts\Docweaver\Tests\Unit\TestCase;
 
 /**
  * Class ConfigProviderTest.
  *
- * @coversDefaultClass \ReliQArts\Docweaver\Services\ConfigProvider
+ * @coversDefaultClass \ReliqArts\Docweaver\Services\ConfigProvider
  *
  * @internal
  */
@@ -190,7 +190,7 @@ final class ConfigProviderTest extends TestCase
      * @covers ::__construct
      * @covers ::get
      * @covers ::getTemplateConfig
-     * @covers \ReliQArts\Docweaver\Models\TemplateConfig
+     * @covers \ReliqArts\Docweaver\Models\TemplateConfig
      */
     public function testGetTemplateConfig(): void
     {

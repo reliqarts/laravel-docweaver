@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Services;
+namespace ReliqArts\Docweaver\Services;
 
 use Illuminate\Filesystem\Filesystem as IlluminateFilesystem;
-use ReliQArts\Docweaver\Contracts\Filesystem as FilesystemContract;
+use ReliqArts\Docweaver\Contracts\Filesystem as FilesystemContract;
 
 final class Filesystem extends IlluminateFilesystem implements FilesystemContract
 {

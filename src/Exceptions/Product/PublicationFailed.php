@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Exceptions\Product;
+namespace ReliqArts\Docweaver\Exceptions\Product;
 
-use ReliQArts\Docweaver\Contracts\Exception as ExceptionContract;
-use ReliQArts\Docweaver\Exceptions\Exception;
-use ReliQArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Contracts\Exception as ExceptionContract;
+use ReliqArts\Docweaver\Exceptions\Exception;
+use ReliqArts\Docweaver\Models\Product;
 
 class PublicationFailed extends Exception
 {

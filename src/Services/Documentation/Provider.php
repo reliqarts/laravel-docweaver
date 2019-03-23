@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Services\Documentation;
+namespace ReliqArts\Docweaver\Services\Documentation;
 
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Psr\SimpleCache\InvalidArgumentException;
-use ReliQArts\Docweaver\Contracts\ConfigProvider;
-use ReliQArts\Docweaver\Contracts\Documentation\Provider as ProviderContract;
-use ReliQArts\Docweaver\Contracts\Filesystem;
-use ReliQArts\Docweaver\Contracts\MarkdownParser;
-use ReliQArts\Docweaver\Exceptions\BadImplementation;
-use ReliQArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Contracts\ConfigProvider;
+use ReliqArts\Docweaver\Contracts\Documentation\Provider as ProviderContract;
+use ReliqArts\Docweaver\Contracts\Filesystem;
+use ReliqArts\Docweaver\Contracts\MarkdownParser;
+use ReliqArts\Docweaver\Exceptions\BadImplementation;
+use ReliqArts\Docweaver\Models\Product;
 
 final class Provider implements ProviderContract
 {

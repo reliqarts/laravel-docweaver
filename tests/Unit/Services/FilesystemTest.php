@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Unit\Services;
+namespace ReliqArts\Docweaver\Tests\Unit\Services;
 
 use AspectMock\Test;
-use ReliQArts\Docweaver\Services\Filesystem;
-use ReliQArts\Docweaver\Tests\Unit\AspectMockedTestCase;
+use ReliqArts\Docweaver\Services\Filesystem;
+use ReliqArts\Docweaver\Tests\Unit\AspectMockedTestCase;
 
 /**
  * Class FilesystemTest.
  *
- * @coversDefaultClass \ReliQArts\Docweaver\Services\Filesystem
+ * @coversDefaultClass \ReliqArts\Docweaver\Services\Filesystem
  *
  * @internal
  */
@@ -21,7 +21,7 @@ final class FilesystemTest extends AspectMockedTestCase
     {
         parent::setUp();
 
-        $this->namespace = '\ReliQArts\Docweaver\Services';
+        $this->namespace = '\ReliqArts\Docweaver\Services';
         $this->parentNamespace = '\Illuminate\Filesystem';
         $this->filesystem = new Filesystem();
     }

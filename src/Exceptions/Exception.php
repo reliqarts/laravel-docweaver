@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Exceptions;
+namespace ReliqArts\Docweaver\Exceptions;
 
 use Exception as BaseException;
-use ReliQArts\Docweaver\Contracts\Exception as ExceptionContract;
+use ReliqArts\Docweaver\Contracts\Exception as ExceptionContract;
 
 abstract class Exception extends BaseException implements ExceptionContract
 {

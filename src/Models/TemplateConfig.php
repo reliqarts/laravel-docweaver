@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Models;
+namespace ReliqArts\Docweaver\Models;
 
 class TemplateConfig
 {

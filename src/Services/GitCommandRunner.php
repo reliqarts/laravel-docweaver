@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Services;
+namespace ReliqArts\Docweaver\Services;
 
-use ReliQArts\Docweaver\Contracts\VCSCommandRunner;
+use ReliqArts\Docweaver\Contracts\VCSCommandRunner;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 

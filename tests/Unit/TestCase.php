@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Unit;
+namespace ReliqArts\Docweaver\Tests\Unit;
 
-use ReliQArts\Docweaver\Contracts\ConfigProvider;
-use ReliQArts\Docweaver\Contracts\Filesystem;
-use ReliQArts\Docweaver\Tests\TestCase as BaseTestCase;
+use ReliqArts\Docweaver\Contracts\ConfigProvider;
+use ReliqArts\Docweaver\Contracts\Filesystem;
+use ReliqArts\Docweaver\Tests\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {

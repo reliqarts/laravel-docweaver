@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Services\Product;
+namespace ReliqArts\Docweaver\Services\Product;
 
-use ReliQArts\Docweaver\Contracts\ConfigProvider;
-use ReliQArts\Docweaver\Contracts\Exception;
-use ReliQArts\Docweaver\Contracts\Filesystem;
-use ReliQArts\Docweaver\Contracts\Logger;
-use ReliQArts\Docweaver\Contracts\Product\Finder as FinderContract;
-use ReliQArts\Docweaver\Contracts\Product\Maker as ProductFactory;
-use ReliQArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Contracts\ConfigProvider;
+use ReliqArts\Docweaver\Contracts\Exception;
+use ReliqArts\Docweaver\Contracts\Filesystem;
+use ReliqArts\Docweaver\Contracts\Logger;
+use ReliqArts\Docweaver\Contracts\Product\Finder as FinderContract;
+use ReliqArts\Docweaver\Contracts\Product\Maker as ProductFactory;
+use ReliqArts\Docweaver\Models\Product;
 
 final class Finder implements FinderContract
 {

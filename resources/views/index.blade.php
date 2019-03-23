@@ -1,6 +1,6 @@
 @php
     /**
-     * @var \ReliQArts\Docweaver\Services\ConfigProvider $docweaverConfigProvider
+     * @var \ReliqArts\Docweaver\Services\ConfigProvider $docweaverConfigProvider
      */
     $templateConfig = $docweaverConfigProvider->getTemplateConfig();
 @endphp

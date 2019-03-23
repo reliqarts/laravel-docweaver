@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Services\Product;
+namespace ReliqArts\Docweaver\Services\Product;
 
-use ReliQArts\Docweaver\Contracts\Exception;
-use ReliQArts\Docweaver\Contracts\Filesystem;
-use ReliQArts\Docweaver\Contracts\Logger;
-use ReliQArts\Docweaver\Contracts\Product\Publisher as PublisherContract;
-use ReliQArts\Docweaver\Contracts\VCSCommandRunner;
-use ReliQArts\Docweaver\Exceptions\Product\InvalidAssetDirectory;
-use ReliQArts\Docweaver\Exceptions\Product\PublicationFailed;
-use ReliQArts\Docweaver\Models\Product;
-use ReliQArts\Docweaver\Services\Publisher as BasePublisher;
-use ReliQArts\Docweaver\VO\Result;
+use ReliqArts\Docweaver\Contracts\Exception;
+use ReliqArts\Docweaver\Contracts\Filesystem;
+use ReliqArts\Docweaver\Contracts\Logger;
+use ReliqArts\Docweaver\Contracts\Product\Publisher as PublisherContract;
+use ReliqArts\Docweaver\Contracts\VCSCommandRunner;
+use ReliqArts\Docweaver\Exceptions\Product\InvalidAssetDirectory;
+use ReliqArts\Docweaver\Exceptions\Product\PublicationFailed;
+use ReliqArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Services\Publisher as BasePublisher;
+use ReliqArts\Docweaver\VO\Result;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Contracts\Documentation;
+namespace ReliqArts\Docweaver\Contracts\Documentation;
 
-use ReliQArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Models\Product;
 
 interface Provider
 {

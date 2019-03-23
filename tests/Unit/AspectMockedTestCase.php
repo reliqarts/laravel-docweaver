@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ReliQArts\Docweaver\Tests\Unit;
+namespace ReliqArts\Docweaver\Tests\Unit;
 
 use AspectMock\Test;
 

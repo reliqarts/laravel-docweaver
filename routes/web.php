@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use ReliQArts\Docweaver\Contracts\ConfigProvider;
+use ReliqArts\Docweaver\Contracts\ConfigProvider;
 
 /**
  * @var ConfigProvider
@@ -11,7 +11,7 @@ use ReliQArts\Docweaver\Contracts\ConfigProvider;
 $configProvider = resolve(ConfigProvider::class);
 
 // Controller Fully Qualified...
-$docController = 'ReliQArts\\Docweaver\\Http\\Controllers\\DocumentationController';
+$docController = 'ReliqArts\\Docweaver\\Http\\Controllers\\DocumentationController';
 
 // the route group
 Route::group($configProvider->getRouteGroupBindings(), function () use ($configProvider, $docController) {
