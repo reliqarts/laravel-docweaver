@@ -1,4 +1,4 @@
-/build
+/build/*
 /node_modules
 /public/mix-manifest.json
 /tests/resources/docs/*
