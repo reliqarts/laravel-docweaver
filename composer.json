@@ -51,7 +51,6 @@
                 "ReliqArts\\Docweaver\\ServiceProvider"
             ],
             "aliases": {
-                "DocweaverConfig": "ReliqArts\\Docweaver\\Helpers\\Config",
                 "DocweaverDocumentation": "ReliqArts\\Docweaver\\Models\\Documentation",
                 "DocweaverMarkdown": "ReliqArts\\Docweaver\\Helpers\\Markdown",
                 "DocweaverProduct": "ReliqArts\\Docweaver\\Models\\Product",
