@@ -6,6 +6,7 @@
 /storage
 /vendor
 !.gitkeep
+composer.lock
 npm-debug.log
 yarn-error.log
 .DS_Store
