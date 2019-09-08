@@ -101,7 +101,7 @@ final class FinderTest extends TestCase
 
         foreach ($results as $result) {
             $this->assertInstanceOf(Product::class, $result);
-            $this->assertContains($result->getKey(), $productDirectories, '', true);
+            $this->assertContains($result->getKey(), $productDirectories);
         }
     }
 
