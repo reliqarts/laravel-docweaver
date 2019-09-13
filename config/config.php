@@ -59,7 +59,7 @@ return [
         'script_stack' => 'scripts',
 
         // Documentation index title
-        'docs_title' => false,
+        'docs_title' => 'Docs',
 
         // Documentation page intro paragraph
         'docs_intro' => 'Please consult the documentation provided below for help '
