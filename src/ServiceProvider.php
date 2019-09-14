@@ -82,7 +82,7 @@ final class ServiceProvider extends BaseServiceProvider
     {
         $this->publishes([
             "{$this->assetsDir}/public" => public_path('vendor/docweaver'),
-        ], 'docweaver:public');
+        ], 'docweaver-public');
 
         return $this;
     }
