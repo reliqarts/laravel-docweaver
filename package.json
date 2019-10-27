@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "npm": "^6.9.0",
-    "snyk": "^1.230.5"
+    "snyk": "^1.236.1"
   },
   "snyk": true
 }
