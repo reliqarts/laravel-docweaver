@@ -6,11 +6,11 @@ namespace ReliqArts\Docweaver\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use ReliqArts\Docweaver\Contracts\ConfigProvider;
-use ReliqArts\Docweaver\Contracts\Documentation\Provider;
-use ReliqArts\Docweaver\Contracts\Logger;
-use ReliqArts\Docweaver\Contracts\Product\Finder;
-use ReliqArts\Docweaver\Models\Product;
+use ReliqArts\Docweaver\Contract\ConfigProvider;
+use ReliqArts\Docweaver\Contract\Documentation\Provider;
+use ReliqArts\Docweaver\Contract\Logger;
+use ReliqArts\Docweaver\Contract\Product\Finder;
+use ReliqArts\Docweaver\Model\Product;
 use Symfony\Component\DomCrawler\Crawler;
 
 class DocumentationController

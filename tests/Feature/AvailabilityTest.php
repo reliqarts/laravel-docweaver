@@ -18,7 +18,7 @@ final class AvailabilityTest extends TestCase
      * @covers ::index
      * @small
      */
-    public function testViewData()
+    public function testViewData(): void
     {
         $docIndex = $this->configProvider->getRoutePrefix();
 
@@ -34,7 +34,7 @@ final class AvailabilityTest extends TestCase
      * @covers ::show
      * @small
      */
-    public function testProjectAvailability()
+    public function testProjectAvailability(): void
     {
         $docIndex = $this->configProvider->getRoutePrefix();
 

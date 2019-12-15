@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use ReliqArts\Docweaver\Contracts\ConfigProvider;
+use ReliqArts\Docweaver\Contract\ConfigProvider;
 
 /**
  * @var ConfigProvider

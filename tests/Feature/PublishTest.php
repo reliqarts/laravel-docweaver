@@ -16,14 +16,7 @@ final class PublishTest extends TestCase
     /**
      * @var array
      */
-    private $publishedProducts;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->publishedProducts = [];
-    }
+    private array $publishedProducts = [];
 
     protected function tearDown(): void
     {
@@ -35,14 +28,14 @@ final class PublishTest extends TestCase
     /**
      * Test the ability to publish documentation.
      *
-     * @covers \ReliqArts\Docweaver\Console\Commands\Publish
-     * @covers \ReliqArts\Docweaver\Services\Documentation\Publisher::publish
+     * @covers \ReliqArts\Docweaver\Console\Command\Publish
+     * @covers \ReliqArts\Docweaver\Service\Documentation\Publisher::publish
      * @large
      */
-    public function testPublishDocumentation()
+    public function testPublishDocumentation(): void
     {
         $docIndex = $this->configProvider->getRoutePrefix();
-        $productName = 'Product 450';
+        $productName = 'Product 1450';
 
         // publish Docweaver docs
         Artisan::call('docweaver:publish', [

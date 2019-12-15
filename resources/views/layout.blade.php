@@ -1,6 +1,6 @@
 @php
     /**
-     * @var \ReliqArts\Docweaver\Services\ConfigProvider $docweaverConfigProvider
+     * @var \ReliqArts\Docweaver\Service\ConfigProvider $docweaverConfigProvider
      */
     $templateConfig = $docweaverConfigProvider->getTemplateConfig();
     $scripts = '<script type="text/javascript" src="/vendor/docweaver/js/docweaver.js"></script>';
@@ -50,7 +50,7 @@
     <aside id="docweaver-footnotes">
         <p class="by-line">Docs by <a href="http://docweaver.reliqarts.com" target="docweaver.rqa">Docweaver</a>.</p>
     </aside>
-    @endif  
+    @endif
 </div>
 @endsection
 

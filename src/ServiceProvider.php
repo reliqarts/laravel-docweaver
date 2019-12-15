@@ -20,26 +20,19 @@ final class ServiceProvider extends BaseServiceProvider
     private const LOG_FILENAME = 'docweaver';
 
     /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
      * Assets location.
      */
-    protected $assetsDir = __DIR__ . '/..';
+    protected string $assetsDir = __DIR__ . '/..';
 
     /**
      * List of commands.
      *
      * @var array
      */
-    protected $commands = [
-        Console\Commands\Publish::class,
-        Console\Commands\Update::class,
-        Console\Commands\UpdateAll::class,
+    protected array $commands = [
+        Console\Command\Publish::class,
+        Console\Command\Update::class,
+        Console\Command\UpdateAll::class,
     ];
 
     /**
@@ -159,10 +152,10 @@ final class ServiceProvider extends BaseServiceProvider
         $loader = AliasLoader::getInstance();
 
         // Register aliases...
-        $loader->alias('DocweaverProduct', Models\Product::class);
-        $loader->alias('DocweaverMarkdown', Services\MarkdownParser::class);
-        $loader->alias('DocweaverDocumentation', Services\Documentation\Provider::class);
-        $loader->alias('DocweaverPublisher', Services\Documentation\Publisher::class);
+        $loader->alias('DocweaverProduct', Model\Product::class);
+        $loader->alias('DocweaverMarkdown', Service\MarkdownParser::class);
+        $loader->alias('DocweaverDocumentation', Service\Documentation\Provider::class);
+        $loader->alias('DocweaverPublisher', Service\Documentation\Publisher::class);
 
         return $this;
     }
@@ -173,60 +166,60 @@ final class ServiceProvider extends BaseServiceProvider
     private function registerBindings(): self
     {
         $this->app->bind(
-            Contracts\Filesystem::class,
-            Services\Filesystem::class
+            Contract\Filesystem::class,
+            Service\Filesystem::class
         );
 
         $this->app->bind(
-            Contracts\Documentation\Publisher::class,
-            Services\Documentation\Publisher::class
+            Contract\Documentation\Publisher::class,
+            Service\Documentation\Publisher::class
         );
 
         $this->app->bind(
-            Contracts\Documentation\Provider::class,
-            Services\Documentation\Provider::class
+            Contract\Documentation\Provider::class,
+            Service\Documentation\Provider::class
         );
 
         $this->app->bind(
-            Contracts\MarkdownParser::class,
-            Services\MarkdownParser::class
+            Contract\MarkdownParser::class,
+            Service\MarkdownParser::class
         );
 
         $this->app->bind(
-            Contracts\VCSCommandRunner::class,
-            Services\GitCommandRunner::class
+            Contract\VCSCommandRunner::class,
+            Service\GitCommandRunner::class
         );
 
         $this->app->bind(
-            Contracts\Product\Maker::class,
-            Factories\ProductMaker::class
+            Contract\Product\Maker::class,
+            Factory\ProductMaker::class
         );
 
         $this->app->bind(
-            Contracts\Product\Finder::class,
-            Services\Product\Finder::class
+            Contract\Product\Finder::class,
+            Service\Product\Finder::class
         );
 
         $this->app->bind(
-            Contracts\Product\Publisher::class,
-            Services\Product\Publisher::class
+            Contract\Product\Publisher::class,
+            Service\Product\Publisher::class
         );
 
         $this->app->singleton(
-            Contracts\ConfigProvider::class,
-            function (): Contracts\ConfigProvider {
-                return new Services\ConfigProvider(
+            Contract\ConfigProvider::class,
+            function (): Contract\ConfigProvider {
+                return new Service\ConfigProvider(
                     resolve(Config::class)
                 );
             }
         );
 
         $this->app->singleton(
-            Contracts\Logger::class,
-            function (): Contracts\Logger {
-                $logger = new Services\Logger(self::LOGGER_NAME);
+            Contract\Logger::class,
+            function (): Contract\Logger {
+                $logger = new Service\Logger(self::LOGGER_NAME);
                 $logFile = storage_path(sprintf('logs/%s.log', self::LOG_FILENAME));
-                $logger->pushHandler(new StreamHandler($logFile, Services\Logger::DEBUG));
+                $logger->pushHandler(new StreamHandler($logFile, Service\Logger::DEBUG));
 
                 return $logger;
             }
@@ -240,7 +233,7 @@ final class ServiceProvider extends BaseServiceProvider
      */
     private function addViewComposers(): self
     {
-        $configProvider = resolve(Contracts\ConfigProvider::class);
+        $configProvider = resolve(Contract\ConfigProvider::class);
         $viewFactory = resolve(ViewFactory::class);
 
         $viewFactory->composer(

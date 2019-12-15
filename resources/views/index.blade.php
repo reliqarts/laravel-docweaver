@@ -1,6 +1,6 @@
 @php
     /**
-     * @var \ReliqArts\Docweaver\Services\ConfigProvider $docweaverConfigProvider
+     * @var \ReliqArts\Docweaver\Service\ConfigProvider $docweaverConfigProvider
      */
     $templateConfig = $docweaverConfigProvider->getTemplateConfig();
 @endphp
@@ -27,12 +27,12 @@
                     <ul class="info-list">
                         @if (!empty($product->getDescription()))
                         <li class="description">
-                            <span class="label">Description:</span> 
+                            <span class="label">Description:</span>
                             <span>{{ $product->getDescription() }}</span>
                         </li>
                         @endif
                         <li>
-                            <span class="label">Version:</span> 
+                            <span class="label">Version:</span>
                             <span>{{ $product->getDefaultVersion() }}</span>
                         </li>
                         <li>
