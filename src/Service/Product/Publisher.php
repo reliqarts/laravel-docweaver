@@ -12,8 +12,8 @@ use ReliqArts\Docweaver\Contract\VCSCommandRunner;
 use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory;
 use ReliqArts\Docweaver\Exception\Product\PublicationFailed;
 use ReliqArts\Docweaver\Model\Product;
-use ReliqArts\Docweaver\Service\Publisher as BasePublisher;
 use ReliqArts\Docweaver\Result;
+use ReliqArts\Docweaver\Service\Publisher as BasePublisher;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
@@ -28,10 +28,6 @@ final class Publisher extends BasePublisher implements PublisherContract
 
     /**
      * Publisher constructor.
-     *
-     * @param Filesystem       $filesystem
-     * @param Logger           $logger
-     * @param VCSCommandRunner $vcsCommandRunner
      */
     public function __construct(Filesystem $filesystem, Logger $logger, VCSCommandRunner $vcsCommandRunner)
     {
@@ -41,12 +37,7 @@ final class Publisher extends BasePublisher implements PublisherContract
     }
 
     /**
-     * @param Product $product
-     * @param string  $source
-     *
      * @throws Exception
-     *
-     * @return Result
      */
     public function publish(Product $product, string $source): Result
     {
@@ -90,11 +81,6 @@ final class Publisher extends BasePublisher implements PublisherContract
         return $result;
     }
 
-    /**
-     * @param Product $product
-     *
-     * @return Result
-     */
     public function update(Product $product): Result
     {
         $result = new Result();
@@ -134,13 +120,7 @@ final class Publisher extends BasePublisher implements PublisherContract
     }
 
     /**
-     * @param Product $product
-     * @param string  $source
-     * @param string  $version
-     *
      * @throws Exception
-     *
-     * @return bool
      */
     private function publishVersion(Product $product, string $source, string $version): bool
     {
@@ -156,25 +136,14 @@ final class Publisher extends BasePublisher implements PublisherContract
     }
 
     /**
-     * @param Product $product
-     * @param string  $version
-     *
      * @throws Exception
-     *
-     * @return bool
      */
     private function updateVersion(Product $product, string $version): bool
     {
         try {
             $this->vcsCommandRunner->pull(sprintf('%s/%s', $product->getDirectory(), $version));
         } catch (ProcessFailedException $e) {
-            throw new PublicationFailed(
-                sprintf(
-                    'Failed to update version `%s` of product `%s`.',
-                    $version,
-                    $product->getName()
-                )
-            );
+            throw new PublicationFailed(sprintf('Failed to update version `%s` of product `%s`.', $version, $product->getName()));
         }
 
         $this->publishProductAssets($product, $version);
@@ -182,13 +151,6 @@ final class Publisher extends BasePublisher implements PublisherContract
         return true;
     }
 
-    /**
-     * @param Product $product
-     * @param string  $source
-     * @param array   $tags
-     *
-     * @return Result
-     */
     private function publishTags(Product $product, string $source, array $tags = []): Result
     {
         $result = new Result();
@@ -221,10 +183,6 @@ final class Publisher extends BasePublisher implements PublisherContract
         ]);
     }
 
-    /**
-     * @param Product $product
-     * @param string  $version
-     */
     private function publishProductAssets(Product $product, string $version): void
     {
         try {
@@ -239,11 +197,7 @@ final class Publisher extends BasePublisher implements PublisherContract
     }
 
     /**
-     * @param Product $product
-     *
      * @throws ProcessFailedException
-     *
-     * @return array
      */
     private function listAvailableProductTags(Product $product): array
     {
@@ -251,11 +205,7 @@ final class Publisher extends BasePublisher implements PublisherContract
     }
 
     /**
-     * @param Product $product
-     *
      * @throws ProcessFailedException
-     *
-     * @return string
      */
     private function getProductSource(Product $product): string
     {

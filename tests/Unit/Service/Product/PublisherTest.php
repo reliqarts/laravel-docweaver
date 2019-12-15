@@ -12,9 +12,9 @@ use ReliqArts\Docweaver\Contract\VCSCommandRunner;
 use ReliqArts\Docweaver\Exception\Product\AssetPublicationFailed;
 use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory;
 use ReliqArts\Docweaver\Model\Product;
+use ReliqArts\Docweaver\Result;
 use ReliqArts\Docweaver\Service\Product\Publisher;
 use ReliqArts\Docweaver\Tests\Unit\TestCase;
-use ReliqArts\Docweaver\Result;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
@@ -83,7 +83,6 @@ final class PublisherTest extends TestCase
         $masterDirectory = sprintf('%s/master', $productDirectory);
         $product = $this->product->reveal();
         $tags = ['1.0', '1.1', '3.7', '3.8'];
-
 
         $this->product->getDirectory()
             ->willReturn($productDirectory);
@@ -543,11 +542,6 @@ final class PublisherTest extends TestCase
         $this->assertNotContains('1.0', $result->getExtra()->versionsPublished);
     }
 
-    /**
-     * @param Result $result
-     * @param string $productName
-     * @param array  $tagsPublished
-     */
     private function assertPublishSuccess(Result $result, string $productName, array $tagsPublished): void
     {
         $this->assertInstanceOf(Result::class, $result);
@@ -564,11 +558,6 @@ final class PublisherTest extends TestCase
     /** @noinspection PhpTooManyParametersInspection */
 
     /**
-     * @param array  $tags
-     * @param string $productDirectory
-     * @param string $source
-     * @param array  $tagExistenceMap
-     *
      * @throws Exception
      */
     private function setTagExpectations(

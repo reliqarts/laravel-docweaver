@@ -42,9 +42,6 @@ abstract class Publisher implements PublisherContract
 
     /**
      * Publisher constructor.
-     *
-     * @param FilesystemContract $filesystem
-     * @param LoggerContract     $logger
      */
     public function __construct(FilesystemContract $filesystem, LoggerContract $logger)
     {
@@ -53,9 +50,6 @@ abstract class Publisher implements PublisherContract
         $this->startTime = microtime(true);
     }
 
-    /**
-     * @return string
-     */
     protected function getExecutionTime(): string
     {
         return sprintf('%ss', $this->secondsSince($this->startTime));
@@ -97,10 +91,6 @@ abstract class Publisher implements PublisherContract
 
     /**
      * Ensure documentation resource directory exists and is writable.
-     *
-     * @param string $directory
-     *
-     * @return bool
      */
     protected function readyResourceDirectory(string $directory): bool
     {

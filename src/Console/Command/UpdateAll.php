@@ -34,8 +34,6 @@ class UpdateAll extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param Publisher $publisher
      */
     public function __construct(Publisher $publisher)
     {

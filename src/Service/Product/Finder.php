@@ -36,11 +36,6 @@ final class Finder implements FinderContract
 
     /**
      * ProductFinder constructor.
-     *
-     * @param Filesystem     $filesystem
-     * @param Logger         $logger
-     * @param ConfigProvider $configProvider
-     * @param ProductFactory $productFactory
      */
     public function __construct(
         Filesystem $filesystem,
@@ -55,8 +50,6 @@ final class Finder implements FinderContract
     }
 
     /**
-     * @param bool $includeUnknowns
-     *
      * @return Product[]
      */
     public function listProducts(bool $includeUnknowns = false): array
@@ -79,11 +72,6 @@ final class Finder implements FinderContract
         return $products;
     }
 
-    /**
-     * @param string $productName
-     *
-     * @return null|Product
-     */
     public function findProduct(string $productName): ?Product
     {
         $productKey = strtolower($productName);

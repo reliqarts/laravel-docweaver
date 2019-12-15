@@ -9,11 +9,6 @@ use ReliqArts\Docweaver\Contract\Exception as ExceptionContract;
 
 abstract class Exception extends BaseException implements ExceptionContract
 {
-    /**
-     * @param string $message
-     *
-     * @return ExceptionContract
-     */
     final public function withMessage(string $message): ExceptionContract
     {
         $this->message = $message;

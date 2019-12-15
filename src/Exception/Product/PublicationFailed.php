@@ -17,13 +17,6 @@ class PublicationFailed extends Exception
      */
     protected $product;
 
-    /**
-     * @param Product        $product
-     * @param string         $version
-     * @param null|Exception $previous
-     *
-     * @return ExceptionContract
-     */
     public static function forProductVersion(
         Product $product,
         string $version,

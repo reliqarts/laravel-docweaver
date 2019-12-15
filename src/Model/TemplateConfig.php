@@ -48,15 +48,6 @@ class TemplateConfig
 
     /**
      * TemplateConfig constructor.
-     *
-     * @param string $masterTemplate
-     * @param string $masterSection
-     * @param string $styleStack
-     * @param string $scriptStack
-     * @param string $indexTitle
-     * @param string $indexIntro
-     * @param bool   $showProductLine
-     * @param bool   $showFootnotes
      */
     public function __construct(
         string $masterTemplate,
@@ -78,81 +69,51 @@ class TemplateConfig
         $this->showFootnotes = $showFootnotes;
     }
 
-    /**
-     * @return string
-     */
     public function getMasterTemplate(): string
     {
         return $this->masterTemplate;
     }
 
-    /**
-     * @return string
-     */
     public function getMasterSection(): string
     {
         return $this->masterSection;
     }
 
-    /**
-     * @return string
-     */
     public function getStyleStack(): string
     {
         return $this->styleStack;
     }
 
-    /**
-     * @return bool
-     */
     public function hasStyleStack(): bool
     {
         return !empty($this->getStyleStack());
     }
 
-    /**
-     * @return string
-     */
     public function getScriptStack(): string
     {
         return $this->scriptStack;
     }
 
-    /**
-     * @return bool
-     */
     public function hasScriptStack(): bool
     {
         return !empty($this->getScriptStack());
     }
 
-    /**
-     * @return string
-     */
     public function getIndexTitle(): string
     {
         return $this->indexTitle;
     }
 
-    /**
-     * @return string
-     */
     public function getIndexIntro(): string
     {
         return $this->indexIntro;
     }
 
-    /**
-     * @return bool
-     */
     public function isShowProductLine(): bool
     {
         return $this->showProductLine;
     }
 
-    /**
-     * @return bool
-     */
     public function isShowFootnotes(): bool
     {
         return $this->showFootnotes;

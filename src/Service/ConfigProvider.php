@@ -45,8 +45,6 @@ final class ConfigProvider implements ConfigProviderContract
 
     /**
      * ConfigProvider constructor.
-     *
-     * @param Config $config
      */
     public function __construct(Config $config)
     {
@@ -57,8 +55,6 @@ final class ConfigProvider implements ConfigProviderContract
      * Get directory path to where documentation are stored.
      *
      * @param bool $absolute whether to return full
-     *
-     * @return string
      */
     public function getDocumentationDirectory($absolute = false): string
     {
@@ -73,8 +69,6 @@ final class ConfigProvider implements ConfigProviderContract
 
     /**
      * Get route config.
-     *
-     * @return array
      */
     public function getRouteConfig(): array
     {
@@ -83,8 +77,6 @@ final class ConfigProvider implements ConfigProviderContract
 
     /**
      * Get route prefix for docs.
-     *
-     * @return string
      */
     public function getRoutePrefix(): string
     {
@@ -93,10 +85,6 @@ final class ConfigProvider implements ConfigProviderContract
 
     /**
      * Get bindings for routes.
-     *
-     * @param array $bindings
-     *
-     * @return array
      */
     public function getRouteGroupBindings(array $bindings = []): array
     {
@@ -111,41 +99,26 @@ final class ConfigProvider implements ConfigProviderContract
         return $this->get(self::KEY_DEBUG, false);
     }
 
-    /**
-     * @return bool
-     */
     public function isWordedDefaultVersionAllowed(): bool
     {
         return $this->get(self::KEY_VERSIONS_ALLOW_WORDED_DEFAULT, false);
     }
 
-    /**
-     * @return string
-     */
     public function getIndexRouteName(): string
     {
         return $this->get(self::KEY_ROUTE_NAME_INDEX, self::DEFAULT_INDEX_ROUTE_NAME);
     }
 
-    /**
-     * @return string
-     */
     public function getProductIndexRouteName(): string
     {
         return $this->get(self::KEY_ROUTE_NAME_PRODUCT_INDEX, self::DEFAULT_PRODUCT_INDEX_ROUTE_NAME);
     }
 
-    /**
-     * @return string
-     */
     public function getProductPageRouteName(): string
     {
         return $this->get(self::KEY_ROUTE_NAME_PRODUCT_PAGE, self::DEFAULT_PRODUCT_PAGE_ROUTE_NAME);
     }
 
-    /**
-     * @return string
-     */
     public function getCacheKey(): string
     {
         return $this->get(self::KEY_CACHE_KEY, self::DEFAULT_CACHE_KEY);
@@ -153,17 +126,12 @@ final class ConfigProvider implements ConfigProviderContract
 
     /**
      * Page used as content index (or Table of Contents) for product documentation.
-     *
-     * @return string
      */
     public function getContentIndexPageName(): string
     {
         return $this->get(self::KEY_TABLE_OF_CONTENTS_PAGE_NAME, self::DEFAULT_TABLE_OF_CONTENTS_PAGE_NAME);
     }
 
-    /**
-     * @return TemplateConfig
-     */
     public function getTemplateConfig(): TemplateConfig
     {
         $masterTemplate = $this->get(self::KEY_VIEW_MASTER_TEMPLATE);
@@ -188,8 +156,7 @@ final class ConfigProvider implements ConfigProviderContract
     }
 
     /**
-     * @param null|string $key
-     * @param mixed       $default
+     * @param mixed $default
      *
      * @return mixed
      */

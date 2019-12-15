@@ -60,17 +60,12 @@ final class ServiceProvider extends BaseServiceProvider
 
     /**
      * Get the services provided by the provider.
-     *
-     * @return array
      */
     public function provides(): array
     {
         return $this->commands;
     }
 
-    /**
-     * @return self
-     */
     protected function handleAssets(): self
     {
         $this->publishes([
@@ -80,9 +75,6 @@ final class ServiceProvider extends BaseServiceProvider
         return $this;
     }
 
-    /**
-     * @return self
-     */
     protected function handleConfig(): self
     {
         $docWeaverConfig = "{$this->assetsDir}/config/config.php";
@@ -96,9 +88,6 @@ final class ServiceProvider extends BaseServiceProvider
         return $this;
     }
 
-    /**
-     * @return self
-     */
     private function handleCommands(): self
     {
         if ($this->app->runningInConsole() && !empty($this->commands)) {
@@ -108,9 +97,6 @@ final class ServiceProvider extends BaseServiceProvider
         return $this;
     }
 
-    /**
-     * @return self
-     */
     private function handleMigrations(): self
     {
         $this->loadMigrationsFrom(sprintf('%s/database/migrations', $this->assetsDir));
@@ -118,9 +104,6 @@ final class ServiceProvider extends BaseServiceProvider
         return $this;
     }
 
-    /**
-     * @return self
-     */
     private function handleRoutes(): self
     {
         require realpath(sprintf('%s/routes/web.php', $this->assetsDir));
@@ -128,9 +111,6 @@ final class ServiceProvider extends BaseServiceProvider
         return $this;
     }
 
-    /**
-     * @return self
-     */
     private function handleViews(): self
     {
         $viewsDirectory = sprintf('%s/resources/views', $this->assetsDir);
@@ -144,9 +124,6 @@ final class ServiceProvider extends BaseServiceProvider
         return $this;
     }
 
-    /**
-     * @return self
-     */
     private function registerAliases(): self
     {
         $loader = AliasLoader::getInstance();
@@ -160,9 +137,6 @@ final class ServiceProvider extends BaseServiceProvider
         return $this;
     }
 
-    /**
-     * @return self
-     */
     private function registerBindings(): self
     {
         $this->app->bind(
@@ -228,9 +202,6 @@ final class ServiceProvider extends BaseServiceProvider
         return $this;
     }
 
-    /**
-     * @return self
-     */
     private function addViewComposers(): self
     {
         $configProvider = resolve(Contract\ConfigProvider::class);

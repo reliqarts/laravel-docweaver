@@ -6,7 +6,6 @@ namespace ReliqArts\Docweaver\Console\Command;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use ReliqArts\Docweaver\Contract\Documentation\Publisher;
 
 class Update extends SingleProductCommand
 {

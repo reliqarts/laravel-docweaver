@@ -33,8 +33,6 @@ class Result implements Arrayable, Jsonable
     /**
      * Result constructor.
      *
-     * @param bool     $success
-     * @param string   $error
      * @param string[] $messages
      * @param mixed    $extra
      */
@@ -50,19 +48,11 @@ class Result implements Arrayable, Jsonable
         $this->extra = $extra;
     }
 
-    /**
-     * @return bool
-     */
     public function isSuccess(): bool
     {
         return $this->success;
     }
 
-    /**
-     * @param bool $success
-     *
-     * @return self
-     */
     public function setSuccess(bool $success): self
     {
         $clone = clone $this;
@@ -71,19 +61,11 @@ class Result implements Arrayable, Jsonable
         return $clone;
     }
 
-    /**
-     * @return string
-     */
     public function getError(): string
     {
         return $this->error;
     }
 
-    /**
-     * @param string $error
-     *
-     * @return self
-     */
     public function setError(string $error): self
     {
         $clone = clone $this;
@@ -93,19 +75,11 @@ class Result implements Arrayable, Jsonable
         return $clone;
     }
 
-    /**
-     * @return null|stdClass
-     */
     public function getExtra(): ?stdClass
     {
         return $this->extra;
     }
 
-    /**
-     * @param stdClass $extra
-     *
-     * @return self
-     */
     public function setExtra(stdClass $extra): self
     {
         $clone = clone $this;
@@ -114,19 +88,11 @@ class Result implements Arrayable, Jsonable
         return $clone;
     }
 
-    /**
-     * @return string
-     */
     public function getMessage(): string
     {
         return empty($this->messages) ? '' : current($this->messages);
     }
 
-    /**
-     * @param string $message
-     *
-     * @return self
-     */
     public function setMessage(string $message): self
     {
         return $this->addMessage($message);
@@ -142,8 +108,6 @@ class Result implements Arrayable, Jsonable
 
     /**
      * @param string ...$messages
-     *
-     * @return self
      */
     public function setMessages(string ...$messages): self
     {
@@ -153,11 +117,6 @@ class Result implements Arrayable, Jsonable
         return $clone;
     }
 
-    /**
-     * @param string $message
-     *
-     * @return self
-     */
     public function addMessage(string $message): self
     {
         $clone = clone $this;
@@ -168,8 +127,6 @@ class Result implements Arrayable, Jsonable
 
     /**
      * {@inheritdoc}
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -180,8 +137,6 @@ class Result implements Arrayable, Jsonable
      * {@inheritdoc}
      *
      * @param int $options
-     *
-     * @return string
      */
     public function toJson($options = 0): string
     {

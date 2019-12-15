@@ -19,19 +19,12 @@ final class MarkdownParser implements MDParser
 
     /**
      * MarkdownParser constructor.
-     *
-     * @param ParsedownExtra $interpreter
      */
     public function __construct(ParsedownExtra $interpreter)
     {
         $this->interpreter = $interpreter;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return string
-     */
     public function parse(string $text): string
     {
         return $this->interpreter->text($text);

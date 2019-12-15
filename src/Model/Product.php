@@ -103,10 +103,6 @@ class Product implements Arrayable, Jsonable
 
     /**
      * Create product instance.
-     *
-     * @param Filesystem     $filesystem
-     * @param ConfigProvider $configProvider
-     * @param string         $directory
      */
     public function __construct(Filesystem $filesystem, ConfigProvider $configProvider, string $directory)
     {
@@ -128,9 +124,6 @@ class Product implements Arrayable, Jsonable
         $this->loadMeta();
     }
 
-    /**
-     * @return string
-     */
     public function getKey(): string
     {
         return $this->key;
@@ -140,8 +133,6 @@ class Product implements Arrayable, Jsonable
      * Get default version for product.
      *
      * @param bool $allowWordedDefault whether a worded version should be accepted as default
-     *
-     * @return string
      */
     public function getDefaultVersion(bool $allowWordedDefault = false): string
     {
@@ -168,8 +159,6 @@ class Product implements Arrayable, Jsonable
 
     /**
      * Get product directory.
-     *
-     * @return string
      */
     public function getDirectory(): string
     {
@@ -178,8 +167,6 @@ class Product implements Arrayable, Jsonable
 
     /**
      * Get product name.
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -188,8 +175,6 @@ class Product implements Arrayable, Jsonable
 
     /**
      * Get product description.
-     *
-     * @return string
      */
     public function getDescription(): string
     {
@@ -198,8 +183,6 @@ class Product implements Arrayable, Jsonable
 
     /**
      * Get product image url.
-     *
-     * @return string
      */
     public function getImageUrl(): string
     {
@@ -208,8 +191,6 @@ class Product implements Arrayable, Jsonable
 
     /**
      * Get the publicly available versions of the product.
-     *
-     * @return array
      */
     public function getVersions(): array
     {
@@ -218,8 +199,6 @@ class Product implements Arrayable, Jsonable
 
     /**
      * Get last modified time.
-     *
-     * @return Carbon
      */
     public function getLastModified(): Carbon
     {
@@ -228,10 +207,6 @@ class Product implements Arrayable, Jsonable
 
     /**
      * Determine if the given string is a valid version.
-     *
-     * @param string $version
-     *
-     * @return bool
      */
     public function hasVersion(string $version): bool
     {
@@ -240,8 +215,6 @@ class Product implements Arrayable, Jsonable
 
     /**
      * Publish product public assets.
-     *
-     * @param string $version
      *
      * @throws Exception if products asset directory is invalid or assets could not be published
      */
@@ -264,8 +237,6 @@ class Product implements Arrayable, Jsonable
 
     /**
      * Get the instance as an array.
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -285,17 +256,12 @@ class Product implements Arrayable, Jsonable
      * Convert the object to its JSON representation.
      *
      * @param int $options
-     *
-     * @return string
      */
     public function toJson($options = 0): string
     {
         return json_encode($this->toArray(), JSON_THROW_ON_ERROR, 512);
     }
 
-    /**
-     * @return string
-     */
     public function getMasterDirectory(): string
     {
         return sprintf('%s/%s', $this->getDirectory(), self::VERSION_MASTER);
@@ -303,11 +269,6 @@ class Product implements Arrayable, Jsonable
 
     /**
      * Convert url string to asset url relative to current product.
-     *
-     * @param string $url
-     * @param string $version
-     *
-     * @return string
      */
     private function getAssetUrl(string $url, string $version): string
     {

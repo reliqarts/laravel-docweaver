@@ -111,7 +111,7 @@ final class PublisherTest extends TestCase
             ->shouldBeCalled()
             ->willReturn(false);
 
-        /* @noinspection PhpUnusedLocalVariableInspection */
+        /** @noinspection PhpUnusedLocalVariableInspection */
         $publisher = new Publisher(
             $this->filesystem->reveal(),
             $this->logger->reveal(),

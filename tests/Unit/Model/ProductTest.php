@@ -204,7 +204,7 @@ final class ProductTest extends AspectMockedTestCase
             ->willReturn(false);
 
         foreach ($metaImageScenarios as $scenario) {
-            [$imageFilename, $expectedImageUrl] = $scenario;
+            list($imageFilename, $expectedImageUrl) = $scenario;
             $metaInfo = [
                 'name' => $metaProductName,
                 'description' => $description,
@@ -287,6 +287,7 @@ final class ProductTest extends AspectMockedTestCase
     /**
      * @covers ::publishAssets
      * @small
+     *
      * @throws Exception
      */
     public function testPublishAssets(): void
@@ -336,6 +337,7 @@ final class ProductTest extends AspectMockedTestCase
      * @covers ::publishAssets
      * @covers                   \ReliqArts\Docweaver\Exception\Product\AssetPublicationFailed
      * @small
+     *
      * @throws Exception
      */
     public function testPublishAssetsWhenAssetPublicationFails(): void
@@ -359,11 +361,6 @@ final class ProductTest extends AspectMockedTestCase
         $this->subject->publishAssets($version);
     }
 
-    /**
-     * @param string $version
-     *
-     * @return array
-     */
     private function getMetaImageScenariosForVersion(string $version): array
     {
         $relativeImagePath = 'product-image.jpg';

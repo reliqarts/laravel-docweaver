@@ -7,7 +7,6 @@ namespace ReliqArts\Docweaver\Tests\Unit\Service;
 use Illuminate\Contracts\Config\Repository as Config;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use ReliqArts\Docweaver\Model\TemplateConfig;
 use ReliqArts\Docweaver\Service\ConfigProvider;
 use ReliqArts\Docweaver\Tests\Unit\TestCase;
 

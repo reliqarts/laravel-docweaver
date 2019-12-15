@@ -73,8 +73,6 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
      * @preserveGlobalState disabled
      * @runInSeparateProcess
      *
-     * @param string $tagList
-     *
      * @throws Exception
      */
     public function testGetTags(string $tagList): void
@@ -116,7 +114,7 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
     {
         $returnedProcess = $this->prophesize(Process::class);
         $process = Test::double(Process::class, [
-            'mustRun' => $returnedProcess->reveal()
+            'mustRun' => $returnedProcess->reveal(),
         ]);
 
         $this->subject->pull($this->workingDirectory);
@@ -126,9 +124,6 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
         $this->assertTrue(true);
     }
 
-    /**
-     * @return array
-     */
     public function tagListProvider(): array
     {
         return [

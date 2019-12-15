@@ -25,9 +25,6 @@ final class ProductMaker implements Maker
 
     /**
      * Factory constructor.
-     *
-     * @param Filesystem     $filesystem
-     * @param ConfigProvider $configProvider
      */
     public function __construct(Filesystem $filesystem, ConfigProvider $configProvider)
     {
@@ -36,11 +33,7 @@ final class ProductMaker implements Maker
     }
 
     /**
-     * @param string $directory
-     *
      * @throws Exception if directory is invalid
-     *
-     * @return Product
      */
     public function create(string $directory): Product
     {

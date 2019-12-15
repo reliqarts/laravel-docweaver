@@ -16,10 +16,7 @@ final class ParsingFailed extends Exception
     private $failedFile;
 
     /**
-     * @param string            $file
      * @param ExceptionContract $previous
-     *
-     * @return ExceptionContract
      */
     public static function forFile(string $file, ExceptionContract $previous = null): ExceptionContract
     {
@@ -32,8 +29,6 @@ final class ParsingFailed extends Exception
 
     /**
      * Get the file which parsing failed for.
-     *
-     * @return null|string
      */
     public function getFailedFile(): ?string
     {

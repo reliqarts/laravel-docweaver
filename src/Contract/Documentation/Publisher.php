@@ -19,8 +19,6 @@ interface Publisher extends BasePublisher
      * @param Command $callingCommand Calling Command
      *
      * @throws InvalidDirectory
-     *
-     * @return Result
      */
     public function publish(string $productName, string $source, Command &$callingCommand = null): Result;
 
@@ -29,8 +27,6 @@ interface Publisher extends BasePublisher
      *
      * @param string  $productName    Product Name
      * @param Command $callingCommand Calling Command
-     *
-     * @return Result
      */
     public function update(string $productName, Command &$callingCommand = null): Result;
 
@@ -38,8 +34,6 @@ interface Publisher extends BasePublisher
      * Update all products.
      *
      * @param Command $callingCommand Calling Command
-     *
-     * @return Result
      */
     public function updateAll(Command &$callingCommand = null): Result;
 }

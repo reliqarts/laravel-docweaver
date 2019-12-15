@@ -19,10 +19,6 @@ interface Finder
 
     /**
      * Get product.
-     *
-     * @param string $productName
-     *
-     * @return null|Product
      */
     public function findProduct(string $productName): ?Product;
 }

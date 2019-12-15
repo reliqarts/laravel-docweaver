@@ -48,11 +48,6 @@ class DocumentationController
 
     /**
      * Create a new controller instance.
-     *
-     * @param ConfigProvider $configProvider
-     * @param Logger         $logger
-     * @param Provider       $docs
-     * @param Finder         $productFinder
      */
     public function __construct(ConfigProvider $configProvider, Logger $logger, Provider $docs, Finder $productFinder)
     {
@@ -65,8 +60,6 @@ class DocumentationController
 
     /**
      * Show the documentation home page (docs).
-     *
-     * @return View
      */
     public function index(): View
     {
@@ -84,8 +77,6 @@ class DocumentationController
      * Show the index page for a product (docs/foo).
      *
      * @param mixed $productName
-     *
-     * @return RedirectResponse
      */
     public function productIndex(string $productName): RedirectResponse
     {
@@ -105,8 +96,6 @@ class DocumentationController
     /**
      * Show a documentation page.
      *
-     * @param string $productKey
-     * @param string $version
      * @param string $page
      *
      * @return RedirectResponse|View

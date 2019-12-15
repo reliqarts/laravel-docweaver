@@ -96,7 +96,7 @@ final class ProviderTest extends TestCase
             ->shouldBeCalled()
             ->willReturn(false);
 
-        /* @noinspection PhpUnusedLocalVariableInspection */
+        /** @noinspection PhpUnusedLocalVariableInspection */
         $provider = new Provider(
             $this->filesystem->reveal(),
             $this->cache->reveal(),
@@ -209,8 +209,6 @@ final class ProviderTest extends TestCase
      * @covers ::sectionExists
      * @dataProvider sectionExistenceDataProvider
      * @small
-     *
-     * @param bool $exists
      */
     public function testSectionExists(bool $exists): void
     {

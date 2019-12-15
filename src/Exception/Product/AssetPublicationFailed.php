@@ -18,12 +18,6 @@ final class AssetPublicationFailed extends PublicationFailed
 
     /**
      * AssetPublicationFailed constructor.
-     *
-     * @param Product        $product
-     * @param string         $assetType
-     * @param null|Exception $previous
-     *
-     * @return Exception
      */
     public static function forProductAssetsOfType(
         Product $product,

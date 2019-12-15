@@ -12,11 +12,6 @@ final class GitCommandRunner implements VCSCommandRunner
 {
     private const DEFAULT_REMOTE_NAME = 'origin';
 
-    /**
-     * @param string $source
-     * @param string $branch
-     * @param string $workingDirectory
-     */
     public function clone(string $source, string $branch, string $workingDirectory): void
     {
         $command = ['git', 'clone', '--branch', $branch, sprintf('%s', $source), $branch];
@@ -26,11 +21,7 @@ final class GitCommandRunner implements VCSCommandRunner
     }
 
     /**
-     * @param string $workingDirectory
-     *
      * @throws ProcessFailedException
-     *
-     * @return array
      */
     public function listTags(string $workingDirectory): array
     {
@@ -47,8 +38,6 @@ final class GitCommandRunner implements VCSCommandRunner
     }
 
     /**
-     * @param string $workingDirectory
-     *
      * @throws ProcessFailedException
      */
     public function pull(string $workingDirectory): void
@@ -58,12 +47,7 @@ final class GitCommandRunner implements VCSCommandRunner
     }
 
     /**
-     * @param string      $workingDirectory
-     * @param null|string $remoteName
-     *
      * @throws ProcessFailedException
-     *
-     * @return string
      */
     public function getRemoteUrl(string $workingDirectory, ?string $remoteName = null): string
     {
@@ -76,9 +60,6 @@ final class GitCommandRunner implements VCSCommandRunner
         return trim($getUrl->getOutput());
     }
 
-    /**
-     * @param string $workingDirectory
-     */
     private function fetch(string $workingDirectory): void
     {
         $pull = new Process(['git', 'fetch'], $workingDirectory);

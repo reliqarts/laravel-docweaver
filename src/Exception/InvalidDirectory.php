@@ -18,8 +18,6 @@ class InvalidDirectory extends Exception
     /**
      * @param string            $directory Directory
      * @param ExceptionContract $previous  Previous Exception if nested exception
-     *
-     * @return ExceptionContract
      */
     public static function forDirectory(string $directory, ExceptionContract $previous = null): ExceptionContract
     {
@@ -30,9 +28,6 @@ class InvalidDirectory extends Exception
         return $self;
     }
 
-    /**
-     * @return null|string
-     */
     final public function getDirectory(): ?string
     {
         return $this->directory;

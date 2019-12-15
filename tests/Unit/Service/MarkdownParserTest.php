@@ -41,9 +41,6 @@ final class MarkdownParserTest extends TestCase
      * @covers ::__construct
      * @covers ::parse
      * @dataProvider textProvider
-     *
-     * @param string $text
-     * @param string $expectedResult
      */
     public function testParse(string $text, string $expectedResult): void
     {
@@ -56,9 +53,6 @@ final class MarkdownParserTest extends TestCase
         $this->assertSame($result, $expectedResult);
     }
 
-    /**
-     * @return array
-     */
     public function textProvider(): array
     {
         return [

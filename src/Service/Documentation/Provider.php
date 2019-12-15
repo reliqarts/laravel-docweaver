@@ -59,11 +59,6 @@ final class Provider implements ProviderContract
     /**
      * Create a new documentation instance.
      *
-     * @param Filesystem     $filesystem
-     * @param Cache          $cache
-     * @param ConfigProvider $configProvider
-     * @param MarkdownParser $markdownParser
-     *
      * @throws BadImplementation
      */
     public function __construct(
@@ -81,24 +76,13 @@ final class Provider implements ProviderContract
         $documentationDirectoryAbsolutePath = base_path($this->documentationDirectory);
 
         if (!$this->filesystem->isDirectory($documentationDirectoryAbsolutePath)) {
-            throw new BadImplementation(
-                sprintf(
-                    'Documentation resource directory `%s` does not exist.',
-                    $this->documentationDirectory
-                )
-            );
+            throw new BadImplementation(sprintf('Documentation resource directory `%s` does not exist.', $this->documentationDirectory));
         }
     }
 
     /**
-     * @param Product     $product
-     * @param string      $version
-     * @param null|string $page
-     *
      * @throws InvalidArgumentException
      * @throws FileNotFoundException
-     *
-     * @return string
      */
     public function getPage(Product $product, string $version, string $page = null): string
     {
@@ -116,13 +100,6 @@ final class Provider implements ProviderContract
         return $pageContent;
     }
 
-    /**
-     * @param Product $product
-     * @param string  $version
-     * @param string  $content
-     *
-     * @return string
-     */
     public function replaceLinks(Product $product, string $version, string $content): string
     {
         $routePrefix = $this->configProvider->getRoutePrefix();
@@ -140,13 +117,6 @@ final class Provider implements ProviderContract
         return str_replace($versionPlaceholder, $version, $content);
     }
 
-    /**
-     * @param Product $product
-     * @param string  $version
-     * @param string  $page
-     *
-     * @return bool
-     */
     public function sectionExists(Product $product, string $version, string $page): bool
     {
         $filePath = $this->getFilePathForProductPage($product, $version, $page);
@@ -154,13 +124,6 @@ final class Provider implements ProviderContract
         return $this->filesystem->exists($filePath);
     }
 
-    /**
-     * @param Product $product
-     * @param string  $version
-     * @param string  $page
-     *
-     * @return string
-     */
     private function getFilePathForProductPage(Product $product, string $version, string $page): string
     {
         $directory = $product->getDirectory();
@@ -170,13 +133,7 @@ final class Provider implements ProviderContract
     }
 
     /**
-     * @param Product $product
-     * @param string  $version
-     * @param string  $page
-     *
      * @throws FileNotFoundException
-     *
-     * @return string
      */
     private function getPageContent(Product $product, string $version, string $page): string
     {

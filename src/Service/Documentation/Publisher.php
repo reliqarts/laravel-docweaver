@@ -13,8 +13,8 @@ use ReliqArts\Docweaver\Contract\Logger;
 use ReliqArts\Docweaver\Contract\Product\Maker as ProductFactory;
 use ReliqArts\Docweaver\Contract\Product\Publisher as ProductPublisher;
 use ReliqArts\Docweaver\Exception\BadImplementation;
-use ReliqArts\Docweaver\Service\Publisher as BasePublisher;
 use ReliqArts\Docweaver\Result;
+use ReliqArts\Docweaver\Service\Publisher as BasePublisher;
 
 /**
  * Publishes and updates documentation.
@@ -48,12 +48,6 @@ final class Publisher extends BasePublisher implements PublisherContract
     /**
      * Create a new DocumentationPublisher.
      *
-     * @param Filesystem       $filesystem
-     * @param Logger           $logger
-     * @param ConfigProvider   $configProvider
-     * @param ProductPublisher $productPublisher
-     * @param ProductFactory   $productFactory
-     *
      * @throws BadImplementation
      */
     public function __construct(
@@ -71,23 +65,12 @@ final class Publisher extends BasePublisher implements PublisherContract
         $this->workingDirectory = base_path($this->documentationDirectory);
 
         if (!$this->readyResourceDirectory($this->workingDirectory)) {
-            throw new BadImplementation(
-                sprintf(
-                    'Could not ready document resource directory `%s`. Please ensure file system is writable.',
-                    $this->documentationDirectory
-                )
-            );
+            throw new BadImplementation(sprintf('Could not ready document resource directory `%s`. Please ensure file system is writable.', $this->documentationDirectory));
         }
     }
 
     /**
-     * @param string       $productName
-     * @param string       $source
-     * @param null|Command $callingCommand
-     *
      * @throws Exception
-     *
-     * @return Result
      */
     public function publish(string $productName, string $source = '', Command &$callingCommand = null): Result
     {
@@ -115,12 +98,7 @@ final class Publisher extends BasePublisher implements PublisherContract
     }
 
     /**
-     * @param string       $productName
-     * @param null|Command $callingCommand
-     *
      * @throws Exception
-     *
-     * @return Result
      */
     public function update(string $productName, Command &$callingCommand = null): Result
     {
@@ -149,11 +127,7 @@ final class Publisher extends BasePublisher implements PublisherContract
     }
 
     /**
-     * @param null|Command $callingCommand
-     *
      * @throws Exception
-     *
-     * @return Result
      */
     public function updateAll(Command &$callingCommand = null): Result
     {

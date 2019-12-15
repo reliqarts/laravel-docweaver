@@ -111,10 +111,6 @@ final class FinderTest extends TestCase
      * @dataProvider findProductDataProvider
      * @small
      *
-     * @param array  $productDirectories
-     * @param string $productName
-     * @param bool   $expectedToFindProduct
-     *
      * @throws Exception
      */
     public function testFindProduct(array $productDirectories, string $productName, bool $expectedToFindProduct): void
@@ -153,9 +149,6 @@ final class FinderTest extends TestCase
         $this->assertSame(strtolower($productName), $result->getKey());
     }
 
-    /**
-     * @return array
-     */
     public function findProductDataProvider(): array
     {
         return [

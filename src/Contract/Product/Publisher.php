@@ -14,21 +14,12 @@ interface Publisher extends BasePublisher
     /**
      * Publish product documentation (all versions).
      *
-     * @param Product $product
-     * @param string  $source
-     *
      * @throws PublicationFailed
-     *
-     * @return Result
      */
     public function publish(Product $product, string $source): Result;
 
     /**
      * Update product documentation (all versions).
-     *
-     * @param Product $product
-     *
-     * @return Result
      */
     public function update(Product $product): Result;
 }
