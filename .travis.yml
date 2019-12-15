@@ -4,15 +4,13 @@ php:
   - 7.4
 
 env:
-  - LARAVEL='^5.7' COMPOSER_FLAGS='--prefer-stable'
-  - LARAVEL='^5.8' COMPOSER_FLAGS='--prefer-stable'
   - LARAVEL='^6.0' COMPOSER_FLAGS='--prefer-stable'
   - LARAVEL='6.x-dev'
 
 matrix:
   fast_finish: true
   allow_failures:
-    - env: LARAVEL='^5.7' COMPOSER_FLAGS='--prefer-stable'
+    - env: LARAVEL='6.x-dev'
 
 cache:
   directories:
