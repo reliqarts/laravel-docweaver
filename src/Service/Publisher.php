@@ -21,9 +21,9 @@ abstract class Publisher implements PublisherContract
     /**
      * Calling command if running in console.
      *
-     * @var Command
+     * @var Command|null
      */
-    protected Command $callingCommand;
+    protected ?Command $callingCommand;
 
     /**
      * @var FilesystemContract
@@ -48,6 +48,7 @@ abstract class Publisher implements PublisherContract
         $this->filesystem = $filesystem;
         $this->logger = $logger;
         $this->startTime = microtime(true);
+        $this->callingCommand = null;
     }
 
     protected function getExecutionTime(): string
@@ -63,7 +64,7 @@ abstract class Publisher implements PublisherContract
      *
      * @return string
      */
-    protected function tell($text, $direction = self::TELL_DIRECTION_OUT)
+    protected function tell($text, $direction = self::TELL_DIRECTION_OUT): string
     {
         $direction = strtolower($direction);
         $nl = app()->runningInConsole() ? "\n" : '<br/>';
@@ -74,7 +75,7 @@ abstract class Publisher implements PublisherContract
             $dirSymbol = '';
         }
 
-        if (app()->runningInConsole() && $this->callingCommand) {
+        if ($this->callingCommand && app()->runningInConsole()) {
             $line = sprintf('%s%s', $dirSymbol, $text);
 
             if ($direction === self::TELL_DIRECTION_OUT) {

@@ -1,8 +1,7 @@
 language: php
 
 php:
-  - 7.2
-  - 7.3
+  - 7.4
 
 env:
   - LARAVEL='^5.7' COMPOSER_FLAGS='--prefer-stable'
@@ -13,7 +12,7 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
-    - env: LARAVEL='6.x-dev'
+    - env: LARAVEL='^5.7' COMPOSER_FLAGS='--prefer-stable'
 
 cache:
   directories:
