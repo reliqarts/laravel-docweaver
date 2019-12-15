@@ -13,8 +13,8 @@ use ReliqArts\Docweaver\Contract\Logger;
 use ReliqArts\Docweaver\Contract\Product\Maker as ProductFactory;
 use ReliqArts\Docweaver\Contract\Product\Publisher as ProductPublisher;
 use ReliqArts\Docweaver\Exception\BadImplementation;
-use ReliqArts\Docweaver\Service\Publisher as BasePublisher;
 use ReliqArts\Docweaver\Result;
+use ReliqArts\Docweaver\Service\Publisher as BasePublisher;
 
 /**
  * Publishes and updates documentation.

@@ -12,8 +12,8 @@ use ReliqArts\Docweaver\Contract\VCSCommandRunner;
 use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory;
 use ReliqArts\Docweaver\Exception\Product\PublicationFailed;
 use ReliqArts\Docweaver\Model\Product;
-use ReliqArts\Docweaver\Service\Publisher as BasePublisher;
 use ReliqArts\Docweaver\Result;
+use ReliqArts\Docweaver\Service\Publisher as BasePublisher;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
