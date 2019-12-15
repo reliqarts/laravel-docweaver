@@ -41,7 +41,7 @@ final class ConfigProvider implements ConfigProviderContract
     /**
      * @var Config
      */
-    private $config;
+    private Config $config;
 
     /**
      * ConfigProvider constructor.

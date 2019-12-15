@@ -23,22 +23,22 @@ abstract class Publisher implements PublisherContract
      *
      * @var Command
      */
-    protected $callingCommand;
+    protected Command $callingCommand;
 
     /**
      * @var FilesystemContract
      */
-    protected $filesystem;
+    protected FilesystemContract $filesystem;
 
     /**
      * @var LoggerContract
      */
-    protected $logger;
+    protected LoggerContract $logger;
 
     /**
      * @var float
      */
-    private $startTime;
+    private float $startTime;
 
     /**
      * Publisher constructor.

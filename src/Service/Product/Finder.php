@@ -17,22 +17,22 @@ final class Finder implements FinderContract
     /**
      * @var Filesystem
      */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     /**
      * @var Logger
      */
-    private $logger;
+    private Logger $logger;
 
     /**
      * @var ConfigProvider
      */
-    private $configProvider;
+    private ConfigProvider $configProvider;
 
     /**
      * @var ProductFactory
      */
-    private $productFactory;
+    private ProductFactory $productFactory;
 
     /**
      * ProductFinder constructor.

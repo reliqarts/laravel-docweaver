@@ -26,24 +26,24 @@ final class Publisher extends BasePublisher implements PublisherContract
      *
      * @var string
      */
-    private $documentationDirectory;
+    private string $documentationDirectory;
 
     /**
      * @var ProductPublisher
      */
-    private $productPublisher;
+    private ProductPublisher $productPublisher;
 
     /**
      * @var ProductFactory
      */
-    private $productFactory;
+    private ProductFactory $productFactory;
 
     /**
      * Working directory.
      *
      * @var string
      */
-    private $workingDirectory;
+    private string $workingDirectory;
 
     /**
      * Create a new DocumentationPublisher.

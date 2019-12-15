@@ -11,9 +11,6 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Illuminate\View\View;
 use Monolog\Handler\StreamHandler;
 
-/**
- *  ServiceProvider.
- */
 final class ServiceProvider extends BaseServiceProvider
 {
     private const LOGGER_NAME = 'Docweaver';

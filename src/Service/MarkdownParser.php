@@ -15,7 +15,7 @@ final class MarkdownParser implements MDParser
     /**
      * @var ParsedownExtra
      */
-    private $interpreter;
+    private ParsedownExtra $interpreter;
 
     /**
      * MarkdownParser constructor.

@@ -25,36 +25,36 @@ final class Provider implements ProviderContract
      *
      * @var Cache
      */
-    private $cache;
+    private Cache $cache;
 
     /**
      * The cache key.
      *
      * @var string
      */
-    private $cacheKey;
+    private string $cacheKey;
 
     /**
      * Documentation resource directory.
      *
      * @var string
      */
-    private $documentationDirectory;
+    private string $documentationDirectory;
 
     /**
      * @var Filesystem
      */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     /**
      * @var ConfigProvider
      */
-    private $configProvider;
+    private ConfigProvider $configProvider;
 
     /**
      * @var MarkdownParser
      */
-    private $markdownParser;
+    private MarkdownParser $markdownParser;
 
     /**
      * Create a new documentation instance.

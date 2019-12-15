@@ -24,7 +24,7 @@ final class Publisher extends BasePublisher implements PublisherContract
     /**
      * @var VCSCommandRunner
      */
-    private $vcsCommandRunner;
+    private VCSCommandRunner $vcsCommandRunner;
 
     /**
      * Publisher constructor.
