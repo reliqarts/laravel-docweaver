@@ -17,10 +17,6 @@
             "email": "reliq@reliqarts.com"
         }
     ],
-    "replace": {
-        "reliqarts/doc-weaver": "1.*",
-        "reliqarts/docweaver": "*"
-    },
     "require": {
         "php": "^7.4",
         "illuminate/support": "^6.0",
@@ -57,5 +53,14 @@
                 "DocweaverPublisher": "ReliqArts\\Docweaver\\Services\\Publisher"
             }
         }
-    }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
