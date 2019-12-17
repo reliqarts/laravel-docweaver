@@ -1,5 +1,5 @@
 /**
- * Docweaver - Core 
+ * Docweaver - Core
  * */
 
 export default class Core {
@@ -9,7 +9,7 @@ export default class Core {
      */
     constructor() {
         // set props
-        this.$wrapper = $('#docweaver-wrapper');
+        this.$wrapper = $('.docweaver-wrapper');
 
         // init parts
         this.initAnchors()
@@ -23,11 +23,11 @@ export default class Core {
      */
     initAnchors() {
         let $wrapper = this.$wrapper;
-        
+
         // Smooth scroll to anchor
         $wrapper.find('a[href*="#"]:not([href="#"])').click(function() {
             if (
-                location.pathname.replace(/^\//,'') === this.pathname.replace(/^\//,'') 
+                location.pathname.replace(/^\//,'') === this.pathname.replace(/^\//,'')
                 && location.hostname == this.hostname
             ) {
                 let target = $(this.hash);
@@ -93,8 +93,8 @@ export default class Core {
      */
     initNavbar() {
         let _self = this,
-            $navbar = this.$wrapper.find('#docweaver-product-bar'),
-            $docsHomeLink = $navbar.find('#docweaver-docs-home-link');
+            $navbar = this.$wrapper.find('.docweaver-product-bar'),
+            $docsHomeLink = $navbar.find('.docweaver-docs-home-link');
 
         if ($navbar.length) {
             // docs home link
@@ -114,18 +114,20 @@ export default class Core {
      */
     initSidebar() {
         let _self = this,
-            $sidebar = this.$wrapper.find('#docweaver-sidebar'),
-            $sidebarPopper = $sidebar.find('#docweaver-sidebar-popper'),
-            $article = this.$wrapper.find('#docweaver-article'),
+            $sidebar = this.$wrapper.find('.docweaver-sidebar'),
+            $sidebarPopper = $sidebar.find('.docweaver-sidebar-popper'),
             $activeLink = $sidebar.find('li a[href="' + decodeURIComponent(window.location.pathname) + '"]');
 
         if ($sidebar.length) {
+            console.log('sidebar length!!!');
+
             // highlight active link
             $activeLink.parent('li').addClass('is-active')
                 .parent('ul').prev('h2').addClass('is-active');
 
             // toggle/pop entire sidebar - small screens
             $sidebarPopper.off('click').on('click', function(ev) {
+                console.log('clicked!!!');
                 ev.preventDefault();
                 $sidebar.toggleClass('popped');
             });
@@ -142,9 +144,9 @@ export default class Core {
                 ev.preventDefault();
                 $(this).toggleClass('is-expanded');
             });
-            
+
             // expand/collapse all sidebar sections
-            $sidebar.find('a#doc-expand').off('click').on('click', function(ev) {
+            $sidebar.find('a.docweaver-doc-expand').off('click').on('click', function(ev) {
                 ev.preventDefault();
                 _self.expandSidebarSections(!$(ev.target).hasClass('is-expanded'));
             });
@@ -163,14 +165,14 @@ export default class Core {
     };
 
     /**
-     * 
-     * @param {boolean} expand 
+     *
+     * @param {boolean} expand
      * @param {any} $sidebar Sidebar instance.
      */
     expandSidebarSections(expand, $sidebar) {
-        $sidebar = $sidebar || this.$wrapper.find('section.sidebar');
-        
-        let $toggle = $sidebar.find('a#doc-expand'),
+        $sidebar = $sidebar || this.$wrapper.find('section.docweaver-sidebar');
+
+        let $toggle = $sidebar.find('a.docweaver-doc-expand'),
             expandedClasses = 'is-expanded';
 
         if (expand) {
@@ -188,4 +190,4 @@ export default class Core {
 
         return this;
     }
-}   
+}

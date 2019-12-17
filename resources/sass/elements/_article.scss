@@ -1,6 +1,6 @@
 // Docweaver - article
 
-#docweaver-article, .docs article {
+.docweaver-article {
 	padding: rem-calc(15px 30px 30px);
 	position: relative;
 	margin-left: 0;
@@ -20,17 +20,17 @@
 
 		&.has-icon {
 			position: relative;
-		
+
 			&.video, &.laracast {
 				background: rgba(103, 58, 183, 0.62);
 			}
-		
+
 			&.tip {
 				background: #64B5F6;
 			}
-		
+
 			p { padding-left: 40px; }
-		
+
 			.flag {
 				position: absolute;
 				width: 30px;
@@ -58,7 +58,7 @@
 			padding-bottom: 50px;
 			border-bottom: 1px solid $color-faint;
 			-webkit-font-smoothing: antialiased;
-			
+
 			li {
 				&:before {
 					content: "# ";
@@ -146,7 +146,7 @@
 			font-size: 16px;
 		}
 	}
-	
+
 	.content-list ul li {
 		margin: 8px;
 		line-height: 1.65;
@@ -163,7 +163,7 @@
 	@media (min-width: $bp-large + 1) {
 		margin-left: rem-calc(300px);
 		padding: rem-calc(50px);
-		
+
 		h2 a:before {
 			margin-left: rem-calc(-25px);
 		}

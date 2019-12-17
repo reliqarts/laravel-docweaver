@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ReliqArts\Docweaver\Service;
 
-use ParsedownExtra;
+use League\CommonMark\ConverterInterface;
 use ReliqArts\Docweaver\Contract\MarkdownParser as MDParser;
 
 /**
@@ -13,20 +13,20 @@ use ReliqArts\Docweaver\Contract\MarkdownParser as MDParser;
 final class MarkdownParser implements MDParser
 {
     /**
-     * @var ParsedownExtra
+     * @var ConverterInterface
      */
-    private ParsedownExtra $interpreter;
+    private ConverterInterface $converter;
 
     /**
-     * MarkdownParser constructor.
+     * CommonMarkConverter constructor.
      */
-    public function __construct(ParsedownExtra $interpreter)
+    public function __construct(ConverterInterface $converter)
     {
-        $this->interpreter = $interpreter;
+        $this->converter = $converter;
     }
 
     public function parse(string $text): string
     {
-        return $this->interpreter->text($text);
+        return $this->converter->convertToHtml($text);
     }
 }

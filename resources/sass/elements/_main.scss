@@ -7,12 +7,12 @@ a {
 }
 
 // Product Bar
-#docweaver-product-bar, #docweaver-product-line {
+.docweaver-product-bar, .docweaver-product-line {
     background-color: lighten($color-primary, 2%);
     margin-bottom: 20px;
     min-height: 2px;
 
-    #docweaver-docs-home-link {
+    .docweaver-docs-home-link {
         display: inline-block;
         padding-right: 0.68em;
         position: relative;
@@ -38,7 +38,7 @@ a {
 				margin-bottom: 0;
 			}
         }
-        
+
         &:hover {
             > span {
                 margin-left: 0;
@@ -65,11 +65,11 @@ a {
         }
     }
 
-    #docweaver-navbar-collapse-replacement {
+    .docweaver-navbar-collapse-replacement {
         @include display-flex;
         margin-left: auto;
     }
-    
+
     .navbar-brand {
         color: #fff;
     }
@@ -90,7 +90,7 @@ a {
         }
     }
 
-    &#docweaver-product-line {
+    &.docweaver-product-line {
         display: block;
 
         &.no-line, &.invisible {
@@ -100,7 +100,7 @@ a {
 }
 
 // Product Showcase
-#docweaver-product-showcase {
+.docweaver-product-showcase {
     > .empty {
         padding: 1rem 0;
 
@@ -183,7 +183,7 @@ a {
                     list-style-type: none;
                     margin: 0;
                     padding: 0;
-    
+
                     li {
                         color: rgba($color-gray, 0.7);
                         font-size: rem-calc(12px);
@@ -235,7 +235,7 @@ a {
     }
 }
 
-#docweaver-footnotes {
+.docweaver-footnotes {
     display: block;
     color: rgba($color-gray, 0.83);
     font-size: 9px;

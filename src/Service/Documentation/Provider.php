@@ -19,6 +19,7 @@ final class Provider implements ProviderContract
     private const CACHE_TIMEOUT_SECONDS = 60 * 5;
     private const PAGE_INDEX = 'index';
     private const FILE_EXTENSION = 'md';
+    private const VERSION_PLACEHOLDER = '{{version}}';
 
     /**
      * The cache implementation.
@@ -33,13 +34,6 @@ final class Provider implements ProviderContract
      * @var string
      */
     private string $cacheKey;
-
-    /**
-     * Documentation resource directory.
-     *
-     * @var string
-     */
-    private string $documentationDirectory;
 
     /**
      * @var Filesystem
@@ -70,13 +64,13 @@ final class Provider implements ProviderContract
         $this->filesystem = $filesystem;
         $this->cache = $cache;
         $this->configProvider = $configProvider;
-        $this->documentationDirectory = $configProvider->getDocumentationDirectory();
         $this->cacheKey = $this->configProvider->getCacheKey();
         $this->markdownParser = $markdownParser;
-        $documentationDirectoryAbsolutePath = base_path($this->documentationDirectory);
+        $documentationDirectory = $configProvider->getDocumentationDirectory();
+        $documentationDirectoryAbsolutePath = base_path($documentationDirectory);
 
         if (!$this->filesystem->isDirectory($documentationDirectoryAbsolutePath)) {
-            throw new BadImplementation(sprintf('Documentation resource directory `%s` does not exist.', $this->documentationDirectory));
+            throw new BadImplementation(sprintf('Documentation resource directory `%s` does not exist.', $documentationDirectory));
         }
     }
 
@@ -100,21 +94,14 @@ final class Provider implements ProviderContract
         return $pageContent;
     }
 
-    public function replaceLinks(Product $product, string $version, string $content): string
+    public function replaceLinks(Product $product, string $version, string $originalContent): string
     {
         $routePrefix = $this->configProvider->getRoutePrefix();
-        $versionPlaceholder = '{{version}}';
+        $versionPlaceholder = urlencode(self::VERSION_PLACEHOLDER);
+        $originalLinkPath = sprintf('docs/%s', $versionPlaceholder);
+        $linkPathReplacement = sprintf('%s/%s/%s', $routePrefix, $product->getKey(), $version);
 
-        // ensure product name exists in url
-        if (!empty($product)) {
-            $content = str_replace(
-                sprintf('docs/%s', $versionPlaceholder),
-                sprintf('%s/%s/%s', $routePrefix, $product->getKey(), $version),
-                $content
-            );
-        }
-
-        return str_replace($versionPlaceholder, $version, $content);
+        return str_replace([$originalLinkPath, $versionPlaceholder], [$linkPathReplacement, $version], $originalContent);
     }
 
     public function sectionExists(Product $product, string $version, string $page): bool

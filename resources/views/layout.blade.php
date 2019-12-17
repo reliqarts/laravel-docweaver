@@ -10,16 +10,16 @@
 @extends($templateConfig->getMasterTemplate())
 
 @section($templateConfig->getMasterSection())
-<div id="docweaver-wrapper" class="docweaver-wrapper docs-wrapper">
+<div class="docweaver-wrapper docs-wrapper">
     @isset($currentProduct)
-    <nav id="docweaver-product-bar" class="navbar navbar-expand-sm navbar-light">
-        <a id="docweaver-docs-home-link" class="docs-home" href="{!! route($docweaverConfigProvider->getIndexRouteName()) !!}">
+    <nav class="docweaver-product-bar navbar navbar-expand-sm navbar-light">
+        <a class="docweaver-docs-home-link docs-home-link" href="{!! route($docweaverConfigProvider->getIndexRouteName()) !!}">
             <span></span>
             <span></span>
             <span></span>
         </a>
-        <a id="docweaver-current-product-name" class="navbar-brand" href="{!! route($docweaverConfigProvider->getProductIndexRouteName(), $currentProduct->getKey()) !!}">{{ $currentProduct->getName() }}</a>
-        <div class="docweaver-navbar-collapse-replacement navbar-fake-collapse" id="docweaver-navbar-collapse-replacement">
+        <a class="docweaver-current-product-name navbar-brand" href="{!! route($docweaverConfigProvider->getProductIndexRouteName(), $currentProduct->getKey()) !!}">{{ $currentProduct->getName() }}</a>
+        <div class="docweaver-navbar-collapse-replacement navbar-fake-collapse">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <div class="version-switcher btn-group ml-auto">
@@ -41,13 +41,13 @@
         </div>
     </nav>
     @else
-    <div id="docweaver-product-line" class="{{ $templateConfig->isShowProductLine() ? '' : 'invisible' }}"></div>
+    <div class="docweaver-product-line {{ $templateConfig->isShowProductLine() ? '' : 'invisible' }}"></div>
     @endisset
     <div class="docs container">
     @yield('docweaver-content')
     </div>
     @if($templateConfig->isShowFootnotes())
-    <aside id="docweaver-footnotes">
+    <aside class="docweaver-footnotes">
         <p class="by-line">Docs by <a href="http://docweaver.reliqarts.com" target="docweaver.rqa">Docweaver</a>.</p>
     </aside>
     @endif

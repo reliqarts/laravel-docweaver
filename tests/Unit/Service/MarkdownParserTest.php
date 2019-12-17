@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ReliqArts\Docweaver\Tests\Unit\Service;
 
-use ParsedownExtra;
+use League\CommonMark\ConverterInterface;
 use Prophecy\Prophecy\ObjectProphecy;
 use ReliqArts\Docweaver\Contract\MarkdownParser as MarkdownParserContract;
 use ReliqArts\Docweaver\Service\MarkdownParser;
@@ -20,9 +20,9 @@ use ReliqArts\Docweaver\Tests\Unit\TestCase;
 final class MarkdownParserTest extends TestCase
 {
     /**
-     * @var ObjectProphecy|ParsedownExtra
+     * @var ObjectProphecy|ConverterInterface
      */
-    private $interpreter;
+    private $converter;
 
     /**
      * @var MarkdownParserContract
@@ -33,8 +33,8 @@ final class MarkdownParserTest extends TestCase
     {
         parent::setUp();
 
-        $this->interpreter = $this->prophesize(ParsedownExtra::class);
-        $this->subject = new MarkdownParser($this->interpreter->reveal());
+        $this->converter = $this->prophesize(ConverterInterface::class);
+        $this->subject = new MarkdownParser($this->converter->reveal());
     }
 
     /**
@@ -44,7 +44,7 @@ final class MarkdownParserTest extends TestCase
      */
     public function testParse(string $text, string $expectedResult): void
     {
-        $this->interpreter->text($text)
+        $this->converter->convertToHtml($text)
             ->shouldBeCalledTimes(1)
             ->willReturn($expectedResult);
 

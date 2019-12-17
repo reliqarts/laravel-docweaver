@@ -125,7 +125,7 @@ final class ProviderTest extends TestCase
         $routePrefix = 'docs';
         $filePath = sprintf('%s/%s/%s.md', $productDirectory, $version, $page);
         $cacheKey = sprintf('%s.%s.%s.%s', $this->cacheKey, $productKey, $version, $page);
-        $fileContents = 'Hi Tester! You got to foo/docs/{{version}}';
+        $fileContents = 'Hi Tester! You got to foo/docs/' . urlencode('{{version}}');
         $pageContent = sprintf('Hi Tester! You got to foo/%s/%s/%s', $routePrefix, $productKey, $version);
 
         $this->product->getKey()

@@ -1,13 +1,11 @@
 @php
-    /**
-     * @var \ReliqArts\Docweaver\Service\ConfigProvider $docweaverConfigProvider
-     */
+    /* @var \ReliqArts\Docweaver\Service\ConfigProvider $docweaverConfigProvider */
     $templateConfig = $docweaverConfigProvider->getTemplateConfig();
 @endphp
 @extends('docweaver::layout')
 
 @section('docweaver-content')
-<div id="docweaver-product-showcase" class="products product-showcase">
+<div class="docweaver-product-showcase products product-showcase">
     <h1 class="docweaver-h1">{{ $title }}</h1>
     @if(!empty($templateConfig->getIndexIntro()))
     <p class="docweaver-intro">{{ $templateConfig->getIndexIntro() }}</p>

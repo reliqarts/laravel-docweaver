@@ -16,7 +16,7 @@ interface Provider
     /**
      * Replace the version place-holder in links.
      */
-    public function replaceLinks(Product $product, string $version, string $content): string;
+    public function replaceLinks(Product $product, string $version, string $originalContent): string;
 
     /**
      * Check if the given section exists.

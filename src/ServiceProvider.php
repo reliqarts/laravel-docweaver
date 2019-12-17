@@ -9,7 +9,34 @@ use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Illuminate\View\View;
+use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\Environment as CommonMarkEnvironment;
+use League\CommonMark\Extras\CommonMarkExtrasExtension;
 use Monolog\Handler\StreamHandler;
+use ReliqArts\Docweaver\Console\Command\Publish;
+use ReliqArts\Docweaver\Console\Command\Update;
+use ReliqArts\Docweaver\Console\Command\UpdateAll;
+use ReliqArts\Docweaver\Contract\ConfigProvider as ConfigProviderContract;
+use ReliqArts\Docweaver\Contract\Documentation\Provider as DocumentationProviderContract;
+use ReliqArts\Docweaver\Contract\Documentation\Publisher as DocumentationPublisherContract;
+use ReliqArts\Docweaver\Contract\Filesystem as FilesystemContract;
+use ReliqArts\Docweaver\Contract\Logger as LoggerContract;
+use ReliqArts\Docweaver\Contract\Product\Finder as ProductFinderContract;
+use ReliqArts\Docweaver\Contract\Product\Maker as ProductMakerContract;
+use ReliqArts\Docweaver\Contract\Product\Publisher as ProductPublisherContract;
+use ReliqArts\Docweaver\Contract\VCSCommandRunner;
+use ReliqArts\Docweaver\Factory\ProductMaker;
+use ReliqArts\Docweaver\Model\Product;
+use ReliqArts\Docweaver\Service\ConfigProvider;
+use ReliqArts\Docweaver\Service\Documentation\Provider as DocumentationProvider;
+use ReliqArts\Docweaver\Service\Documentation\Publisher as DocumentationPublisher;
+use ReliqArts\Docweaver\Service\Filesystem;
+use ReliqArts\Docweaver\Contract\MarkdownParser as MarkdownParserContract;
+use ReliqArts\Docweaver\Service\GitCommandRunner;
+use ReliqArts\Docweaver\Service\Logger;
+use ReliqArts\Docweaver\Service\MarkdownParser;
+use ReliqArts\Docweaver\Service\Product\Finder as ProductFinder;
+use ReliqArts\Docweaver\Service\Product\Publisher as ProductPublisher;
 
 final class ServiceProvider extends BaseServiceProvider
 {
@@ -27,9 +54,9 @@ final class ServiceProvider extends BaseServiceProvider
      * @var array
      */
     protected array $commands = [
-        Console\Command\Publish::class,
-        Console\Command\Update::class,
-        Console\Command\UpdateAll::class,
+        Publish::class,
+        Update::class,
+        UpdateAll::class,
     ];
 
     /**
@@ -65,9 +92,12 @@ final class ServiceProvider extends BaseServiceProvider
 
     protected function handleAssets(): self
     {
-        $this->publishes([
-            "{$this->assetsDir}/public" => public_path('vendor/docweaver'),
-        ], 'docweaver-public');
+        $this->publishes(
+            [
+                sprintf('%s/public', $this->assetsDir) => public_path('vendor/docweaver'),
+            ],
+            'docweaver-public'
+        );
 
         return $this;
     }
@@ -87,7 +117,7 @@ final class ServiceProvider extends BaseServiceProvider
 
     private function handleCommands(): self
     {
-        if ($this->app->runningInConsole() && !empty($this->commands)) {
+        if (!empty($this->commands) && $this->app->runningInConsole()) {
             $this->commands($this->commands);
         }
 
@@ -126,73 +156,49 @@ final class ServiceProvider extends BaseServiceProvider
         $loader = AliasLoader::getInstance();
 
         // Register aliases...
-        $loader->alias('DocweaverProduct', Model\Product::class);
-        $loader->alias('DocweaverMarkdown', Service\MarkdownParser::class);
-        $loader->alias('DocweaverDocumentation', Service\Documentation\Provider::class);
-        $loader->alias('DocweaverPublisher', Service\Documentation\Publisher::class);
+        $loader->alias('DocweaverProduct', Product::class);
+        $loader->alias('DocweaverMarkdown', MarkdownParser::class);
+        $loader->alias('DocweaverDocumentation', DocumentationProvider::class);
+        $loader->alias('DocweaverPublisher', DocumentationPublisher::class);
 
         return $this;
     }
 
     private function registerBindings(): self
     {
-        $this->app->bind(
-            Contract\Filesystem::class,
-            Service\Filesystem::class
-        );
-
-        $this->app->bind(
-            Contract\Documentation\Publisher::class,
-            Service\Documentation\Publisher::class
-        );
-
-        $this->app->bind(
-            Contract\Documentation\Provider::class,
-            Service\Documentation\Provider::class
-        );
-
-        $this->app->bind(
-            Contract\MarkdownParser::class,
-            Service\MarkdownParser::class
-        );
-
-        $this->app->bind(
-            Contract\VCSCommandRunner::class,
-            Service\GitCommandRunner::class
-        );
-
-        $this->app->bind(
-            Contract\Product\Maker::class,
-            Factory\ProductMaker::class
-        );
-
-        $this->app->bind(
-            Contract\Product\Finder::class,
-            Service\Product\Finder::class
-        );
-
-        $this->app->bind(
-            Contract\Product\Publisher::class,
-            Service\Product\Publisher::class
-        );
-
+        $this->app->singleton(FilesystemContract::class, Filesystem::class);
+        $this->app->singleton(DocumentationPublisherContract::class, DocumentationPublisher::class);
+        $this->app->singleton(DocumentationProviderContract::class, DocumentationProvider::class);
+        $this->app->singleton(VCSCommandRunner::class, GitCommandRunner::class);
+        $this->app->singleton(ProductMakerContract::class, ProductMaker::class);
+        $this->app->singleton(ProductFinderContract::class, ProductFinder::class);
+        $this->app->singleton(ProductPublisherContract::class, ProductPublisher::class);
         $this->app->singleton(
-            Contract\ConfigProvider::class,
-            function (): Contract\ConfigProvider {
-                return new Service\ConfigProvider(
+            ConfigProviderContract::class,
+            static function (): ConfigProviderContract {
+                return new ConfigProvider(
                     resolve(Config::class)
                 );
             }
         );
-
         $this->app->singleton(
-            Contract\Logger::class,
-            function (): Contract\Logger {
-                $logger = new Service\Logger(self::LOGGER_NAME);
+            LoggerContract::class,
+            static function (): LoggerContract {
+                $logger = new Logger(self::LOGGER_NAME);
                 $logFile = storage_path(sprintf('logs/%s.log', self::LOG_FILENAME));
-                $logger->pushHandler(new StreamHandler($logFile, Service\Logger::DEBUG));
+                $logger->pushHandler(new StreamHandler($logFile, Logger::DEBUG));
 
                 return $logger;
+            }
+        );
+        $this->app->singleton(
+            MarkdownParserContract::class,
+            static function (): MarkdownParserContract {
+                $config = [];
+                $environment = CommonMarkEnvironment::createCommonMarkEnvironment();
+                $environment->addExtension(new CommonMarkExtrasExtension());
+
+                return new MarkdownParser(new CommonMarkConverter($config, $environment));
             }
         );
 
@@ -201,12 +207,12 @@ final class ServiceProvider extends BaseServiceProvider
 
     private function addViewComposers(): self
     {
-        $configProvider = resolve(Contract\ConfigProvider::class);
+        $configProvider = resolve(ConfigProviderContract::class);
         $viewFactory = resolve(ViewFactory::class);
 
         $viewFactory->composer(
             '*',
-            function (View $view) use ($configProvider): void {
+            static function (View $view) use ($configProvider): void {
                 $view->with('docweaverConfigProvider', $configProvider);
             }
         );
