@@ -2,6 +2,10 @@
 
 // common
 
+* {
+    box-sizing: border-box;
+}
+
 a {
     @include transition(all 200ms);
 }
