@@ -95,7 +95,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param Application $app
      */
-    private function setupRoutes($app)
+    private function setupRoutes($app): void
     {
         // require routes
         require_once realpath($app->basePath('routes/web.php'));

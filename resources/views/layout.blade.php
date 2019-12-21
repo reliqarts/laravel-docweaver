@@ -27,7 +27,7 @@
                         <select name="docweaver-version-selector" class="docweaver-version-selector">
                             @foreach ($currentProduct->getVersions() as $versionTag => $versionName)
                                 <option class="docweaver-version-selector-option"
-                                        data-link="{!! route('docs.show', [$currentProduct->getKey(), $versionTag, $page]) !!}"
+                                        data-link="{!! route($docweaverConfigProvider->getProductPageRouteName(), [$currentProduct->getKey(), $versionTag, $page]) !!}"
                                     {{ $currentVersion === $versionTag ? 'selected' : null }}>{{ $versionName }}</option>
                             @endforeach
                         </select>

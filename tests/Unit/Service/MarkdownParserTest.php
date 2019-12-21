@@ -20,7 +20,7 @@ use ReliqArts\Docweaver\Tests\Unit\TestCase;
 final class MarkdownParserTest extends TestCase
 {
     /**
-     * @var ObjectProphecy|ConverterInterface
+     * @var ConverterInterface|ObjectProphecy
      */
     private $converter;
 

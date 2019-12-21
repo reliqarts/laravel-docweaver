@@ -10,7 +10,7 @@ use ReliqArts\Docweaver\Model\Product;
 interface Maker
 {
     /**
-     * @throws Exception
+     * @throws Exception if directory is invalid or product population fails
      */
     public function create(string $directory): Product;
 }

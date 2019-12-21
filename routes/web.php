@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 use ReliqArts\Docweaver\Contract\ConfigProvider;
+use ReliqArts\Docweaver\Http\Controller\DocumentationController;
 
 /**
  * @var ConfigProvider
@@ -11,10 +12,10 @@ use ReliqArts\Docweaver\Contract\ConfigProvider;
 $configProvider = resolve(ConfigProvider::class);
 
 // Controller Fully Qualified...
-$docController = 'ReliqArts\\Docweaver\\Http\\Controllers\\DocumentationController';
+$docController = DocumentationController::class;
 
 // the route group
-Route::group($configProvider->getRouteGroupBindings(), function () use ($configProvider, $docController) {
+Route::group($configProvider->getRouteGroupBindings(), static function () use ($configProvider, $docController) {
     Route::get(
         '/',
         sprintf('%s@index', $docController)

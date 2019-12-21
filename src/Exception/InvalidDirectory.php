@@ -8,12 +8,14 @@ use ReliqArts\Docweaver\Contract\Exception as ExceptionContract;
 
 class InvalidDirectory extends Exception
 {
+    protected const MESSAGE_TEMPLATE = 'Invalid directory: `%s`.';
+
     private const CODE = 4002;
 
     /**
      * @var null|string
      */
-    protected $directory;
+    protected ?string $directory;
 
     /**
      * @param string            $directory Directory
@@ -21,8 +23,8 @@ class InvalidDirectory extends Exception
      */
     public static function forDirectory(string $directory, ExceptionContract $previous = null): ExceptionContract
     {
-        $message = sprintf('Invalid directory: `%s`.', $directory);
-        $self = new self($message, self::CODE, $previous);
+        $message = sprintf(static::MESSAGE_TEMPLATE, $directory);
+        $self = new static($message, self::CODE, $previous);
         $self->directory = $directory;
 
         return $self;

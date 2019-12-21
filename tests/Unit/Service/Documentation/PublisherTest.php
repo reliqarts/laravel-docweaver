@@ -12,6 +12,7 @@ use ReliqArts\Docweaver\Contract\Logger;
 use ReliqArts\Docweaver\Contract\Product\Maker as ProductFactory;
 use ReliqArts\Docweaver\Contract\Product\Publisher as ProductPublisher;
 use ReliqArts\Docweaver\Exception\BadImplementation;
+use ReliqArts\Docweaver\Exception\DirectoryNotWritable;
 use ReliqArts\Docweaver\Model\Product;
 use ReliqArts\Docweaver\Result;
 use ReliqArts\Docweaver\Service\Documentation\Publisher;
@@ -91,8 +92,8 @@ final class PublisherTest extends TestCase
 
     /**
      * @covers ::__construct
-     * @covers ::readyResourceDirectory
-     * @covers                   \ReliqArts\Docweaver\Service\Publisher::__construct
+     * @covers \ReliqArts\Docweaver\Service\Publisher::__construct
+     * @covers \ReliqArts\Docweaver\Service\Publisher::readyResourceDirectory
      * @small
      */
     public function testExceptionIsThrownIfDocumentationDirectoryIsInvalid(): void
@@ -122,12 +123,12 @@ final class PublisherTest extends TestCase
     }
 
     /**
-     * @covers ::getExecutionTime
      * @covers ::publish
-     * @covers ::readyResourceDirectory
-     * @covers ::setExecutionStartTime
-     * @covers ::tell
+     * @covers \ReliqArts\Docweaver\Service\Publisher::getExecutionTime
+     * @covers \ReliqArts\Docweaver\Service\Publisher::readyResourceDirectory
      * @covers \ReliqArts\Docweaver\Service\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Service\Publisher::setExecutionStartTime
+     * @covers \ReliqArts\Docweaver\Service\Publisher::tell
      * @small
      *
      * @throws Exception
@@ -189,7 +190,7 @@ final class PublisherTest extends TestCase
         $productName = 'Product 24';
         $source = 'http://product-24.src';
         $productDirectory = sprintf('%s/%s', $this->workingDirectory, strtolower($productName));
-        $expectedErrorMessage = sprintf('Product directory %s is not writable.', $productDirectory);
+        $expectedErrorMessage = sprintf('Directory `%s` is not writable.', $productDirectory);
 
         $this->filesystem->isDirectory($productDirectory)
             ->shouldBeCalledTimes(1)
@@ -202,19 +203,19 @@ final class PublisherTest extends TestCase
         $this->productPublisher->publish(Argument::cetera())
             ->shouldNotBeCalled();
 
-        $result = $this->subject->publish($productName, $source);
+        $this->expectException(DirectoryNotWritable::class);
+        $this->expectErrorMessage($expectedErrorMessage);
 
-        $this->assertInstanceOf(Result::class, $result);
-        $this->assertSame($expectedErrorMessage, $result->getError());
+        $this->subject->publish($productName, $source);
     }
 
     /**
-     * @covers ::getExecutionTime
-     * @covers ::readyResourceDirectory
-     * @covers ::setExecutionStartTime
-     * @covers ::tell
      * @covers ::update
+     * @covers \ReliqArts\Docweaver\Service\Publisher::getExecutionTime
+     * @covers \ReliqArts\Docweaver\Service\Publisher::readyResourceDirectory
      * @covers \ReliqArts\Docweaver\Service\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Service\Publisher::setExecutionStartTime
+     * @covers \ReliqArts\Docweaver\Service\Publisher::tell
      * @small
      *
      * @throws Exception
@@ -261,11 +262,11 @@ final class PublisherTest extends TestCase
     }
 
     /**
-     * @covers ::getExecutionTime
-     * @covers ::readyResourceDirectory
-     * @covers ::setExecutionStartTime
      * @covers ::update
+     * @covers \ReliqArts\Docweaver\Service\Publisher::getExecutionTime
+     * @covers \ReliqArts\Docweaver\Service\Publisher::readyResourceDirectory
      * @covers \ReliqArts\Docweaver\Service\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Service\Publisher::setExecutionStartTime
      * @small
      *
      * @throws Exception
@@ -274,7 +275,7 @@ final class PublisherTest extends TestCase
     {
         $productName = 'Product 245463547342';
         $productDirectory = sprintf('%s/%s', $this->workingDirectory, strtolower($productName));
-        $expectedErrorMessage = sprintf('Product directory %s is not writable.', $productDirectory);
+        $expectedErrorMessage = sprintf('Directory `%s` is not writable.', $productDirectory);
 
         $this->filesystem->isDirectory($productDirectory)
             ->shouldBeCalledTimes(1)
@@ -287,20 +288,20 @@ final class PublisherTest extends TestCase
         $this->productPublisher->update(Argument::cetera())
             ->shouldNotBeCalled();
 
-        $result = $this->subject->update($productName);
+        $this->expectException(DirectoryNotWritable::class);
+        $this->expectErrorMessage($expectedErrorMessage);
 
-        $this->assertInstanceOf(Result::class, $result);
-        $this->assertSame($expectedErrorMessage, $result->getError());
+        $this->subject->update($productName);
     }
 
     /**
-     * @covers ::getExecutionTime
-     * @covers ::readyResourceDirectory
-     * @covers ::setExecutionStartTime
-     * @covers ::tell
      * @covers ::update
      * @covers ::updateAll
-     * @covers \ReliqArts\Docweaver\Service\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Service\Publisher::getExecutionTime
+     * @covers \ReliqArts\Docweaver\Service\Publisher::readyResourceDirectory
+     * @covers       \ReliqArts\Docweaver\Service\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Service\Publisher::setExecutionStartTime
+     * @covers \ReliqArts\Docweaver\Service\Publisher::tell
      * @dataProvider updateAllDataProvider
      * @small
      *

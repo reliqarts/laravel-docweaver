@@ -21,6 +21,7 @@ use ReliqArts\Docweaver\Contract\Documentation\Provider as DocumentationProvider
 use ReliqArts\Docweaver\Contract\Documentation\Publisher as DocumentationPublisherContract;
 use ReliqArts\Docweaver\Contract\Filesystem as FilesystemContract;
 use ReliqArts\Docweaver\Contract\Logger as LoggerContract;
+use ReliqArts\Docweaver\Contract\MarkdownParser as MarkdownParserContract;
 use ReliqArts\Docweaver\Contract\Product\Finder as ProductFinderContract;
 use ReliqArts\Docweaver\Contract\Product\Maker as ProductMakerContract;
 use ReliqArts\Docweaver\Contract\Product\Publisher as ProductPublisherContract;
@@ -31,7 +32,6 @@ use ReliqArts\Docweaver\Service\ConfigProvider;
 use ReliqArts\Docweaver\Service\Documentation\Provider as DocumentationProvider;
 use ReliqArts\Docweaver\Service\Documentation\Publisher as DocumentationPublisher;
 use ReliqArts\Docweaver\Service\Filesystem;
-use ReliqArts\Docweaver\Contract\MarkdownParser as MarkdownParserContract;
 use ReliqArts\Docweaver\Service\GitCommandRunner;
 use ReliqArts\Docweaver\Service\Logger;
 use ReliqArts\Docweaver\Service\MarkdownParser;

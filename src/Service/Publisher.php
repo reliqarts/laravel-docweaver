@@ -21,7 +21,7 @@ abstract class Publisher implements PublisherContract
     /**
      * Calling command if running in console.
      *
-     * @var Command|null
+     * @var null|Command
      */
     protected ?Command $callingCommand;
 
@@ -61,8 +61,6 @@ abstract class Publisher implements PublisherContract
      *
      * @param string $text
      * @param string $direction in|out
-     *
-     * @return string
      */
     protected function tell($text, $direction = self::TELL_DIRECTION_OUT): string
     {

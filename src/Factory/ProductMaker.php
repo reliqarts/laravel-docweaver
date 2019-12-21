@@ -33,7 +33,7 @@ final class ProductMaker implements Maker
     }
 
     /**
-     * @throws Exception if directory is invalid
+     * @throws Exception if directory is invalid or product population fails
      */
     public function create(string $directory): Product
     {

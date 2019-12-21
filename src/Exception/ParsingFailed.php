@@ -13,7 +13,7 @@ final class ParsingFailed extends Exception
     /**
      * @var null|string
      */
-    private $failedFile;
+    private ?string $failedFile;
 
     /**
      * @param ExceptionContract $previous

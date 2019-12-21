@@ -15,7 +15,7 @@ class PublicationFailed extends Exception
     /**
      * @var Product
      */
-    protected $product;
+    protected Product $product;
 
     public static function forProductVersion(
         Product $product,

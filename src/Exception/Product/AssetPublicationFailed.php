@@ -14,7 +14,7 @@ final class AssetPublicationFailed extends PublicationFailed
     /**
      * @var null|string
      */
-    protected $assetType;
+    protected ?string $assetType;
 
     /**
      * AssetPublicationFailed constructor.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ReliqArts\Docweaver\Http\Controllers;
+namespace ReliqArts\Docweaver\Http\Controller;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -20,31 +20,31 @@ class DocumentationController
     /**
      * @var ConfigProvider
      */
-    protected $configProvider;
+    protected ConfigProvider $configProvider;
 
     /**
      * The documentation repository.
      *
      * @var Provider
      */
-    protected $documentationProvider;
+    protected Provider $documentationProvider;
 
     /**
      * Doc home path.
      *
-     * @var
+     * @var string
      */
-    protected $documentationHome;
+    protected string $documentationHome;
 
     /**
      * @var Finder
      */
-    protected $productFinder;
+    protected Finder $productFinder;
 
     /**
      * @var Logger
      */
-    protected $logger;
+    protected Logger $logger;
 
     /**
      * Create a new controller instance.
@@ -82,7 +82,7 @@ class DocumentationController
     {
         $product = $this->productFinder->findProduct($productName);
 
-        if (empty($product) || $product->getDefaultVersion() === Product::VERSION_UNKNOWN) {
+        if ($product === null || $product->getDefaultVersion() === Product::VERSION_UNKNOWN) {
             abort(404);
         }
 
@@ -104,7 +104,7 @@ class DocumentationController
     {
         // ensure product exists
         $product = $this->productFinder->findProduct($productKey);
-        if (empty($product)) {
+        if ($product === null) {
             abort(404);
         }
 

@@ -13,6 +13,8 @@ use ReliqArts\Docweaver\Contract\Logger;
 use ReliqArts\Docweaver\Contract\Product\Maker as ProductFactory;
 use ReliqArts\Docweaver\Contract\Product\Publisher as ProductPublisher;
 use ReliqArts\Docweaver\Exception\BadImplementation;
+use ReliqArts\Docweaver\Exception\DirectoryNotWritable;
+use ReliqArts\Docweaver\Model\Product;
 use ReliqArts\Docweaver\Result;
 use ReliqArts\Docweaver\Service\Publisher as BasePublisher;
 
@@ -21,13 +23,6 @@ use ReliqArts\Docweaver\Service\Publisher as BasePublisher;
  */
 final class Publisher extends BasePublisher implements PublisherContract
 {
-    /**
-     * Documentation resource directory.
-     *
-     * @var string
-     */
-    private string $documentationDirectory;
-
     /**
      * @var ProductPublisher
      */
@@ -61,11 +56,11 @@ final class Publisher extends BasePublisher implements PublisherContract
 
         $this->productPublisher = $productPublisher;
         $this->productFactory = $productFactory;
-        $this->documentationDirectory = $configProvider->getDocumentationDirectory();
-        $this->workingDirectory = base_path($this->documentationDirectory);
+        $documentationDirectory = $configProvider->getDocumentationDirectory();
+        $this->workingDirectory = base_path($documentationDirectory);
 
         if (!$this->readyResourceDirectory($this->workingDirectory)) {
-            throw new BadImplementation(sprintf('Could not ready document resource directory `%s`. Please ensure file system is writable.', $this->documentationDirectory));
+            throw new BadImplementation(sprintf('Could not ready document resource directory `%s`. Please ensure file system is writable.', $documentationDirectory));
         }
     }
 
@@ -74,18 +69,11 @@ final class Publisher extends BasePublisher implements PublisherContract
      */
     public function publish(string $productName, string $source = '', Command &$callingCommand = null): Result
     {
-        $result = new Result();
-        $commonName = strtolower($productName);
-        $productDirectory = sprintf('%s/%s', $this->workingDirectory, $commonName);
+        $this->callingCommand = $callingCommand;
 
         $this->setExecutionStartTime();
-        if (!$this->readyResourceDirectory($productDirectory)) {
-            return $result->setError(sprintf('Product directory %s is not writable.', $productDirectory))
-                ->setExtra((object)['executionTime' => $this->getExecutionTime()]);
-        }
 
-        $product = $this->productFactory->create($productDirectory);
-        $result = $this->productPublisher->publish($product, $source);
+        $result = $this->productPublisher->publish($this->getProductForPublishing($productName), $source);
 
         foreach ($result->getMessages() as $message) {
             $this->tell($message);
@@ -103,18 +91,10 @@ final class Publisher extends BasePublisher implements PublisherContract
     public function update(string $productName, Command &$callingCommand = null): Result
     {
         $this->callingCommand = $callingCommand;
-        $result = new Result();
-        $commonName = strtolower($productName);
-        $productDirectory = sprintf('%s/%s', $this->workingDirectory, $commonName);
 
         $this->setExecutionStartTime();
-        if (!$this->readyResourceDirectory($productDirectory)) {
-            return $result->setError(sprintf('Product directory %s is not writable.', $productDirectory))
-                ->setExtra((object)['executionTime' => $this->getExecutionTime()]);
-        }
 
-        $product = $this->productFactory->create($productDirectory);
-        $result = $this->productPublisher->update($product);
+        $result = $this->productPublisher->update($this->getProductForPublishing($productName));
 
         foreach ($result->getMessages() as $message) {
             $this->tell($message);
@@ -157,5 +137,19 @@ final class Publisher extends BasePublisher implements PublisherContract
             'productsUpdated' => $productsUpdated,
             'executionTime' => $this->getExecutionTime(),
         ]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getProductForPublishing(string $productName): Product
+    {
+        $productDirectory = sprintf('%s/%s', $this->workingDirectory, strtolower($productName));
+
+        if (!$this->readyResourceDirectory($productDirectory)) {
+            throw DirectoryNotWritable::forDirectory($productDirectory);
+        }
+
+        return $this->productFactory->create($productDirectory);
     }
 }

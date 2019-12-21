@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ReliqArts\Docweaver\Tests\Feature;
 
 /**
- * @coversDefaultClass \ReliqArts\Docweaver\Http\Controllers\DocumentationController
+ * @coversDefaultClass \ReliqArts\Docweaver\Http\Controller\DocumentationController
  *
  * @internal
  */
@@ -36,7 +36,7 @@ final class AvailabilityTest extends TestCase
      */
     public function testProjectAvailability(): void
     {
-        $docIndex = $this->configProvider->getRoutePrefix();
+        $docIndex = route($this->configProvider->getIndexRouteName());
         $rightSingleQuote = "\u{2019}";
 
         $this->visit($docIndex)
