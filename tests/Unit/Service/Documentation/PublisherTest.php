@@ -123,6 +123,7 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::getProductForPublishing
      * @covers ::publish
      * @covers \ReliqArts\Docweaver\Service\Publisher::getExecutionTime
      * @covers \ReliqArts\Docweaver\Service\Publisher::readyResourceDirectory
@@ -176,11 +177,12 @@ final class PublisherTest extends TestCase
     }
 
     /**
-     * @covers ::getExecutionTime
+     * @covers ::getProductForPublishing
      * @covers ::publish
-     * @covers ::readyResourceDirectory
-     * @covers ::setExecutionStartTime
+     * @covers \ReliqArts\Docweaver\Service\Publisher::getExecutionTime
+     * @covers \ReliqArts\Docweaver\Service\Publisher::readyResourceDirectory
      * @covers \ReliqArts\Docweaver\Service\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Service\Publisher::setExecutionStartTime
      * @small
      *
      * @throws Exception
@@ -210,6 +212,7 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::getProductForPublishing
      * @covers ::update
      * @covers \ReliqArts\Docweaver\Service\Publisher::getExecutionTime
      * @covers \ReliqArts\Docweaver\Service\Publisher::readyResourceDirectory
@@ -262,6 +265,7 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::getProductForPublishing
      * @covers ::update
      * @covers \ReliqArts\Docweaver\Service\Publisher::getExecutionTime
      * @covers \ReliqArts\Docweaver\Service\Publisher::readyResourceDirectory
@@ -295,11 +299,12 @@ final class PublisherTest extends TestCase
     }
 
     /**
+     * @covers ::getProductForPublishing
      * @covers ::update
      * @covers ::updateAll
      * @covers \ReliqArts\Docweaver\Service\Publisher::getExecutionTime
      * @covers \ReliqArts\Docweaver\Service\Publisher::readyResourceDirectory
-     * @covers       \ReliqArts\Docweaver\Service\Publisher::secondsSince
+     * @covers \ReliqArts\Docweaver\Service\Publisher::secondsSince
      * @covers \ReliqArts\Docweaver\Service\Publisher::setExecutionStartTime
      * @covers \ReliqArts\Docweaver\Service\Publisher::tell
      * @dataProvider updateAllDataProvider
