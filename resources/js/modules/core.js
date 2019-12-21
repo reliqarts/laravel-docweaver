@@ -25,13 +25,13 @@ export default class Core {
         let $wrapper = this.$wrapper;
 
         // Smooth scroll to anchor
-        $wrapper.find('a[href*="#"]:not([href="#"])').click(function() {
+        $wrapper.find('a[href*="#"]:not([href="#"])').click(function () {
             if (
-                location.pathname.replace(/^\//,'') === this.pathname.replace(/^\//,'')
+                location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '')
                 && location.hostname == this.hostname
             ) {
                 let target = $(this.hash);
-                target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+                target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
                 if (target.length) {
                     $('html,body').animate({
                         scrollTop: target.offset().top
@@ -56,7 +56,7 @@ export default class Core {
     initBlockquotes() {
         // It's nice to just write in Markdown, so this will adjust
         // our blockquote style to fill in the icon flag and label
-        this.$wrapper.find('.docs blockquote p:first-child').each(function() {
+        this.$wrapper.find('.docs blockquote p:first-child').each(function () {
             let str = $(this).html(),
                 match = str.match(/\{(.*?)\}/),
                 icon = false,
@@ -78,9 +78,9 @@ export default class Core {
                     case "laracast":
                     case "video":
                         icon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" version="1.1" x="0px" y="0px" width="68.9px" height="59.9px" viewBox="0 0 68.9 59.9" enable-background="new 0 0 68.9 59.9" xml:space="preserve"><path fill="#FFFFFF" d="M63.7 0H5.3C2.4 0 0 2.4 0 5.3v49.3c0 2.9 2.4 5.3 5.3 5.3h58.3c2.9 0 5.3-2.4 5.3-5.3V5.3C69 2.4 66.6 0 63.7 0zM5.3 4h58.3c0.7 0 1.3 0.6 1.3 1.3V48H4V5.3C4 4.6 4.6 4 5.3 4zM13 52v4h-2v-4H13zM17 52h2v4h-2V52zM23 52h2v4h-2V52zM29 52h2v4h-2V52zM35 52h2v4h-2V52zM41 52h2v4h-2V52zM4 54.7V52h3v4H5.3C4.6 56 4 55.4 4 54.7zM63.7 56H47v-4h18v2.7C65 55.4 64.4 56 63.7 56zM26 38.7c0.3 0.2 0.7 0.3 1 0.3 0.4 0 0.7-0.1 1-0.3l17-10c0.6-0.4 1-1 1-1.7s-0.4-1.4-1-1.7l-17-10c-0.6-0.4-1.4-0.4-2 0s-1 1-1 1.7v20C25 37.7 25.4 38.4 26 38.7zM29 20.5L40.1 27 29 33.5V20.5z"/></svg>';
-                    break;
+                        break;
                 }
-                $(this).html(str.replace(/\{(.*?)\}/, '<div class="flag"><span class="svg">'+ icon +'</span></div>'));
+                $(this).html(str.replace(/\{(.*?)\}/, '<div class="flag"><span class="svg">' + icon + '</span></div>'));
                 $(this).parent().addClass('has-icon ' + word);
             }
         });
@@ -94,16 +94,19 @@ export default class Core {
     initNavbar() {
         let _self = this,
             $navbar = this.$wrapper.find('.docweaver-product-bar'),
-            $docsHomeLink = $navbar.find('.docweaver-docs-home-link');
+            $docsHomeLink = $navbar.find('.docweaver-docs-home-link'),
+            $versionSelector = $navbar.find('select.docweaver-version-selector');
 
         if ($navbar.length) {
-            // docs home link
-            $docsHomeLink.off('click').on('click', function(ev) {
+            $docsHomeLink.off('click').on('click', () => {
                 $docsHomeLink.addClass('active');
             });
 
-            // add leaving class to wrapper
-            _self.$wrapper.addClass('leaving');
+            $versionSelector.off('change').on('change', () => {
+                let url = $versionSelector.find('option:selected').data('link');
+
+                window.location.replace(url);
+            });
         }
 
         return _self;
@@ -119,34 +122,31 @@ export default class Core {
             $activeLink = $sidebar.find('li a[href="' + decodeURIComponent(window.location.pathname) + '"]');
 
         if ($sidebar.length) {
-            console.log('sidebar length!!!');
-
             // highlight active link
             $activeLink.parent('li').addClass('is-active')
                 .parent('ul').prev('h2').addClass('is-active');
 
             // toggle/pop entire sidebar - small screens
-            $sidebarPopper.off('click').on('click', function(ev) {
-                console.log('clicked!!!');
+            $sidebarPopper.off('click').on('click', ev => {
                 ev.preventDefault();
                 $sidebar.toggleClass('popped');
             });
 
             // allow clicking empty space to close
-            $sidebarPopper.parent().off('click').on('click', function(ev) {
+            $sidebarPopper.parent().off('click').on('click', ev => {
                 if ($(ev.target).is($sidebar) && $sidebar.hasClass('popped')) {
                     $sidebar.removeClass('popped');
                 }
             });
 
             // expand/collapse single section
-            $sidebar.find('h2').off('click').on('click', function(ev) {
+            $sidebar.find('h2').off('click').on('click', function (ev) {
                 ev.preventDefault();
                 $(this).toggleClass('is-expanded');
             });
 
             // expand/collapse all sidebar sections
-            $sidebar.find('a.docweaver-doc-expand').off('click').on('click', function(ev) {
+            $sidebar.find('a.docweaver-doc-expand').off('click').on('click', ev => {
                 ev.preventDefault();
                 _self.expandSidebarSections(!$(ev.target).hasClass('is-expanded'));
             });
@@ -156,9 +156,10 @@ export default class Core {
 
             // restore sidebar state if persisted
             try {
-                let s = localStorage.getItem(this.sidebarSectionsExpandedKey) == 'true';
-                _self.expandSidebarSections(s);
-            } catch(e) {}
+                let s = localStorage.getItem(this.sidebarSectionsExpandedKey) === 'true';
+                _self.expandSidebarSections(s, null);
+            } catch (e) {
+            }
         }
 
         return _self;
@@ -186,7 +187,8 @@ export default class Core {
         // persist in local storage
         try {
             localStorage.setItem(this.sidebarSectionsExpandedKey, expand);
-        } catch(e) {}
+        } catch (e) {
+        }
 
         return this;
     }

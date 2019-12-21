@@ -10,58 +10,56 @@
 @extends($templateConfig->getMasterTemplate())
 
 @section($templateConfig->getMasterSection())
-<div class="docweaver-wrapper docs-wrapper">
-    @isset($currentProduct)
-    <nav class="docweaver-product-bar navbar navbar-expand-sm navbar-light">
-        <a class="docweaver-docs-home-link docs-home-link" href="{!! route($docweaverConfigProvider->getIndexRouteName()) !!}">
-            <span></span>
-            <span></span>
-            <span></span>
-        </a>
-        <a class="docweaver-current-product-name navbar-brand" href="{!! route($docweaverConfigProvider->getProductIndexRouteName(), $currentProduct->getKey()) !!}">{{ $currentProduct->getName() }}</a>
-        <div class="docweaver-navbar-collapse-replacement navbar-fake-collapse">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <div class="version-switcher btn-group ml-auto">
-                        <button disabled class="current-version btn btn-primary btn-sm" type="button">{{ $currentVersion }}</button>
-                        <button class="version-menu-btn btn btn-primary btn-sm dropdown-toggle dropdown-toggle-split" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <div class="version-menu dropdown-menu dropdown-menu-right">
-                            <h6 class="dropdown-header">Versions</h6>
+    <div class="docweaver-wrapper docs-wrapper">
+        @isset($currentProduct)
+            <nav class="docweaver-product-bar">
+                <a class="docweaver-docs-home-link docs-home-link"
+                   href="{!! route($docweaverConfigProvider->getIndexRouteName()) !!}">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </a>
+                <a class="docweaver-current-product-name"
+                   href="{!! route($docweaverConfigProvider->getProductIndexRouteName(), $currentProduct->getKey()) !!}">{{ $currentProduct->getName() }}</a>
+                <div class="docweaver-current-product-versions">
+                    <label for="docweaver-version-selector" class="docweaver-version-selector-label">
+                        <span>@lang('Version')</span>
+                        <select name="docweaver-version-selector" class="docweaver-version-selector">
                             @foreach ($currentProduct->getVersions() as $versionTag => $versionName)
-                                @if ($currentVersion != $versionTag)
-                                <a class="dropdown-item" href="{!! route('docs.show', [$currentProduct->getKey(), $versionTag, $page]) !!}">{{ $versionName }}</a>
-                                @endif
+                                <option class="docweaver-version-selector-option"
+                                        data-link="{!! route('docs.show', [$currentProduct->getKey(), $versionTag, $page]) !!}"
+                                    {{ $currentVersion === $versionTag ? 'selected' : null }}>{{ $versionName }}</option>
                             @endforeach
+                        </select>
+                        <div class="docweaver-version-selector-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                         </div>
-                    </div>
-                </li>
-            </ul>
+                    </label>
+                </div>
+            </nav>
+        @else
+            <div class="docweaver-product-line {{ $templateConfig->isShowProductLine() ? '' : 'invisible' }}"></div>
+        @endisset
+        <div class="docs container">
+            @yield('docweaver-content')
         </div>
-    </nav>
-    @else
-    <div class="docweaver-product-line {{ $templateConfig->isShowProductLine() ? '' : 'invisible' }}"></div>
-    @endisset
-    <div class="docs container">
-    @yield('docweaver-content')
+        @if($templateConfig->isShowFootnotes())
+            <aside class="docweaver-footnotes">
+                <p class="by-line">Docs by <a href="http://docweaver.reliqarts.com" target="docweaver.rqa">Docweaver</a>.
+                </p>
+            </aside>
+        @endif
     </div>
-    @if($templateConfig->isShowFootnotes())
-    <aside class="docweaver-footnotes">
-        <p class="by-line">Docs by <a href="http://docweaver.reliqarts.com" target="docweaver.rqa">Docweaver</a>.</p>
-    </aside>
-    @endif
-</div>
 @endsection
 
 @if($templateConfig->hasStyleStack())
-@push($templateConfig->getStyleStack(), $styles)
+    @push($templateConfig->getStyleStack(), $styles)
 @else
-{!! $styles !!}
+    {!! $styles !!}
 @endif
 
 @if($templateConfig->hasScriptStack())
-@push($templateConfig->getScriptStack(), $scripts)
+    @push($templateConfig->getScriptStack(), $scripts)
 @else
-{!! $scripts !!}
+    {!! $scripts !!}
 @endif

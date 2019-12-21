@@ -4,6 +4,9 @@
  */
 
 let mix = require('laravel-mix');
+let tailwindcss = require('tailwindcss');
+
+require('laravel-mix-purgecss');
 
 // constants
 const publicFolder = 'public';
@@ -42,4 +45,9 @@ mix.webpackConfig({
 // start mixing:
 mix
     .js('resources/js/docweaver.js', assetFolders.scripts)
-    .sass('resources/sass/docweaver.scss', assetFolders.styles);
+    .sass('resources/sass/docweaver.scss', assetFolders.styles)
+    .options({
+        processCssUrls: false,
+        postCss: [tailwindcss('./tailwind.config.js')],
+    })
+    .purgeCss();
