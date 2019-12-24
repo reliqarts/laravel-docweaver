@@ -51,7 +51,7 @@ final class GitCommandRunner implements VCSCommandRunner
      */
     public function getRemoteUrl(string $workingDirectory, ?string $remoteName = null): string
     {
-        $remoteName = $remoteName ?? self::DEFAULT_REMOTE_NAME;
+        $remoteName ??= self::DEFAULT_REMOTE_NAME;
         $command = ['git', 'config', '--get', sprintf('remote.%s.url', $remoteName)];
 
         $getUrl = new Process($command, $workingDirectory);

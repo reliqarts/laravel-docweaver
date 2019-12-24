@@ -6,6 +6,7 @@ namespace ReliqArts\Docweaver\Tests\Unit\Service;
 
 use AspectMock\Test;
 use Exception;
+use Prophecy\Prophecy\ObjectProphecy;
 use ReliqArts\Docweaver\Contract\VCSCommandRunner;
 use ReliqArts\Docweaver\Service\GitCommandRunner;
 use ReliqArts\Docweaver\Tests\Unit\AspectMockedTestCase;
@@ -21,11 +22,18 @@ use Symfony\Component\Process\Process;
 final class GitCommandRunnerTest extends AspectMockedTestCase
 {
     private const SPLIT_ERROR_STATE = 'error!';
+    private const PROCESS_METHOD_MUST_RUN = 'mustRun';
+    private const PROCESS_METHOD_GET_OUTPUT = 'getOutput';
 
     /**
      * @var VCSCommandRunner
      */
     private VCSCommandRunner $subject;
+
+    /**
+     * @var Process|ObjectProphecy
+     */
+    private ObjectProphecy $returnedProcess;
 
     /**
      * @var string
@@ -40,6 +48,7 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
         parent::setUp();
 
         $this->namespace = '\ReliqArts\Docweaver\Service';
+        $this->returnedProcess = $this->prophesize(Process::class);
         $this->subject = new GitCommandRunner();
         $this->workingDirectory = 'dir';
     }
@@ -56,18 +65,18 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
     {
         $source = 'my-src';
         $branch = 'master';
-        $returnedProcess = $this->prophesize(Process::class);
-        $process = Test::double(Process::class, ['mustRun' => $returnedProcess->reveal()]);
+        $process = Test::double(Process::class, [self::PROCESS_METHOD_MUST_RUN => $this->returnedProcess->reveal()]);
 
         $this->subject->clone($source, $branch, $this->workingDirectory);
 
-        $process->verifyInvokedMultipleTimes('mustRun', 1);
+        $process->verifyInvokedMultipleTimes(self::PROCESS_METHOD_MUST_RUN, 1);
 
         $this->assertTrue(true);
     }
 
     /**
      * @covers ::listTags
+     * @covers ::fetch
      * @dataProvider        tagListProvider
      * @small
      * @preserveGlobalState disabled
@@ -77,12 +86,11 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
      */
     public function testGetTags(string $tagList): void
     {
-        $returnedProcess = $this->prophesize(Process::class);
         $process = Test::double(
             Process::class,
             [
-                'mustRun' => $returnedProcess->reveal(),
-                'getOutput' => $tagList,
+                self::PROCESS_METHOD_MUST_RUN => $this->returnedProcess->reveal(),
+                self::PROCESS_METHOD_GET_OUTPUT => $tagList,
             ]
         );
         $pregSplit = Test::func($this->namespace, 'preg_split', static function ($pattern, $text) {
@@ -94,8 +102,8 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
 
         $results = $this->subject->listTags($this->workingDirectory);
 
-        $process->verifyInvokedMultipleTimes('mustRun', 2);
-        $process->verifyInvokedMultipleTimes('getOutput', 1);
+        $process->verifyInvokedMultipleTimes(self::PROCESS_METHOD_MUST_RUN, 2);
+        $process->verifyInvokedMultipleTimes(self::PROCESS_METHOD_GET_OUTPUT, 1);
         $pregSplit->verifyInvokedMultipleTimes(1);
 
         $this->assertIsArray($results);
@@ -112,16 +120,38 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
      */
     public function testPull(): void
     {
-        $returnedProcess = $this->prophesize(Process::class);
         $process = Test::double(Process::class, [
-            'mustRun' => $returnedProcess->reveal(),
+            self::PROCESS_METHOD_MUST_RUN => $this->returnedProcess->reveal(),
         ]);
 
         $this->subject->pull($this->workingDirectory);
 
-        $process->verifyInvokedMultipleTimes('mustRun', 1);
+        $process->verifyInvokedMultipleTimes(self::PROCESS_METHOD_MUST_RUN, 1);
 
         $this->assertTrue(true);
+    }
+
+    /**
+     * @covers ::getRemoteUrl
+     * @small
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
+     * @throws Exception
+     */
+    public function testGetRemoteUrl(): void
+    {
+        $remoteUrl = 'url://remote-url';
+        $process = Test::double(Process::class, [
+            self::PROCESS_METHOD_MUST_RUN => $this->returnedProcess->reveal(),
+            self::PROCESS_METHOD_GET_OUTPUT => $remoteUrl,
+        ]);
+
+        $result = $this->subject->getRemoteUrl($this->workingDirectory);
+
+        $process->verifyInvokedMultipleTimes(self::PROCESS_METHOD_MUST_RUN, 1);
+        $process->verifyInvokedMultipleTimes(self::PROCESS_METHOD_GET_OUTPUT, 1);
+
+        $this->assertSame($remoteUrl, $result);
     }
 
     public function tagListProvider(): array
