@@ -34,7 +34,9 @@
         "phpunit/phpunit": "^8.5",
         "orchestra/testbench-browser-kit": "^4.0",
         "goaop/framework": "^2.3.3",
-        "codeception/aspect-mock": "^3.0"
+        "codeception/aspect-mock": "^3.0",
+        "phpro/grumphp": "^0.15.2",
+        "wearejust/grumphp-extra-tasks": "^2.2"
     },
     "autoload": {
         "psr-4": {

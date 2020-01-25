@@ -31,7 +31,7 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
     private VCSCommandRunner $subject;
 
     /**
-     * @var Process|ObjectProphecy
+     * @var ObjectProphecy|Process
      */
     private ObjectProphecy $returnedProcess;
 
@@ -75,8 +75,8 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
     }
 
     /**
-     * @covers ::listTags
      * @covers ::fetch
+     * @covers ::listTags
      * @dataProvider        tagListProvider
      * @small
      * @preserveGlobalState disabled
@@ -136,6 +136,7 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
      * @small
      * @preserveGlobalState disabled
      * @runInSeparateProcess
+     *
      * @throws Exception
      */
     public function testGetRemoteUrl(): void
