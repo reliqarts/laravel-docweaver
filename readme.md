@@ -1,6 +1,6 @@
 # Laravel Docweaver
 
-A simple Laravel 5.x/6.x product documentation package. 
+An easy-to-use product documentation package for Laravel. 
 
 Docweaver is suitable for product documentation and/or knowledge bases. Converts folder(s) of .md files into full-bread complete documentation. Docweaver is inspired by Laravel's very own documentation.
 

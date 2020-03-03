@@ -6,11 +6,13 @@ php:
 env:
   - LARAVEL='^6.0' COMPOSER_FLAGS='--prefer-stable'
   - LARAVEL='6.x-dev'
+  - LARAVEL='^7.0' COMPOSER_FLAGS='--prefer-stable'
+  - LARAVEL='dev-master'
 
 matrix:
   fast_finish: true
   allow_failures:
-    - env: LARAVEL='6.x-dev'
+    - env: LARAVEL='dev-master'
 
 cache:
   directories:

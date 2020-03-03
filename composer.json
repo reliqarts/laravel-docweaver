@@ -1,12 +1,12 @@
 {
     "name": "reliqarts/laravel-docweaver",
-    "description": "Highly configurable Laravel 5.x package for product documentation.",
+    "description": "An easy-to-use product documentation package for Laravel.",
     "keywords": [
         "doc",
         "package",
         "generation",
         "documentation",
-        "laravel5",
+        "laravel",
         "content"
     ],
     "type": "library",
@@ -20,23 +20,22 @@
     "require": {
         "php": "^7.4",
         "ext-json": "*",
-        "illuminate/support": "^6.0",
+        "illuminate/support": "6 - 7",
         "league/commonmark": "^1.1",
         "league/commonmark-extras": "^1.1",
-        "monolog/monolog": "~1.11",
+        "monolog/monolog": "1.24 - 2",
         "nesbot/carbon": "^2.0",
         "reliqarts/laravel-common": "^5.0",
         "symfony/browser-kit": "^4.3",
-        "symfony/process": "~4.0",
+        "symfony/process": "4 - 5",
         "symfony/yaml": "^4.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.5",
-        "orchestra/testbench-browser-kit": "^4.0",
-        "goaop/framework": "^2.3.3",
-        "codeception/aspect-mock": "^3.0",
-        "phpro/grumphp": "^0.15.2",
-        "wearejust/grumphp-extra-tasks": "^2.2"
+        "orchestra/testbench-browser-kit": "4 - 5",
+        "goaop/framework": "^3.0@rc",
+        "codeception/aspect-mock": "^3.1",
+        "phpro/grumphp": "^0.18.0"
     },
     "autoload": {
         "psr-4": {
@@ -58,7 +57,10 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit"
+        "test": "phpunit",
+        "test:ci": "phpunit --verbose --colors=auto --coverage-clover=coverage.xml",
+        "test:unit": "phpunit --testsuite=Unit --verbose --coverage-clover=coverage.xml",
+        "test:integration": "phpunit --testsuite=Integration --verbose"
     },
     "config": {
         "sort-packages": true,
