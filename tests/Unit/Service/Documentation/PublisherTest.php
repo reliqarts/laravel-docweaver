@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @noinspection PhpParamsInspection
+ * @noinspection PhpUndefinedMethodInspection
+ * @noinspection PhpStrictTypeCheckingInspection
+ */
+
 declare(strict_types=1);
 
 namespace ReliqArts\Docweaver\Tests\Unit\Service\Documentation;
@@ -142,9 +148,7 @@ final class PublisherTest extends TestCase
         $product = $this->prophesize(Product::class)->reveal();
         $messages = ['Test message 1', 'Test message 2'];
 
-        /**
-         * @var ObjectProphecy|Result
-         */
+        /** @var ObjectProphecy|Result */
         $productPublisherResult = $this->prophesize(Result::class);
 
         $productPublisherResult->getMessages()
@@ -172,8 +176,8 @@ final class PublisherTest extends TestCase
 
         $result = $this->subject->publish($productName, $source);
 
-        $this->assertInstanceOf(Result::class, $result);
-        $this->assertSame($messages, $result->getMessages());
+        self::assertInstanceOf(Result::class, $result);
+        self::assertSame($messages, $result->getMessages());
     }
 
     /**
@@ -230,9 +234,7 @@ final class PublisherTest extends TestCase
         $product = $this->prophesize(Product::class)->reveal();
         $messages = ['Successfully updated X'];
 
-        /**
-         * @var ObjectProphecy|Result
-         */
+        /** @var ObjectProphecy|Result */
         $productPublisherResult = $this->prophesize(Result::class);
 
         $productPublisherResult->getMessages()
@@ -260,8 +262,8 @@ final class PublisherTest extends TestCase
 
         $result = $this->subject->update($productName);
 
-        $this->assertInstanceOf(Result::class, $result);
-        $this->assertSame($messages, $result->getMessages());
+        self::assertInstanceOf(Result::class, $result);
+        self::assertSame($messages, $result->getMessages());
     }
 
     /**
@@ -320,9 +322,7 @@ final class PublisherTest extends TestCase
         $productDirectoryCount = count($productDirectories);
         $messages = ['Successfully updated X'];
 
-        /**
-         * @var ObjectProphecy|Result
-         */
+        /** @var ObjectProphecy|Result */
         $productPublisherResult = $this->prophesize(Result::class);
         $productPublisherResult->getMessages()
             ->shouldBeCalledTimes($productDirectoryCount)
@@ -362,13 +362,13 @@ final class PublisherTest extends TestCase
         $result = $this->subject->updateAll();
         $productsUpdated = $result->getExtra()->productsUpdated;
 
-        $this->assertInstanceOf(Result::class, $result);
-        $this->assertCount($productDirectoryCount, $productsUpdated);
+        self::assertInstanceOf(Result::class, $result);
+        self::assertCount($productDirectoryCount, $productsUpdated);
 
         foreach ($productDirectories as $productDirectory) {
             $productName = basename($productDirectory);
 
-            $this->assertContains($productName, $productsUpdated);
+            self::assertContains($productName, $productsUpdated);
         }
     }
 

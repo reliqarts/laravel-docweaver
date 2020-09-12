@@ -8,14 +8,16 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Str;
+use JsonException;
 use ReliqArts\Docweaver\Contract\ConfigProvider;
 use ReliqArts\Docweaver\Contract\Exception;
+use ReliqArts\Docweaver\Contract\FileHelper;
 use ReliqArts\Docweaver\Contract\Filesystem;
+use ReliqArts\Docweaver\Contract\YamlHelper;
 use ReliqArts\Docweaver\Exception\ParsingFailed;
 use ReliqArts\Docweaver\Exception\Product\AssetPublicationFailed;
 use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory;
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Yaml;
+use RuntimeException;
 
 /**
  * A documented product.
@@ -35,62 +37,35 @@ class Product implements Arrayable, Jsonable
 
     /**
      * Product key.
-     *
-     * @var string
      */
     private string $key;
-
-    /**
-     * Filesystem.
-     *
-     * @var Filesystem
-     */
     private Filesystem $filesystem;
-
-    /**
-     * @var ConfigProvider
-     */
     private ConfigProvider $configProvider;
+    private YamlHelper $yamlHelper;
+    private FileHelper $fileHelper;
 
     /**
      * Last time product was modified (timestamp).
-     *
-     * @var int
      */
     private int $lastModified = 0;
 
     /**
      * Product name.
-     *
-     * @var string
      */
     private string $name;
 
     /**
      * Product description.
-     *
-     * @var string
      */
     private string $description = '';
 
     /**
      * Product image url.
-     *
-     * @var string
      */
     private string $imageUrl = '';
 
     /**
-     * Product meta (from file).
-     *
-     * @var array
-     */
-    private array $meta = [];
-
-    /**
      * List of available product versions.
-     *
-     * @var array
      */
     private array $versions = [];
 
@@ -104,10 +79,17 @@ class Product implements Arrayable, Jsonable
     /**
      * Create product instance.
      */
-    public function __construct(Filesystem $filesystem, ConfigProvider $configProvider, string $directory)
-    {
+    public function __construct(
+        Filesystem $filesystem,
+        ConfigProvider $configProvider,
+        FileHelper $fileHelper,
+        YamlHelper $yamlHelper,
+        string $directory
+    ) {
         $this->filesystem = $filesystem;
         $this->configProvider = $configProvider;
+        $this->fileHelper = $fileHelper;
+        $this->yamlHelper = $yamlHelper;
         $this->name = Str::title(basename($directory));
         $this->key = strtolower($this->name);
         $this->directory = $directory;
@@ -256,6 +238,8 @@ class Product implements Arrayable, Jsonable
      * Convert the object to its JSON representation.
      *
      * @param int $options
+     *
+     * @throws JsonException
      */
     public function toJson($options = 0): string
     {
@@ -290,21 +274,21 @@ class Product implements Arrayable, Jsonable
     /**
      * Load meta onto product.
      *
-     * @param string $version Version to load configuration from. (optional)
+     * @param string|null $version Version to load configuration from. (optional)
      *
      * @throws Exception if meta file could not be parsed
      */
-    private function loadMeta(string $version = null): void
+    private function loadMeta(?string $version = null): void
     {
         $version = empty($version) ? $this->getDefaultVersion() : $version;
-        $metaFile = realpath(sprintf('%s/%s/%s', $this->directory, $version, self::META_FILE));
+        $metaFile = $this->fileHelper->realPath(sprintf('%s/%s/%s', $this->directory, $version, self::META_FILE));
 
         if (empty($metaFile)) {
             return;
         }
 
         try {
-            $meta = Yaml::parse(file_get_contents($metaFile));
+            $meta = $this->yamlHelper->parse($this->fileHelper->getFileContents($metaFile));
 
             if (!empty($meta['name'])) {
                 $this->name = $meta['name'];
@@ -314,8 +298,7 @@ class Product implements Arrayable, Jsonable
             }
 
             $this->imageUrl = $this->getAssetUrl($meta['image_url'] ?? '', $version);
-            $this->meta = $meta;
-        } catch (ParseException $exception) {
+        } catch (RuntimeException $exception) {
             $message = sprintf(
                 'Failed to parse meta file `%s`. %s',
                 $metaFile,

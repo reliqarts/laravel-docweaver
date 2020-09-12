@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace ReliqArts\Docweaver\Tests\Unit\Factory;
 
 use Illuminate\Support\Str;
+use Prophecy\Prophecy\ObjectProphecy;
 use ReliqArts\Docweaver\Contract\Exception;
+use ReliqArts\Docweaver\Contract\FileHelper;
+use ReliqArts\Docweaver\Contract\YamlHelper;
 use ReliqArts\Docweaver\Factory\ProductMaker;
 use ReliqArts\Docweaver\Tests\Unit\TestCase;
 
@@ -19,18 +22,33 @@ use ReliqArts\Docweaver\Tests\Unit\TestCase;
 final class ProductMakerTest extends TestCase
 {
     /**
-     * @var ProductMaker
+     * @var ObjectProphecy|FileHelper
      */
+    private ObjectProphecy $fileHelper;
+
+    /**
+     * @var ObjectProphecy|YamlHelper
+     */
+    private ObjectProphecy $yamlHelper;
+
     private ProductMaker $subject;
 
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->fileHelper = $this->prophesize(FileHelper::class);
+        $this->yamlHelper = $this->prophesize(YamlHelper::class);
+
         $this->configProvider->isWordedDefaultVersionAllowed()
             ->willReturn(true);
 
-        $this->subject = new ProductMaker($this->filesystem->reveal(), $this->configProvider->reveal());
+        $this->subject = new ProductMaker(
+            $this->filesystem->reveal(),
+            $this->configProvider->reveal(),
+            $this->fileHelper->reveal(),
+            $this->yamlHelper->reveal()
+        );
     }
 
     /**
@@ -58,9 +76,9 @@ final class ProductMakerTest extends TestCase
 
         $result = $this->subject->create($directory);
 
-        $this->assertSame($directory, $result->getDirectory());
-        $this->assertSame($expectedKey, $result->getKey());
-        $this->assertSame($expectedName, $result->getName());
+        self::assertSame($directory, $result->getDirectory());
+        self::assertSame($expectedKey, $result->getKey());
+        self::assertSame($expectedName, $result->getName());
     }
 
     /**

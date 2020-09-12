@@ -74,9 +74,7 @@ final class FinderTest extends TestCase
 
         foreach ($productDirectories as $productDirectory) {
             $key = basename($productDirectory);
-            /**
-             * @var ObjectProphecy|Product
-             */
+            /** @var ObjectProphecy|Product */
             $product = $this->prophesize(Product::class);
             $product->getDefaultVersion()->willReturn('1.0');
             $product->getKey()->willReturn($key);
@@ -96,12 +94,12 @@ final class FinderTest extends TestCase
 
         $results = $this->subject->listProducts();
 
-        $this->assertIsArray($results);
-        $this->assertCount(count($productDirectories) - $failedCount, $results);
+        self::assertIsArray($results);
+        self::assertCount(count($productDirectories) - $failedCount, $results);
 
         foreach ($results as $result) {
-            $this->assertInstanceOf(Product::class, $result);
-            $this->assertContains($result->getKey(), $productDirectories);
+            self::assertInstanceOf(Product::class, $result);
+            self::assertContains($result->getKey(), $productDirectories);
         }
     }
 
@@ -126,9 +124,7 @@ final class FinderTest extends TestCase
 
         foreach ($productDirectories as $productDirectory) {
             $key = strtolower(basename($productDirectory));
-            /**
-             * @var ObjectProphecy|Product
-             */
+            /** @var ObjectProphecy|Product */
             $product = $this->prophesize(Product::class);
             $product->getDefaultVersion()->willReturn('1.0');
             $product->getKey()->willReturn($key);
@@ -140,13 +136,13 @@ final class FinderTest extends TestCase
         $result = $this->subject->findProduct($productName);
 
         if (!$expectedToFindProduct) {
-            $this->assertNull($result);
+            self::assertNull($result);
 
             return;
         }
 
-        $this->assertInstanceOf(Product::class, $result);
-        $this->assertSame(strtolower($productName), $result->getKey());
+        self::assertInstanceOf(Product::class, $result);
+        self::assertSame(strtolower($productName), $result->getKey());
     }
 
     public function findProductDataProvider(): array

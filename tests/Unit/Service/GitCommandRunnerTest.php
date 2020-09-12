@@ -1,15 +1,22 @@
 <?php
 
+/**
+ * @noinspection PhpParamsInspection
+ * @noinspection PhpUndefinedMethodInspection
+ * @noinspection PhpStrictTypeCheckingInspection
+ */
+
 declare(strict_types=1);
 
 namespace ReliqArts\Docweaver\Tests\Unit\Service;
 
-use AspectMock\Test;
 use Exception;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use ReliqArts\Docweaver\Contract\VCSCommandRunner;
+use ReliqArts\Docweaver\Contract\ProcessHelper;
+use ReliqArts\Docweaver\Contract\VcsCommandRunner;
 use ReliqArts\Docweaver\Service\GitCommandRunner;
-use ReliqArts\Docweaver\Tests\Unit\AspectMockedTestCase;
+use ReliqArts\Docweaver\Tests\Unit\TestCase;
 use Symfony\Component\Process\Process;
 
 /**
@@ -19,26 +26,21 @@ use Symfony\Component\Process\Process;
  *
  * @internal
  */
-final class GitCommandRunnerTest extends AspectMockedTestCase
+final class GitCommandRunnerTest extends TestCase
 {
-    private const SPLIT_ERROR_STATE = 'error!';
-    private const PROCESS_METHOD_MUST_RUN = 'mustRun';
-    private const PROCESS_METHOD_GET_OUTPUT = 'getOutput';
-
-    /**
-     * @var VCSCommandRunner
-     */
-    private VCSCommandRunner $subject;
-
     /**
      * @var ObjectProphecy|Process
      */
     private ObjectProphecy $returnedProcess;
 
     /**
-     * @var string
+     * @var ObjectProphecy|ProcessHelper
      */
+    private ObjectProphecy $processHelper;
+
     private string $workingDirectory;
+
+    private VcsCommandRunner $subject;
 
     /**
      * @throws Exception
@@ -47,9 +49,13 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
     {
         parent::setUp();
 
-        $this->namespace = '\ReliqArts\Docweaver\Service';
         $this->returnedProcess = $this->prophesize(Process::class);
-        $this->subject = new GitCommandRunner();
+        $this->processHelper = $this->prophesize(ProcessHelper::class);
+
+        $this->processHelper->createProcess(Argument::cetera())
+            ->willReturn($this->returnedProcess->reveal());
+
+        $this->subject = new GitCommandRunner($this->processHelper->reveal());
         $this->workingDirectory = 'dir';
     }
 
@@ -65,13 +71,22 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
     {
         $source = 'my-src';
         $branch = 'master';
-        $process = Test::double(Process::class, [self::PROCESS_METHOD_MUST_RUN => $this->returnedProcess->reveal()]);
+
+        $this->processHelper->createProcess(
+            Argument::that(
+                fn (array $argument) => in_array($source, $argument, true)
+                    && in_array($branch, $argument, true)
+            ),
+            $this->workingDirectory
+        )->willReturn($this->returnedProcess->reveal());
+
+        $this->returnedProcess
+            ->mustRun()
+            ->shouldBeCalledTimes(1);
 
         $this->subject->clone($source, $branch, $this->workingDirectory);
 
-        $process->verifyInvokedMultipleTimes(self::PROCESS_METHOD_MUST_RUN, 1);
-
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     /**
@@ -82,32 +97,25 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
      * @preserveGlobalState disabled
      * @runInSeparateProcess
      *
-     * @throws Exception
+     * @param mixed $tagList
      */
-    public function testGetTags(string $tagList): void
+    public function testGetTags($tagList): void
     {
-        $process = Test::double(
-            Process::class,
-            [
-                self::PROCESS_METHOD_MUST_RUN => $this->returnedProcess->reveal(),
-                self::PROCESS_METHOD_GET_OUTPUT => $tagList,
-            ]
-        );
-        $pregSplit = Test::func($this->namespace, 'preg_split', static function ($pattern, $text) {
-            return $text === self::SPLIT_ERROR_STATE ? false : \preg_split($pattern, $text);
-        });
-        $expectedTags = $tagList !== self::SPLIT_ERROR_STATE
-            ? array_filter(array_map('trim', preg_split("/[\n\r]/", $tagList)))
-            : [];
+        $this->returnedProcess
+            ->mustRun()
+            ->shouldBeCalledTimes(2);
+
+        $this->returnedProcess
+            ->getOutput()
+            ->shouldBeCalledTimes(1)
+            ->willReturn($tagList);
+
+        $expectedTags = array_filter(array_map('trim', preg_split("/[\n\r]/", $tagList)));
 
         $results = $this->subject->listTags($this->workingDirectory);
 
-        $process->verifyInvokedMultipleTimes(self::PROCESS_METHOD_MUST_RUN, 2);
-        $process->verifyInvokedMultipleTimes(self::PROCESS_METHOD_GET_OUTPUT, 1);
-        $pregSplit->verifyInvokedMultipleTimes(1);
-
-        $this->assertIsArray($results);
-        $this->assertSame($expectedTags, $results);
+        self::assertIsArray($results);
+        self::assertSame($expectedTags, $results);
     }
 
     /**
@@ -120,15 +128,13 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
      */
     public function testPull(): void
     {
-        $process = Test::double(Process::class, [
-            self::PROCESS_METHOD_MUST_RUN => $this->returnedProcess->reveal(),
-        ]);
+        $this->returnedProcess
+            ->mustRun()
+            ->shouldBeCalledTimes(1);
 
         $this->subject->pull($this->workingDirectory);
 
-        $process->verifyInvokedMultipleTimes(self::PROCESS_METHOD_MUST_RUN, 1);
-
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     /**
@@ -142,17 +148,18 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
     public function testGetRemoteUrl(): void
     {
         $remoteUrl = 'url://remote-url';
-        $process = Test::double(Process::class, [
-            self::PROCESS_METHOD_MUST_RUN => $this->returnedProcess->reveal(),
-            self::PROCESS_METHOD_GET_OUTPUT => $remoteUrl,
-        ]);
+
+        $this->returnedProcess
+            ->mustRun()
+            ->shouldBeCalledTimes(1);
+        $this->returnedProcess
+            ->getOutput()
+            ->shouldBeCalledTimes(1)
+            ->willReturn($remoteUrl);
 
         $result = $this->subject->getRemoteUrl($this->workingDirectory);
 
-        $process->verifyInvokedMultipleTimes(self::PROCESS_METHOD_MUST_RUN, 1);
-        $process->verifyInvokedMultipleTimes(self::PROCESS_METHOD_GET_OUTPUT, 1);
-
-        $this->assertSame($remoteUrl, $result);
+        self::assertSame($remoteUrl, $result);
     }
 
     public function tagListProvider(): array
@@ -162,7 +169,6 @@ final class GitCommandRunnerTest extends AspectMockedTestCase
             'precise tags' => ["1.1.0-beta\n2.0.0-alpha.2\r"],
             'spaces' => ['\n\r\r\n'],
             'no tags' => [''],
-            'split error' => [self::SPLIT_ERROR_STATE],
         ];
     }
 }

@@ -49,8 +49,8 @@ final class MarkdownParserTest extends TestCase
             ->willReturn($expectedResult);
 
         $result = $this->subject->parse($text);
-        $this->assertIsString($result);
-        $this->assertSame($result, $expectedResult);
+        self::assertIsString($result);
+        self::assertSame($result, $expectedResult);
     }
 
     public function textProvider(): array

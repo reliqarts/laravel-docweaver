@@ -8,7 +8,7 @@ use ReliqArts\Docweaver\Contract\Exception;
 use ReliqArts\Docweaver\Contract\Filesystem;
 use ReliqArts\Docweaver\Contract\Logger;
 use ReliqArts\Docweaver\Contract\Product\Publisher as PublisherContract;
-use ReliqArts\Docweaver\Contract\VCSCommandRunner;
+use ReliqArts\Docweaver\Contract\VcsCommandRunner;
 use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory;
 use ReliqArts\Docweaver\Exception\Product\PublicationFailed;
 use ReliqArts\Docweaver\Model\Product;
@@ -22,14 +22,14 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 final class Publisher extends BasePublisher implements PublisherContract
 {
     /**
-     * @var VCSCommandRunner
+     * @var VcsCommandRunner
      */
-    private VCSCommandRunner $vcsCommandRunner;
+    private VcsCommandRunner $vcsCommandRunner;
 
     /**
      * Publisher constructor.
      */
-    public function __construct(Filesystem $filesystem, Logger $logger, VCSCommandRunner $vcsCommandRunner)
+    public function __construct(Filesystem $filesystem, Logger $logger, VcsCommandRunner $vcsCommandRunner)
     {
         parent::__construct($filesystem, $logger);
 

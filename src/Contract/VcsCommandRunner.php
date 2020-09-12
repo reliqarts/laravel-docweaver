@@ -6,7 +6,7 @@ namespace ReliqArts\Docweaver\Contract;
 
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
-interface VCSCommandRunner
+interface VcsCommandRunner
 {
     public function clone(string $source, string $branch, string $workingDirectory): void;
 

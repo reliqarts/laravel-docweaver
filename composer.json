@@ -20,7 +20,7 @@
     "require": {
         "php": "^7.4",
         "ext-json": "*",
-        "illuminate/support": "6 - 7",
+        "illuminate/support": "7 - 8",
         "league/commonmark": "^1.1",
         "league/commonmark-extras": "^1.1",
         "monolog/monolog": "1.24 - 2",
@@ -31,11 +31,11 @@
         "symfony/yaml": "^4.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.5",
-        "orchestra/testbench-browser-kit": "4 - 5",
-        "goaop/framework": "^3.0@rc",
-        "codeception/aspect-mock": "^3.1",
-        "phpro/grumphp": "^0.18.0"
+        "orchestra/testbench-browser-kit": "4 - 6",
+        "phpunit/phpunit": "^9.3",
+        "phpro/grumphp": "^0.19.1",
+        "phpspec/prophecy-phpunit": "^2.0",
+        "symplify/easy-coding-standard": "^8.2"
     },
     "autoload": {
         "psr-4": {

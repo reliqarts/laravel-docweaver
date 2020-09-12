@@ -8,7 +8,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use ReliqArts\Docweaver\Contract\Exception;
 use ReliqArts\Docweaver\Contract\Logger;
-use ReliqArts\Docweaver\Contract\VCSCommandRunner;
+use ReliqArts\Docweaver\Contract\VcsCommandRunner;
 use ReliqArts\Docweaver\Exception\Product\AssetPublicationFailed;
 use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory;
 use ReliqArts\Docweaver\Model\Product;
@@ -42,7 +42,7 @@ final class PublisherTest extends TestCase
     private Publisher $subject;
 
     /**
-     * @var ObjectProphecy|VCSCommandRunner
+     * @var ObjectProphecy|VcsCommandRunner
      */
     private ObjectProphecy $vcsCommandRunner;
 
@@ -50,7 +50,7 @@ final class PublisherTest extends TestCase
     {
         parent::setUp();
 
-        $this->vcsCommandRunner = $this->prophesize(VCSCommandRunner::class);
+        $this->vcsCommandRunner = $this->prophesize(VcsCommandRunner::class);
         $this->product = $this->prophesize(Product::class);
         $this->logger = $this->prophesize(Logger::class);
 
@@ -107,8 +107,8 @@ final class PublisherTest extends TestCase
         $this->setTagExpectations($tags, $productDirectory, $source);
 
         $result = $this->subject->publish($product, $source);
-        $this->assertPublishSuccess($result, $productName, $tags);
-        $this->assertContains(Product::VERSION_MASTER, $result->getExtra()->versionsPublished);
+        self::assertPublishSuccess($result, $productName, $tags);
+        self::assertContains(Product::VERSION_MASTER, $result->getExtra()->versionsPublished);
     }
 
     /**
@@ -158,7 +158,7 @@ final class PublisherTest extends TestCase
         $this->setTagExpectations($tags, $productDirectory, $source);
 
         $result = $this->subject->publish($product, $source);
-        $this->assertPublishSuccess($result, $productName, $tags);
+        self::assertPublishSuccess($result, $productName, $tags);
     }
 
     /**
@@ -207,7 +207,7 @@ final class PublisherTest extends TestCase
         $this->setTagExpectations($tags, $productDirectory, $source, ['1.0' => true]);
 
         $result = $this->subject->publish($product, $source);
-        $this->assertPublishSuccess($result, $productName, ['2.0']);
+        self::assertPublishSuccess($result, $productName, ['2.0']);
     }
 
     /**
@@ -270,10 +270,10 @@ final class PublisherTest extends TestCase
             ->shouldNotBeCalled();
 
         $result = $this->subject->publish($product, $source);
-        $this->assertInstanceOf(Result::class, $result);
-        $this->assertTrue($result->isSuccess());
-        $this->assertContains('master', $result->getExtra()->versionsPublished);
-        $this->assertNotContains($tag, $result->getExtra()->versionsPublished);
+        self::assertInstanceOf(Result::class, $result);
+        self::assertTrue($result->isSuccess());
+        self::assertContains('master', $result->getExtra()->versionsPublished);
+        self::assertNotContains($tag, $result->getExtra()->versionsPublished);
     }
 
     /**
@@ -326,7 +326,7 @@ final class PublisherTest extends TestCase
         $this->setTagExpectations($tags, $productDirectory, $source);
 
         $result = $this->subject->publish($product, $source);
-        $this->assertPublishSuccess($result, $productName, $tags);
+        self::assertPublishSuccess($result, $productName, $tags);
     }
 
     /**
@@ -366,10 +366,10 @@ final class PublisherTest extends TestCase
 
         $result = $this->subject->publish($product, $source);
 
-        $this->assertInstanceOf(Result::class, $result);
-        $this->assertFalse($result->isSuccess());
-        $this->assertIsString($result->getExtra()->executionTime);
-        $this->assertSame(sprintf('Product directory %s is not writable.', $productDirectory), $result->getError());
+        self::assertInstanceOf(Result::class, $result);
+        self::assertFalse($result->isSuccess());
+        self::assertIsString($result->getExtra()->executionTime);
+        self::assertSame(sprintf('Product directory %s is not writable.', $productDirectory), $result->getError());
     }
 
     /**
@@ -477,14 +477,14 @@ final class PublisherTest extends TestCase
 
         $result = $this->subject->update($this->product->reveal());
 
-        $this->assertTrue($result->isSuccess());
+        self::assertTrue($result->isSuccess());
 
         foreach ($branches as $version) {
-            $this->assertContains($version, $result->getExtra()->versionsUpdated);
+            self::assertContains($version, $result->getExtra()->versionsUpdated);
         }
 
         foreach ($unpublishedTags as $version) {
-            $this->assertContains($version, $result->getExtra()->versionsPublished);
+            self::assertContains($version, $result->getExtra()->versionsPublished);
         }
     }
 
@@ -536,22 +536,22 @@ final class PublisherTest extends TestCase
 
         $result = $this->subject->update($this->product->reveal());
 
-        $this->assertTrue($result->isSuccess());
-        $this->assertNotContains('master', $result->getExtra()->versionsUpdated);
-        $this->assertContains('2.0', $result->getExtra()->versionsPublished);
-        $this->assertNotContains('1.0', $result->getExtra()->versionsPublished);
+        self::assertTrue($result->isSuccess());
+        self::assertNotContains('master', $result->getExtra()->versionsUpdated);
+        self::assertContains('2.0', $result->getExtra()->versionsPublished);
+        self::assertNotContains('1.0', $result->getExtra()->versionsPublished);
     }
 
     private function assertPublishSuccess(Result $result, string $productName, array $tagsPublished): void
     {
-        $this->assertInstanceOf(Result::class, $result);
-        $this->assertTrue($result->isSuccess());
-        $this->assertIsString($result->getExtra()->executionTime);
-        $this->assertSame(sprintf('%s was successfully published.', $productName), $result->getMessage());
-        $this->assertContains(Product::VERSION_MASTER, $result->getExtra()->versions);
+        self::assertInstanceOf(Result::class, $result);
+        self::assertTrue($result->isSuccess());
+        self::assertIsString($result->getExtra()->executionTime);
+        self::assertSame(sprintf('%s was successfully published.', $productName), $result->getMessage());
+        self::assertContains(Product::VERSION_MASTER, $result->getExtra()->versions);
 
         foreach ($tagsPublished as $tag) {
-            $this->assertContains($tag, $result->getExtra()->versionsPublished);
+            self::assertContains($tag, $result->getExtra()->versionsPublished);
         }
     }
 

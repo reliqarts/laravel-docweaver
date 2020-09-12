@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @noinspection PhpParamsInspection
+ * @noinspection PhpUndefinedMethodInspection
+ * @noinspection PhpStrictTypeCheckingInspection
+ */
+
 declare(strict_types=1);
 
 namespace ReliqArts\Docweaver\Tests\Unit\Service\Documentation;
@@ -50,9 +56,6 @@ final class ProviderTest extends TestCase
      */
     private ObjectProphecy $product;
 
-    /**
-     * @var ProviderContract
-     */
     private ProviderContract $subject;
 
     protected function setUp(): void
@@ -154,8 +157,8 @@ final class ProviderTest extends TestCase
 
         $result = $this->subject->getPage($this->product->reveal(), $version, $page);
 
-        $this->assertIsString($result);
-        $this->assertSame($pageContent, $result);
+        self::assertIsString($result);
+        self::assertSame($pageContent, $result);
     }
 
     /**
@@ -201,8 +204,8 @@ final class ProviderTest extends TestCase
 
         $result = $this->subject->getPage($this->product->reveal(), $version, $page);
 
-        $this->assertIsString($result);
-        $this->assertSame($pageContent, $result);
+        self::assertIsString($result);
+        self::assertSame($pageContent, $result);
     }
 
     /**
@@ -225,8 +228,8 @@ final class ProviderTest extends TestCase
             ->willReturn($exists);
 
         $result = $this->subject->sectionExists($this->product->reveal(), $version, $page);
-        $this->assertIsBool($result);
-        $this->assertSame($exists, $result);
+        self::assertIsBool($result);
+        self::assertSame($exists, $result);
     }
 
     public function sectionExistenceDataProvider(): array

@@ -51,10 +51,10 @@ final class ConfigProviderTest extends TestCase
         $result1 = $this->configProvider->getDocumentationDirectory();
         $result2 = $this->configProvider->getDocumentationDirectory(true);
 
-        $this->assertIsString($result1);
-        $this->assertIsString($result2);
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result1);
-        $this->assertSame(base_path(self::ARBITRARY_CONFIG_VALUE), $result2);
+        self::assertIsString($result1);
+        self::assertIsString($result2);
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result1);
+        self::assertSame(base_path(self::ARBITRARY_CONFIG_VALUE), $result2);
     }
 
     /**
@@ -66,8 +66,8 @@ final class ConfigProviderTest extends TestCase
     {
         $result = $this->configProvider->getRouteConfig();
 
-        $this->assertIsArray($result);
-        $this->assertSame(self::ARBITRARY_CONFIG_ARRAY, $result);
+        self::assertIsArray($result);
+        self::assertSame(self::ARBITRARY_CONFIG_ARRAY, $result);
     }
 
     /**
@@ -79,8 +79,8 @@ final class ConfigProviderTest extends TestCase
     {
         $result = $this->configProvider->getRoutePrefix();
 
-        $this->assertIsString($result);
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result);
+        self::assertIsString($result);
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result);
     }
 
     /**
@@ -92,9 +92,9 @@ final class ConfigProviderTest extends TestCase
     {
         $result = $this->configProvider->getRouteGroupBindings();
 
-        $this->assertIsArray($result);
-        $this->assertArrayHasKey('prefix', $result);
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result['key']);
+        self::assertIsArray($result);
+        self::assertArrayHasKey('prefix', $result);
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result['key']);
     }
 
     /**
@@ -106,8 +106,8 @@ final class ConfigProviderTest extends TestCase
     {
         $result = $this->configProvider->isDebug();
 
-        $this->assertIsBool($result);
-        $this->assertTrue($result);
+        self::assertIsBool($result);
+        self::assertTrue($result);
     }
 
     /**
@@ -119,8 +119,8 @@ final class ConfigProviderTest extends TestCase
     {
         $result = $this->configProvider->isWordedDefaultVersionAllowed();
 
-        $this->assertIsBool($result);
-        $this->assertTrue($result);
+        self::assertIsBool($result);
+        self::assertTrue($result);
     }
 
     /**
@@ -132,8 +132,8 @@ final class ConfigProviderTest extends TestCase
     {
         $result = $this->configProvider->getIndexRouteName();
 
-        $this->assertIsString($result);
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result);
+        self::assertIsString($result);
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result);
     }
 
     /**
@@ -145,8 +145,8 @@ final class ConfigProviderTest extends TestCase
     {
         $result = $this->configProvider->getProductIndexRouteName();
 
-        $this->assertIsString($result);
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result);
+        self::assertIsString($result);
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result);
     }
 
     /**
@@ -158,8 +158,8 @@ final class ConfigProviderTest extends TestCase
     {
         $result = $this->configProvider->getProductPageRouteName();
 
-        $this->assertIsString($result);
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result);
+        self::assertIsString($result);
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result);
     }
 
     /**
@@ -171,8 +171,8 @@ final class ConfigProviderTest extends TestCase
     {
         $result = $this->configProvider->getCacheKey();
 
-        $this->assertIsString($result);
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result);
+        self::assertIsString($result);
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result);
     }
 
     /**
@@ -184,8 +184,8 @@ final class ConfigProviderTest extends TestCase
     {
         $result = $this->configProvider->getContentIndexPageName();
 
-        $this->assertIsString($result);
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result);
+        self::assertIsString($result);
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result);
     }
 
     /**
@@ -198,15 +198,15 @@ final class ConfigProviderTest extends TestCase
     {
         $result = $this->configProvider->getTemplateConfig();
 
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result->getMasterTemplate());
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result->getMasterSection());
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result->getStyleStack());
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result->getScriptStack());
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result->getIndexTitle());
-        $this->assertSame(self::ARBITRARY_CONFIG_VALUE, $result->getIndexIntro());
-        $this->assertTrue($result->isShowProductLine());
-        $this->assertTrue($result->isShowFootnotes());
-        $this->assertTrue($result->hasStyleStack());
-        $this->assertTrue($result->hasScriptStack());
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result->getMasterTemplate());
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result->getMasterSection());
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result->getStyleStack());
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result->getScriptStack());
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result->getIndexTitle());
+        self::assertSame(self::ARBITRARY_CONFIG_VALUE, $result->getIndexIntro());
+        self::assertTrue($result->isShowProductLine());
+        self::assertTrue($result->isShowFootnotes());
+        self::assertTrue($result->hasStyleStack());
+        self::assertTrue($result->hasScriptStack());
     }
 }

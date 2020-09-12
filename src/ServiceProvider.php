@@ -19,14 +19,20 @@ use ReliqArts\Docweaver\Console\Command\UpdateAll;
 use ReliqArts\Docweaver\Contract\ConfigProvider as ConfigProviderContract;
 use ReliqArts\Docweaver\Contract\Documentation\Provider as DocumentationProviderContract;
 use ReliqArts\Docweaver\Contract\Documentation\Publisher as DocumentationPublisherContract;
+use ReliqArts\Docweaver\Contract\FileHelper as FileHelperContract;
 use ReliqArts\Docweaver\Contract\Filesystem as FilesystemContract;
 use ReliqArts\Docweaver\Contract\Logger as LoggerContract;
 use ReliqArts\Docweaver\Contract\MarkdownParser as MarkdownParserContract;
+use ReliqArts\Docweaver\Contract\ProcessHelper as ProcessHelperContract;
 use ReliqArts\Docweaver\Contract\Product\Finder as ProductFinderContract;
 use ReliqArts\Docweaver\Contract\Product\Maker as ProductMakerContract;
 use ReliqArts\Docweaver\Contract\Product\Publisher as ProductPublisherContract;
-use ReliqArts\Docweaver\Contract\VCSCommandRunner;
+use ReliqArts\Docweaver\Contract\VcsCommandRunner;
+use ReliqArts\Docweaver\Contract\YamlHelper as YamlHelperContract;
 use ReliqArts\Docweaver\Factory\ProductMaker;
+use ReliqArts\Docweaver\Helper\FileHelper;
+use ReliqArts\Docweaver\Helper\ProcessHelper;
+use ReliqArts\Docweaver\Helper\YamlHelper;
 use ReliqArts\Docweaver\Model\Product;
 use ReliqArts\Docweaver\Service\ConfigProvider;
 use ReliqArts\Docweaver\Service\Documentation\Provider as DocumentationProvider;
@@ -169,10 +175,13 @@ final class ServiceProvider extends BaseServiceProvider
         $this->app->singleton(FilesystemContract::class, Filesystem::class);
         $this->app->singleton(DocumentationPublisherContract::class, DocumentationPublisher::class);
         $this->app->singleton(DocumentationProviderContract::class, DocumentationProvider::class);
-        $this->app->singleton(VCSCommandRunner::class, GitCommandRunner::class);
+        $this->app->singleton(VcsCommandRunner::class, GitCommandRunner::class);
         $this->app->singleton(ProductMakerContract::class, ProductMaker::class);
         $this->app->singleton(ProductFinderContract::class, ProductFinder::class);
         $this->app->singleton(ProductPublisherContract::class, ProductPublisher::class);
+        $this->app->singleton(FileHelperContract::class, FileHelper::class);
+        $this->app->singleton(YamlHelperContract::class, YamlHelper::class);
+        $this->app->singleton(ProcessHelperContract::class, ProcessHelper::class);
         $this->app->singleton(
             ConfigProviderContract::class,
             static function (): ConfigProviderContract {

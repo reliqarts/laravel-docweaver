@@ -6,30 +6,33 @@ namespace ReliqArts\Docweaver\Factory;
 
 use ReliqArts\Docweaver\Contract\ConfigProvider;
 use ReliqArts\Docweaver\Contract\Exception;
+use ReliqArts\Docweaver\Contract\FileHelper;
 use ReliqArts\Docweaver\Contract\Filesystem;
 use ReliqArts\Docweaver\Contract\Product\Maker;
+use ReliqArts\Docweaver\Contract\YamlHelper;
 use ReliqArts\Docweaver\Exception\InvalidDirectory;
 use ReliqArts\Docweaver\Model\Product;
 
 final class ProductMaker implements Maker
 {
-    /**
-     * @var ConfigProvider
-     */
-    private $configProvider;
-
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
+    private ConfigProvider $configProvider;
+    private Filesystem $filesystem;
+    private FileHelper $fileHelper;
+    private YamlHelper $yamlHelper;
 
     /**
      * Factory constructor.
      */
-    public function __construct(Filesystem $filesystem, ConfigProvider $configProvider)
-    {
+    public function __construct(
+        Filesystem $filesystem,
+        ConfigProvider $configProvider,
+        FileHelper $fileHelper,
+        YamlHelper $yamlHelper
+    ) {
         $this->filesystem = $filesystem;
         $this->configProvider = $configProvider;
+        $this->fileHelper = $fileHelper;
+        $this->yamlHelper = $yamlHelper;
     }
 
     /**
@@ -41,7 +44,14 @@ final class ProductMaker implements Maker
             throw InvalidDirectory::forDirectory($directory);
         }
 
-        $product = new Product($this->filesystem, $this->configProvider, $directory);
+        $product = new Product(
+            $this->filesystem,
+            $this->configProvider,
+            $this->fileHelper,
+            $this->yamlHelper,
+            $directory
+        );
+
         $product->populate();
 
         return $product;

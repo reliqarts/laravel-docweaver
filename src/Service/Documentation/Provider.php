@@ -114,7 +114,7 @@ final class Provider implements ProviderContract
     private function getFilePathForProductPage(Product $product, string $version, string $page): string
     {
         $directory = $product->getDirectory();
-        $filename = ($page === self::PAGE_INDEX) ? $this->configProvider->getContentIndexPageName() : $page;
+        $filename = $page === self::PAGE_INDEX ? $this->configProvider->getContentIndexPageName() : $page;
 
         return sprintf('%s/%s/%s.%s', $directory, $version, $filename, self::FILE_EXTENSION);
     }

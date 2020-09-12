@@ -1,21 +1,29 @@
 <?php
 
+/**
+ * @noinspection PhpParamsInspection
+ * @noinspection PhpUndefinedMethodInspection
+ * @noinspection PhpStrictTypeCheckingInspection
+ */
+
 declare(strict_types=1);
 
 namespace ReliqArts\Docweaver\Tests\Unit\Model;
 
-use AspectMock\Test;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use JsonException;
 use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use ReliqArts\Docweaver\Contract\Exception;
+use ReliqArts\Docweaver\Contract\FileHelper;
+use ReliqArts\Docweaver\Contract\YamlHelper;
 use ReliqArts\Docweaver\Exception\ParsingFailed;
 use ReliqArts\Docweaver\Exception\Product\AssetPublicationFailed;
 use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory;
 use ReliqArts\Docweaver\Model\Product;
-use ReliqArts\Docweaver\Tests\Unit\AspectMockedTestCase;
+use ReliqArts\Docweaver\Tests\Unit\TestCase;
 use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class ProductTest.
@@ -24,14 +32,11 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @internal
  */
-final class ProductTest extends AspectMockedTestCase
+final class ProductTest extends TestCase
 {
     private const PRODUCT_DIRECTORY = '/foo/bar/docs/alpha';
-
-    /**
-     * @var Product
-     */
-    private Product $subject;
+    private const ARBITRARY_FILE_CONTENTS = 'file.contents';
+    private const ARBITRARY_REAL_PATH = 'real/path';
 
     /**
      * @var string[]
@@ -44,31 +49,28 @@ final class ProductTest extends AspectMockedTestCase
     private array $versionDirectories;
 
     /**
-     * @var int
+     * @var FileHelper|ObjectProphecy
      */
+    private ObjectProphecy $fileHelper;
+
+    /**
+     * @var YamlHelper|ObjectProphecy
+     */
+    private ObjectProphecy $yamlHelper;
+
     private int $lastModified;
-
-    /**
-     * @var string
-     */
     private string $productName;
-
-    /**
-     * @var string
-     */
     private string $productKey;
-
-    /**
-     * @var string
-     */
     private string $routePrefix;
+    private Product $subject;
 
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->fileHelper = $this->prophesize(FileHelper::class);
+        $this->yamlHelper = $this->prophesize(YamlHelper::class);
         $this->routePrefix = 'docs';
-        $this->namespace = '\ReliqArts\Docweaver\Model';
         $this->productName = Str::title(basename(self::PRODUCT_DIRECTORY));
         $this->productKey = strtolower($this->productName);
         $this->lastModified = 123456789;
@@ -77,9 +79,12 @@ final class ProductTest extends AspectMockedTestCase
             sprintf('%s/1.0', self::PRODUCT_DIRECTORY),
             sprintf('%s/2.0', self::PRODUCT_DIRECTORY),
         ];
-        $this->expectedVersions = array_map(static function (string $versionDirectory) {
-            return basename($versionDirectory);
-        }, $this->versionDirectories);
+        $this->expectedVersions = array_map(
+            static function (string $versionDirectory) {
+                return basename($versionDirectory);
+            },
+            $this->versionDirectories
+        );
 
         $this->filesystem->directories(self::PRODUCT_DIRECTORY)
             ->shouldBeCalledTimes(1)
@@ -87,6 +92,12 @@ final class ProductTest extends AspectMockedTestCase
         $this->filesystem->lastModified(self::PRODUCT_DIRECTORY)
             ->shouldBeCalledTimes(1)
             ->willReturn($this->lastModified);
+
+        $this->fileHelper->getFileContents(Argument::cetera())
+            ->willReturn(self::ARBITRARY_FILE_CONTENTS);
+        $this->fileHelper->realPath(Argument::cetera())
+            ->willReturn(self::ARBITRARY_REAL_PATH);
+
         $this->configProvider->getRoutePrefix()
             ->shouldBeCalledTimes(1)
             ->willReturn($this->routePrefix);
@@ -94,6 +105,8 @@ final class ProductTest extends AspectMockedTestCase
         $this->subject = new Product(
             $this->filesystem->reveal(),
             $this->configProvider->reveal(),
+            $this->fileHelper->reveal(),
+            $this->yamlHelper->reveal(),
             self::PRODUCT_DIRECTORY
         );
     }
@@ -116,10 +129,14 @@ final class ProductTest extends AspectMockedTestCase
      * @covers ::toJson
      * @small
      *
-     * @throws Exception
+     * @throws Exception|JsonException
      */
     public function testPopulateWithNoMeta(): void
     {
+        $this->fileHelper->realPath(Argument::cetera())
+            ->shouldBeCalledTimes(1)
+            ->willReturn(false);
+
         $this->configProvider->isWordedDefaultVersionAllowed()
             ->willReturn(true);
         $this->configProvider->getRoutePrefix()
@@ -131,37 +148,37 @@ final class ProductTest extends AspectMockedTestCase
         $productJson = $this->subject->toJson();
         $productVersions = $this->subject->getVersions();
 
-        $this->assertIsArray($productVersions);
-        $this->assertSame(
+        self::assertIsArray($productVersions);
+        self::assertSame(
             'master',
             $this->subject->getDefaultVersion(),
             'Product default version is not as expected.'
         );
-        $this->assertSame(
+        self::assertSame(
             Carbon::createFromTimestamp($this->lastModified)->toAtomString(),
             $this->subject->getLastModified()->toAtomString(),
             'Product last modified time is not as expected.'
         );
-        $this->assertSame(
+        self::assertSame(
             self::PRODUCT_DIRECTORY,
             $this->subject->getDirectory(),
             'Product directory is not as expected.'
         );
-        $this->assertSame($this->productName, $this->subject->getName(), 'Product name is not as expected.');
-        $this->assertSame($this->productKey, $this->subject->getKey(), 'Product key is not as expected.');
-        $this->assertCount(count($this->expectedVersions), $productVersions);
-        $this->assertEmpty($this->subject->getDescription());
-        $this->assertEmpty($this->subject->getImageUrl());
-        $this->assertNotEmpty($productArray);
-        $this->assertContains($this->productName, $productArray);
-        $this->assertContains($this->productKey, $productArray);
-        $this->assertCount(count($productArray), json_decode($productJson, true, 512, JSON_THROW_ON_ERROR));
+        self::assertSame($this->productName, $this->subject->getName(), 'Product name is not as expected.');
+        self::assertSame($this->productKey, $this->subject->getKey(), 'Product key is not as expected.');
+        self::assertCount(count($this->expectedVersions), $productVersions);
+        self::assertEmpty($this->subject->getDescription());
+        self::assertEmpty($this->subject->getImageUrl());
+        self::assertNotEmpty($productArray);
+        self::assertContains($this->productName, $productArray);
+        self::assertContains($this->productKey, $productArray);
+        self::assertCount(count($productArray), json_decode($productJson, true, 512, JSON_THROW_ON_ERROR));
 
         foreach ($this->expectedVersions as $expectedVersion) {
             $versionName = Str::title($expectedVersion);
-            $this->assertArrayHasKey($expectedVersion, $productVersions);
-            $this->assertContains($versionName, $productVersions);
-            $this->assertTrue($this->subject->hasVersion($expectedVersion));
+            self::assertArrayHasKey($expectedVersion, $productVersions);
+            self::assertContains($versionName, $productVersions);
+            self::assertTrue($this->subject->hasVersion($expectedVersion));
         }
     }
 
@@ -178,21 +195,15 @@ final class ProductTest extends AspectMockedTestCase
      * @medium
      * @preserveGlobalState      disabled
      * @runInSeparateProcess
-     *
      * @throws Exception
+     * @noinspection             DisconnectedForeachInstructionInspection
      */
     public function testPopulateWithMeta(): void
     {
         $metaProductName = 'Bravo';
         $description = 'A product';
-        $metaFile = 'meta-file';
         $expectedDefaultVersion = '2.0';
         $metaImageScenarios = $this->getMetaImageScenariosForVersion($expectedDefaultVersion);
-        $metaImageScenarioCount = count($metaImageScenarios);
-
-        $realPath = Test::func($this->namespace, 'realpath', $metaFile);
-        $fileGetContents = Test::func($this->namespace, 'file_get_contents', $metaFile);
-        $yaml = null;
 
         $this->filesystem->directories(self::PRODUCT_DIRECTORY)
             ->shouldBeCalledTimes(2)
@@ -204,7 +215,7 @@ final class ProductTest extends AspectMockedTestCase
             ->willReturn(false);
 
         foreach ($metaImageScenarios as $scenario) {
-            list($imageFilename, $expectedImageUrl) = $scenario;
+            [$imageFilename, $expectedImageUrl] = $scenario;
             $metaInfo = [
                 'name' => $metaProductName,
                 'description' => $description,
@@ -213,35 +224,36 @@ final class ProductTest extends AspectMockedTestCase
                     : sprintf('{{docs}}/%s', $imageFilename),
             ];
 
-            $yaml = Test::double(Yaml::class, ['parse' => $metaInfo]);
+            $this->yamlHelper->parse(Argument::type('string'))
+                ->shouldBeCalledTimes(2)
+                ->willReturn($metaInfo);
 
             $this->subject->populate();
 
-            $this->assertSame(
-                $metaProductName,
-                $this->subject->getName(),
-                'Product name is not as expected.'
-            );
-            $this->assertSame(
-                $description,
-                $this->subject->getDescription(),
-                'Product description is not as expected.'
-            );
-            $this->assertSame(
+            self::assertSame(
                 $expectedImageUrl,
                 $this->subject->getImageUrl(),
                 'Product image URL is not as expected.'
             );
-            $this->assertSame(
+
+            self::assertSame(
+                $metaProductName,
+                $this->subject->getName(),
+                'Product name is not as expected.'
+            );
+
+            self::assertSame(
+                $description,
+                $this->subject->getDescription(),
+                'Product description is not as expected.'
+            );
+
+            self::assertSame(
                 $expectedDefaultVersion,
                 $this->subject->getDefaultVersion(),
                 'Product default version is not as expected.'
             );
         }
-
-        $realPath->verifyInvokedMultipleTimes($metaImageScenarioCount);
-        $fileGetContents->verifyInvokedMultipleTimes($metaImageScenarioCount);
-        $yaml->verifyInvokedMultipleTimes('parse', $metaImageScenarioCount);
     }
 
     /**
@@ -262,15 +274,11 @@ final class ProductTest extends AspectMockedTestCase
     public function testPopulateWhenMetaIsInvalid(): void
     {
         $this->expectException(ParsingFailed::class);
-        $this->expectExceptionMessage('Failed to parse meta file `meta-file`. foo');
+        $this->expectExceptionMessage(sprintf('Failed to parse meta file `%s`. foo', self::ARBITRARY_REAL_PATH));
 
-        $metaFile = 'meta-file';
-
-        $realPath = Test::func($this->namespace, 'realpath', $metaFile);
-        $fileGetContents = Test::func($this->namespace, 'file_get_contents', $metaFile);
-        $yaml = Test::double(Yaml::class, ['parse' => function () {
-            throw new ParseException('foo');
-        }]);
+        $this->yamlHelper->parse(Argument::cetera())
+            ->shouldBeCalled()
+            ->willThrow(new ParseException('foo'));
 
         $this->configProvider->getRoutePrefix()
             ->shouldNotBeCalled();
@@ -278,10 +286,6 @@ final class ProductTest extends AspectMockedTestCase
             ->willReturn(false);
 
         $this->subject->populate();
-
-        $realPath->verifyInvokedOnce();
-        $fileGetContents->verifyInvokedOnce([$metaFile]);
-        $yaml->verifyInvokedOnce('parse');
     }
 
     /**
@@ -312,6 +316,7 @@ final class ProductTest extends AspectMockedTestCase
      * @covers ::publishAssets
      * @covers                   \ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory
      * @small
+     * @throws Exception
      */
     public function testPublishAssetsWhenImageDirectoryIsInvalid(): void
     {
@@ -369,13 +374,15 @@ final class ProductTest extends AspectMockedTestCase
         return [
             'relative image path' => [
                 $relativeImagePath,
-                asset(sprintf(
-                    'storage/%s/%s/%s/%s',
-                    $this->routePrefix,
-                    $this->productKey,
-                    $version,
-                    $relativeImagePath
-                )),
+                asset(
+                    sprintf(
+                        'storage/%s/%s/%s/%s',
+                        $this->routePrefix,
+                        $this->productKey,
+                        $version,
+                        $relativeImagePath
+                    )
+                ),
             ],
             'absolute image path' => [
                 $absoluteImagePath,

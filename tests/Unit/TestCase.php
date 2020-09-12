@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace ReliqArts\Docweaver\Tests\Unit;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use ReliqArts\Docweaver\Contract\ConfigProvider;
 use ReliqArts\Docweaver\Contract\Filesystem;
 use ReliqArts\Docweaver\Tests\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         parent::setUp();

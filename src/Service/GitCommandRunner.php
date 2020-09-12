@@ -4,19 +4,26 @@ declare(strict_types=1);
 
 namespace ReliqArts\Docweaver\Service;
 
-use ReliqArts\Docweaver\Contract\VCSCommandRunner;
+use ReliqArts\Docweaver\Contract\ProcessHelper;
+use ReliqArts\Docweaver\Contract\VcsCommandRunner;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 
-final class GitCommandRunner implements VCSCommandRunner
+final class GitCommandRunner implements VcsCommandRunner
 {
     private const DEFAULT_REMOTE_NAME = 'origin';
 
+    private ProcessHelper $processHelper;
+
+    public function __construct(ProcessHelper $processHelper)
+    {
+        $this->processHelper = $processHelper;
+    }
+
     public function clone(string $source, string $branch, string $workingDirectory): void
     {
-        $command = ['git', 'clone', '--branch', $branch, sprintf('%s', $source), $branch];
+        $command = ['git', 'clone', '--branch', $branch, $source, $branch];
 
-        $clone = new Process($command, $workingDirectory);
+        $clone = $this->processHelper->createProcess($command, $workingDirectory);
         $clone->mustRun();
     }
 
@@ -27,7 +34,7 @@ final class GitCommandRunner implements VCSCommandRunner
     {
         $this->fetch($workingDirectory);
 
-        $listTags = new Process(['git', 'tag', '-l'], $workingDirectory);
+        $listTags = $this->processHelper->createProcess(['git', 'tag', '-l'], $workingDirectory);
         $listTags->mustRun();
 
         if ($splitTags = preg_split("/[\n\r]/", $listTags->getOutput())) {
@@ -42,7 +49,7 @@ final class GitCommandRunner implements VCSCommandRunner
      */
     public function pull(string $workingDirectory): void
     {
-        $pull = new Process(['git', 'pull'], $workingDirectory);
+        $pull = $this->processHelper->createProcess(['git', 'pull'], $workingDirectory);
         $pull->mustRun();
     }
 
@@ -54,7 +61,7 @@ final class GitCommandRunner implements VCSCommandRunner
         $remoteName ??= self::DEFAULT_REMOTE_NAME;
         $command = ['git', 'config', '--get', sprintf('remote.%s.url', $remoteName)];
 
-        $getUrl = new Process($command, $workingDirectory);
+        $getUrl = $this->processHelper->createProcess($command, $workingDirectory);
         $getUrl->mustRun();
 
         return trim($getUrl->getOutput());
@@ -62,7 +69,7 @@ final class GitCommandRunner implements VCSCommandRunner
 
     private function fetch(string $workingDirectory): void
     {
-        $pull = new Process(['git', 'fetch'], $workingDirectory);
+        $pull = $this->processHelper->createProcess(['git', 'fetch'], $workingDirectory);
         $pull->mustRun();
     }
 }
