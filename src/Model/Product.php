@@ -122,7 +122,7 @@ class Product implements Arrayable, Jsonable
         $allowWordedDefault = $allowWordedDefault || $this->configProvider->isWordedDefaultVersionAllowed();
         $defaultVersion = self::VERSION_UNKNOWN;
 
-        foreach ($versions as $tag => $ver) {
+        foreach (array_keys($versions) as $tag) {
             if (!$allowWordedDefault) {
                 if (is_numeric($tag)) {
                     $defaultVersion = $tag;
