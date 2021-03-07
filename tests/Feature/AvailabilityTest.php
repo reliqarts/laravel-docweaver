@@ -37,7 +37,6 @@ final class AvailabilityTest extends TestCase
     public function testProjectAvailability(): void
     {
         $docIndex = route($this->configProvider->getIndexRouteName());
-        $rightSingleQuote = "\u{2019}";
 
         $this->visit($docIndex)
             ->see('Sandy')
@@ -47,6 +46,6 @@ final class AvailabilityTest extends TestCase
             ->click('Sandy')
             ->dontSee('documentation')
             ->see('elements are important')
-            ->see(sprintf('Haha! It%ss pre-installed fam.', $rightSingleQuote));
+            ->see(sprintf('Haha! It%ss pre-installed fam.', "'"));
     }
 }

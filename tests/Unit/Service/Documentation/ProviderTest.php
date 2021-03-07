@@ -99,8 +99,7 @@ final class ProviderTest extends TestCase
             ->shouldBeCalled()
             ->willReturn(false);
 
-        /** @noinspection PhpUnusedLocalVariableInspection */
-        $provider = new Provider(
+        new Provider(
             $this->filesystem->reveal(),
             $this->cache->reveal(),
             $this->configProvider->reveal(),

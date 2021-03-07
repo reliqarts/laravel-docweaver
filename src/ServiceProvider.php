@@ -9,9 +9,7 @@ use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Illuminate\View\View;
-use League\CommonMark\CommonMarkConverter;
-use League\CommonMark\Environment as CommonMarkEnvironment;
-use League\CommonMark\Extras\CommonMarkExtrasExtension;
+use League\CommonMark\GithubFlavoredMarkdownConverter;
 use Monolog\Handler\StreamHandler;
 use ReliqArts\Docweaver\Console\Command\Publish;
 use ReliqArts\Docweaver\Console\Command\Update;
@@ -202,13 +200,7 @@ final class ServiceProvider extends BaseServiceProvider
         );
         $this->app->singleton(
             MarkdownParserContract::class,
-            static function (): MarkdownParserContract {
-                $config = [];
-                $environment = CommonMarkEnvironment::createCommonMarkEnvironment();
-                $environment->addExtension(new CommonMarkExtrasExtension());
-
-                return new MarkdownParser(new CommonMarkConverter($config, $environment));
-            }
+            static fn (): MarkdownParserContract => new MarkdownParser(new GithubFlavoredMarkdownConverter([]))
         );
 
         return $this;
