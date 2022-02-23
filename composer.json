@@ -20,21 +20,21 @@
     "require": {
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
-        "illuminate/support": "7 - 8",
-        "league/commonmark": "^1.5",
+        "illuminate/support": "7 - 9",
+        "league/commonmark": "^1.5 || ^2.2",
         "monolog/monolog": "1.24 - 2",
         "nesbot/carbon": "^2.0",
-        "reliqarts/laravel-common": "^5.0",
-        "symfony/browser-kit": "^4.3",
-        "symfony/process": "4 - 5",
-        "symfony/yaml": "^4.3"
+        "reliqarts/laravel-common": "^6.0",
+        "symfony/browser-kit": ">=4.3",
+        "symfony/process": ">=5.2",
+        "symfony/yaml": ">=4.3"
     },
     "require-dev": {
-        "orchestra/testbench-browser-kit": "4 - 6",
+        "orchestra/testbench-browser-kit": "7",
         "phpunit/phpunit": "^9.3",
         "phpro/grumphp": "^1.0",
         "phpspec/prophecy-phpunit": "^2.0",
-        "symplify/easy-coding-standard": "^8.2"
+        "symplify/easy-coding-standard": ">=8.2"
     },
     "autoload": {
         "psr-4": {
