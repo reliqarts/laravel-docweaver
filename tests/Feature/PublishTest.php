@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ReliqArts\Docweaver\Tests\Feature;
 
 use Illuminate\Support\Facades\Artisan;
+use ReliqArts\Docweaver\Model\Product;
 
 /**
  * @coversNothing
@@ -47,7 +48,7 @@ final class PublishTest extends TestCase
         // check existence
         $this->visit($docIndex)
             ->see($productName)
-            ->see('master');
+            ->see(Product::VERSION_MAIN);
 
         $this->publishedProducts[] = $productName;
     }

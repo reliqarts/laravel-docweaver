@@ -17,7 +17,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\SimpleCache\InvalidArgumentException;
 use ReliqArts\Docweaver\Contract\Documentation\Provider as ProviderContract;
 use ReliqArts\Docweaver\Contract\MarkdownParser;
-use ReliqArts\Docweaver\Exception\BadImplementation;
+use ReliqArts\Docweaver\Exception\BadImplementationException;
 use ReliqArts\Docweaver\Model\Product;
 use ReliqArts\Docweaver\Service\Documentation\Provider;
 use ReliqArts\Docweaver\Tests\Unit\TestCase;
@@ -92,7 +92,7 @@ final class ProviderTest extends TestCase
      */
     public function testExceptionIsThrownIfDocumentationDirectoryIsInvalid(): void
     {
-        $this->expectException(BadImplementation::class);
+        $this->expectException(BadImplementationException::class);
         $this->expectExceptionMessage('Documentation resource directory `docs` does not exist.');
 
         $this->filesystem->isDirectory(base_path($this->documentationDirectory))

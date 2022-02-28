@@ -13,7 +13,7 @@ interface ConfigProvider
      *
      * @param bool $absolute whether to return full
      */
-    public function getDocumentationDirectory($absolute = false): string;
+    public function getDocumentationDirectory(bool $absolute = false): string;
 
     /**
      * Get route config.

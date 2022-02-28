@@ -9,8 +9,8 @@ use Prophecy\Prophecy\ObjectProphecy;
 use ReliqArts\Docweaver\Contract\Exception;
 use ReliqArts\Docweaver\Contract\Logger;
 use ReliqArts\Docweaver\Contract\VcsCommandRunner;
-use ReliqArts\Docweaver\Exception\Product\AssetPublicationFailed;
-use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory;
+use ReliqArts\Docweaver\Exception\Product\AssetPublicationFailedException;
+use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectoryException;
 use ReliqArts\Docweaver\Model\Product;
 use ReliqArts\Docweaver\Result;
 use ReliqArts\Docweaver\Service\Product\Publisher;
@@ -86,7 +86,7 @@ final class PublisherTest extends TestCase
 
         $this->product->getDirectory()
             ->willReturn($productDirectory);
-        $this->product->getMasterDirectory()
+        $this->product->getMainDirectory()
             ->willReturn($masterDirectory);
         $this->product->getName()
             ->willReturn($productName);
@@ -100,15 +100,15 @@ final class PublisherTest extends TestCase
         $this->filesystem->isDirectory($masterDirectory)
             ->shouldBeCalledTimes(1)
             ->willReturn(false);
-        $this->vcsCommandRunner->clone($source, Product::VERSION_MASTER, $productDirectory)
+        $this->vcsCommandRunner->clone($source, Product::VERSION_MAIN, $productDirectory)
             ->shouldBeCalledTimes(1);
-        $this->product->publishAssets(Product::VERSION_MASTER)
+        $this->product->publishAssets(Product::VERSION_MAIN)
             ->shouldBeCalledTimes(1);
         $this->setTagExpectations($tags, $productDirectory, $source);
 
         $result = $this->subject->publish($product, $source);
         self::assertPublishSuccess($result, $productName, $tags);
-        self::assertContains(Product::VERSION_MASTER, $result->getExtra()->versionsPublished);
+        self::assertContains(Product::VERSION_MAIN, $result->getExtra()->versionsPublished);
     }
 
     /**
@@ -137,7 +137,7 @@ final class PublisherTest extends TestCase
 
         $this->product->getDirectory()
             ->willReturn($productDirectory);
-        $this->product->getMasterDirectory()
+        $this->product->getMainDirectory()
             ->willReturn($masterDirectory);
         $this->product->getName()
             ->willReturn($productName);
@@ -151,9 +151,9 @@ final class PublisherTest extends TestCase
         $this->filesystem->isDirectory($masterDirectory)
             ->shouldBeCalledTimes(1)
             ->willReturn(true);
-        $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, Product::VERSION_MASTER))
+        $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, Product::VERSION_MAIN))
             ->shouldBeCalledTimes(1);
-        $this->product->publishAssets(Product::VERSION_MASTER)
+        $this->product->publishAssets(Product::VERSION_MAIN)
             ->shouldBeCalledTimes(1);
         $this->setTagExpectations($tags, $productDirectory, $source);
 
@@ -185,7 +185,7 @@ final class PublisherTest extends TestCase
 
         $this->product->getDirectory()
             ->willReturn($productDirectory);
-        $this->product->getMasterDirectory()
+        $this->product->getMainDirectory()
             ->willReturn($masterDirectory);
         $this->product->getName()
             ->willReturn($productName);
@@ -199,10 +199,10 @@ final class PublisherTest extends TestCase
         $this->filesystem->isDirectory($masterDirectory)
             ->shouldBeCalledTimes(1)
             ->willReturn(true);
-        $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, Product::VERSION_MASTER))
+        $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, Product::VERSION_MAIN))
             ->shouldBeCalledTimes(1);
-        $this->product->publishAssets(Product::VERSION_MASTER)
-            ->shouldBeCalledTimes(1)->willThrow(InvalidAssetDirectory::class);
+        $this->product->publishAssets(Product::VERSION_MAIN)
+            ->shouldBeCalledTimes(1)->willThrow(InvalidAssetDirectoryException::class);
         $this->logger->info(Argument::type('string'))->shouldBeCalledTimes(1);
         $this->setTagExpectations($tags, $productDirectory, $source, ['1.0' => true]);
 
@@ -220,7 +220,7 @@ final class PublisherTest extends TestCase
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
      * @covers ::updateVersion
-     * @covers \ReliqArts\Docweaver\Exception\Product\PublicationFailed::forProductVersion
+     * @covers \ReliqArts\Docweaver\Exception\Product\PublicationFailedException::forProductVersion
      * @covers \ReliqArts\Docweaver\Service\Publisher::secondsSince
      * @small
      *
@@ -231,7 +231,7 @@ final class PublisherTest extends TestCase
         $productName = 'Product 31';
         $productDirectory = 'product 31';
         $source = 'http://product.source';
-        $masterDirectory = sprintf('%s/master', $productDirectory);
+        $mainDirectory = sprintf('%s/main', $productDirectory);
         $product = $this->product->reveal();
         $tag = '1.1';
         $tagDirectory = sprintf('%s/%s', $productDirectory, $tag);
@@ -239,8 +239,8 @@ final class PublisherTest extends TestCase
 
         $this->product->getDirectory()
             ->willReturn($productDirectory);
-        $this->product->getMasterDirectory()
-            ->willReturn($masterDirectory);
+        $this->product->getMainDirectory()
+            ->willReturn($mainDirectory);
         $this->product->getName()
             ->willReturn($productName);
 
@@ -250,14 +250,14 @@ final class PublisherTest extends TestCase
         $this->filesystem->isWritable($productDirectory)
             ->shouldBeCalledTimes(1)
             ->willReturn(true);
-        $this->filesystem->isDirectory($masterDirectory)
+        $this->filesystem->isDirectory($mainDirectory)
             ->shouldBeCalledTimes(1)
             ->willReturn(false);
-        $this->vcsCommandRunner->clone($source, Product::VERSION_MASTER, $productDirectory)
+        $this->vcsCommandRunner->clone($source, Product::VERSION_MAIN, $productDirectory)
             ->shouldBeCalledTimes(1);
-        $this->product->publishAssets(Product::VERSION_MASTER)
+        $this->product->publishAssets(Product::VERSION_MAIN)
             ->shouldBeCalledTimes(1);
-        $this->vcsCommandRunner->listTags($masterDirectory)
+        $this->vcsCommandRunner->listTags($mainDirectory)
             ->shouldBeCalledTimes(1)
             ->willReturn($tags);
         $this->filesystem->isDirectory($tagDirectory)
@@ -272,7 +272,7 @@ final class PublisherTest extends TestCase
         $result = $this->subject->publish($product, $source);
         self::assertInstanceOf(Result::class, $result);
         self::assertTrue($result->isSuccess());
-        self::assertContains('master', $result->getExtra()->versionsPublished);
+        self::assertContains(Product::VERSION_MAIN, $result->getExtra()->versionsPublished);
         self::assertNotContains($tag, $result->getExtra()->versionsPublished);
     }
 
@@ -302,7 +302,7 @@ final class PublisherTest extends TestCase
 
         $this->product->getDirectory()
             ->willReturn($productDirectory);
-        $this->product->getMasterDirectory()
+        $this->product->getMainDirectory()
             ->willReturn($masterDirectory);
         $this->product->getName()
             ->willReturn($productName);
@@ -316,11 +316,11 @@ final class PublisherTest extends TestCase
         $this->filesystem->isDirectory($masterDirectory)
             ->shouldBeCalledTimes(1)
             ->willReturn(true);
-        $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, Product::VERSION_MASTER))
+        $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, Product::VERSION_MAIN))
             ->shouldBeCalledTimes(1);
-        $this->product->publishAssets(Product::VERSION_MASTER)
+        $this->product->publishAssets(Product::VERSION_MAIN)
             ->shouldBeCalledTimes(1)
-            ->willThrow(AssetPublicationFailed::class);
+            ->willThrow(AssetPublicationFailedException::class);
         $this->logger->error(Argument::type('string'))
             ->shouldBeCalledTimes(1);
         $this->setTagExpectations($tags, $productDirectory, $source);
@@ -346,7 +346,7 @@ final class PublisherTest extends TestCase
 
         $this->product->getDirectory()
             ->willReturn($productDirectory);
-        $this->product->getMasterDirectory()
+        $this->product->getMainDirectory()
             ->willReturn($masterDirectory);
 
         $this->filesystem->isDirectory($productDirectory)
@@ -357,9 +357,9 @@ final class PublisherTest extends TestCase
             ->willReturn(false);
         $this->filesystem->isDirectory($masterDirectory)
             ->shouldNotBeCalled();
-        $this->vcsCommandRunner->clone($source, Product::VERSION_MASTER, $productDirectory)
+        $this->vcsCommandRunner->clone($source, Product::VERSION_MAIN, $productDirectory)
             ->shouldNotBeCalled();
-        $this->product->publishAssets(Product::VERSION_MASTER)
+        $this->product->publishAssets(Product::VERSION_MAIN)
             ->shouldNotBeCalled();
         $this->vcsCommandRunner->listTags($masterDirectory)
             ->shouldNotBeCalled();
@@ -378,14 +378,14 @@ final class PublisherTest extends TestCase
      * @covers ::readyResourceDirectory
      * @covers ::setExecutionStartTime
      * @covers ::updateVersion
-     * @covers \ReliqArts\Docweaver\Exception\Product\PublicationFailed::forProductVersion
+     * @covers \ReliqArts\Docweaver\Exception\Product\PublicationFailedException::forProductVersion
      * @covers \ReliqArts\Docweaver\Service\Publisher::secondsSince
      * @small
      */
     public function testPublishThrowsExceptionIfMasterFailsToUpdate(): void
     {
-        $this->expectException(\ReliqArts\Docweaver\Exception\Product\PublicationFailed::class);
-        $this->expectExceptionMessage('Failed to update version `master` of product `Product 24`');
+        $this->expectException(\ReliqArts\Docweaver\Exception\Product\PublicationFailedException::class);
+        $this->expectExceptionMessage('Failed to update version `main` of product `Product 24`');
 
         $productName = 'Product 24';
         $productDirectory = 'product';
@@ -397,7 +397,7 @@ final class PublisherTest extends TestCase
             ->willReturn($productName);
         $this->product->getDirectory()
             ->willReturn($productDirectory);
-        $this->product->getMasterDirectory()
+        $this->product->getMainDirectory()
             ->willReturn($masterDirectory);
 
         $this->filesystem->isDirectory($productDirectory)
@@ -409,10 +409,10 @@ final class PublisherTest extends TestCase
         $this->filesystem->isDirectory($masterDirectory)
             ->shouldBeCalledTimes(1)
             ->willReturn(true);
-        $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, Product::VERSION_MASTER))
+        $this->vcsCommandRunner->pull(sprintf('%s/%s', $productDirectory, Product::VERSION_MAIN))
             ->shouldBeCalledTimes(1)
             ->willThrow(ProcessFailedException::class);
-        $this->product->publishAssets(Product::VERSION_MASTER)
+        $this->product->publishAssets(Product::VERSION_MAIN)
             ->shouldNotBeCalled();
         $this->vcsCommandRunner->listTags($masterDirectory)
             ->shouldNotBeCalled();
@@ -452,7 +452,7 @@ final class PublisherTest extends TestCase
             ->willReturn($productName);
         $this->product->getDirectory()
             ->willReturn($productDirectory);
-        $this->product->getMasterDirectory()
+        $this->product->getMainDirectory()
             ->willReturn($masterDirectory);
         $this->product->getVersions()
             ->willReturn($publishedVersions);
@@ -512,7 +512,7 @@ final class PublisherTest extends TestCase
             ->willReturn($productName);
         $this->product->getDirectory()
             ->willReturn($productDirectory);
-        $this->product->getMasterDirectory()
+        $this->product->getMainDirectory()
             ->willReturn($masterDirectory);
         $this->product->getVersions()
             ->willReturn($publishedVersions);
@@ -548,7 +548,7 @@ final class PublisherTest extends TestCase
         self::assertTrue($result->isSuccess());
         self::assertIsString($result->getExtra()->executionTime);
         self::assertSame(sprintf('%s was successfully published.', $productName), $result->getMessage());
-        self::assertContains(Product::VERSION_MASTER, $result->getExtra()->versions);
+        self::assertContains(Product::VERSION_MAIN, $result->getExtra()->versions);
 
         foreach ($tagsPublished as $tag) {
             self::assertContains($tag, $result->getExtra()->versionsPublished);

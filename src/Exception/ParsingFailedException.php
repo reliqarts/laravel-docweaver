@@ -6,7 +6,7 @@ namespace ReliqArts\Docweaver\Exception;
 
 use ReliqArts\Docweaver\Contract\Exception as ExceptionContract;
 
-final class ParsingFailed extends Exception
+final class ParsingFailedException extends Exception
 {
     private const CODE = 1004;
 

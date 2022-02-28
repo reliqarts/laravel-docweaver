@@ -14,9 +14,9 @@ use ReliqArts\Docweaver\Contract\Exception;
 use ReliqArts\Docweaver\Contract\FileHelper;
 use ReliqArts\Docweaver\Contract\Filesystem;
 use ReliqArts\Docweaver\Contract\YamlHelper;
-use ReliqArts\Docweaver\Exception\ParsingFailed;
-use ReliqArts\Docweaver\Exception\Product\AssetPublicationFailed;
-use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory;
+use ReliqArts\Docweaver\Exception\ParsingFailedException;
+use ReliqArts\Docweaver\Exception\Product\AssetPublicationFailedException;
+use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectoryException;
 use RuntimeException;
 
 /**
@@ -24,7 +24,7 @@ use RuntimeException;
  */
 class Product implements Arrayable, Jsonable
 {
-    public const VERSION_MASTER = 'master';
+    public const VERSION_MAIN = 'main';
     public const VERSION_UNKNOWN = 'unknown';
 
     private const ASSET_URL_PLACEHOLDER_1 = '{{docs}}';
@@ -209,11 +209,11 @@ class Product implements Arrayable, Jsonable
         $imageDirectory = sprintf('%s/%s/images', $this->directory, $version);
 
         if (!$this->filesystem->isDirectory($imageDirectory)) {
-            throw InvalidAssetDirectory::forDirectory($imageDirectory);
+            throw InvalidAssetDirectoryException::forDirectory($imageDirectory);
         }
 
         if (!$this->filesystem->copyDirectory($imageDirectory, sprintf('%s/images', $storagePath))) {
-            throw AssetPublicationFailed::forProductAssetsOfType($this, 'image');
+            throw AssetPublicationFailedException::forProductAssetsOfType($this, 'image');
         }
     }
 
@@ -246,9 +246,9 @@ class Product implements Arrayable, Jsonable
         return json_encode($this->toArray(), JSON_THROW_ON_ERROR, 512);
     }
 
-    public function getMasterDirectory(): string
+    public function getMainDirectory(): string
     {
-        return sprintf('%s/%s', $this->getDirectory(), self::VERSION_MASTER);
+        return sprintf('%s/%s', $this->getDirectory(), self::VERSION_MAIN);
     }
 
     /**
@@ -305,7 +305,7 @@ class Product implements Arrayable, Jsonable
                 $exception->getMessage()
             );
 
-            throw ParsingFailed::forFile($metaFile)->withMessage($message);
+            throw ParsingFailedException::forFile($metaFile)->withMessage($message);
         }
     }
 

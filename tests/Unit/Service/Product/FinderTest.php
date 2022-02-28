@@ -9,7 +9,7 @@ use ReliqArts\Docweaver\Contract\Exception;
 use ReliqArts\Docweaver\Contract\Logger;
 use ReliqArts\Docweaver\Contract\Product\Finder as FinderContract;
 use ReliqArts\Docweaver\Contract\Product\Maker as ProductFactory;
-use ReliqArts\Docweaver\Exception\InvalidDirectory;
+use ReliqArts\Docweaver\Exception\InvalidDirectoryException;
 use ReliqArts\Docweaver\Model\Product;
 use ReliqArts\Docweaver\Service\Product\Finder;
 use ReliqArts\Docweaver\Tests\Unit\TestCase;
@@ -56,7 +56,7 @@ final class FinderTest extends TestCase
     /**
      * @covers ::__construct
      * @covers ::listProducts
-     * @covers \ReliqArts\Docweaver\Exception\InvalidDirectory::forDirectory
+     * @covers \ReliqArts\Docweaver\Exception\InvalidDirectoryException::forDirectory
      * @small
      */
     public function testListProducts(): void
@@ -74,14 +74,14 @@ final class FinderTest extends TestCase
 
         foreach ($productDirectories as $productDirectory) {
             $key = basename($productDirectory);
-            /** @var ObjectProphecy|Product */
+            /** @var ObjectProphecy|Product $product */
             $product = $this->prophesize(Product::class);
             $product->getDefaultVersion()->willReturn('1.0');
             $product->getKey()->willReturn($key);
 
             if (stripos($key, 'invalid') !== false) {
-                /** @var \Exception|InvalidDirectory $exception */
-                $exception = InvalidDirectory::forDirectory($productDirectory);
+                /** @var \Exception|InvalidDirectoryException $exception */
+                $exception = InvalidDirectoryException::forDirectory($productDirectory);
                 $this->productFactory->create($productDirectory)
                     ->shouldBeCalledTimes(1)->willThrow($exception);
                 $this->logger->error($exception->getMessage(), [])->shouldBeCalledTimes(1);
@@ -124,7 +124,7 @@ final class FinderTest extends TestCase
 
         foreach ($productDirectories as $productDirectory) {
             $key = strtolower(basename($productDirectory));
-            /** @var ObjectProphecy|Product */
+            /** @var ObjectProphecy|Product $product */
             $product = $this->prophesize(Product::class);
             $product->getDefaultVersion()->willReturn('1.0');
             $product->getKey()->willReturn($key);

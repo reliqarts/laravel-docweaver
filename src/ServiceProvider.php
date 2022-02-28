@@ -200,7 +200,10 @@ final class ServiceProvider extends BaseServiceProvider
         );
         $this->app->singleton(
             MarkdownParserContract::class,
-            static fn (): MarkdownParserContract => new MarkdownParser(new GithubFlavoredMarkdownConverter([]))
+            static fn (): MarkdownParserContract => new MarkdownParser(
+                resolve(LoggerContract::class),
+                new GithubFlavoredMarkdownConverter([])
+            )
         );
 
         return $this;

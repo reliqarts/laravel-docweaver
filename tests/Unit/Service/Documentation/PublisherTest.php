@@ -17,8 +17,8 @@ use ReliqArts\Docweaver\Contract\Exception;
 use ReliqArts\Docweaver\Contract\Logger;
 use ReliqArts\Docweaver\Contract\Product\Maker as ProductFactory;
 use ReliqArts\Docweaver\Contract\Product\Publisher as ProductPublisher;
-use ReliqArts\Docweaver\Exception\BadImplementation;
-use ReliqArts\Docweaver\Exception\DirectoryNotWritable;
+use ReliqArts\Docweaver\Exception\BadImplementationException;
+use ReliqArts\Docweaver\Exception\DirectoryNotWritableException;
 use ReliqArts\Docweaver\Model\Product;
 use ReliqArts\Docweaver\Result;
 use ReliqArts\Docweaver\Service\Documentation\Publisher;
@@ -65,7 +65,7 @@ final class PublisherTest extends TestCase
     private PublisherContract $subject;
 
     /**
-     * @throws BadImplementation
+     * @throws BadImplementationException
      */
     protected function setUp(): void
     {
@@ -104,7 +104,7 @@ final class PublisherTest extends TestCase
      */
     public function testExceptionIsThrownIfDocumentationDirectoryIsInvalid(): void
     {
-        $this->expectException(BadImplementation::class);
+        $this->expectException(BadImplementationException::class);
         $this->expectExceptionMessage('Could not ready document resource directory `docs`');
 
         $directory = $this->workingDirectory;
@@ -147,7 +147,7 @@ final class PublisherTest extends TestCase
         $product = $this->prophesize(Product::class)->reveal();
         $messages = ['Test message 1', 'Test message 2'];
 
-        /** @var ObjectProphecy|Result */
+        /** @var ObjectProphecy|Result $productPublisherResult */
         $productPublisherResult = $this->prophesize(Result::class);
 
         $productPublisherResult->getMessages()
@@ -208,7 +208,7 @@ final class PublisherTest extends TestCase
         $this->productPublisher->publish(Argument::cetera())
             ->shouldNotBeCalled();
 
-        $this->expectException(DirectoryNotWritable::class);
+        $this->expectException(DirectoryNotWritableException::class);
         $this->expectErrorMessage($expectedErrorMessage);
 
         $this->subject->publish($productName, $source);
@@ -233,7 +233,7 @@ final class PublisherTest extends TestCase
         $product = $this->prophesize(Product::class)->reveal();
         $messages = ['Successfully updated X'];
 
-        /** @var ObjectProphecy|Result */
+        /** @var ObjectProphecy|Result $productPublisherResult */
         $productPublisherResult = $this->prophesize(Result::class);
 
         $productPublisherResult->getMessages()
@@ -293,7 +293,7 @@ final class PublisherTest extends TestCase
         $this->productPublisher->update(Argument::cetera())
             ->shouldNotBeCalled();
 
-        $this->expectException(DirectoryNotWritable::class);
+        $this->expectException(DirectoryNotWritableException::class);
         $this->expectErrorMessage($expectedErrorMessage);
 
         $this->subject->update($productName);
@@ -321,7 +321,7 @@ final class PublisherTest extends TestCase
         $productDirectoryCount = count($productDirectories);
         $messages = ['Successfully updated X'];
 
-        /** @var ObjectProphecy|Result */
+        /** @var ObjectProphecy|Result $productPublisherResult */
         $productPublisherResult = $this->prophesize(Result::class);
         $productPublisherResult->getMessages()
             ->shouldBeCalledTimes($productDirectoryCount)

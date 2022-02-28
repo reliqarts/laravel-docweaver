@@ -7,7 +7,7 @@ namespace ReliqArts\Docweaver\Contract;
 interface MarkdownParser
 {
     /**
-     * Convert markdown text to HTML text.
+     * Convert Markdown to HTML text.
      */
     public function parse(string $text): string;
 }

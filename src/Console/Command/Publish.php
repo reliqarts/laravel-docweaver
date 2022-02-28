@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ReliqArts\Docweaver\Console\Command;
 
 use Carbon\Carbon;
-use ReliqArts\Docweaver\Exception\InvalidDirectory;
+use ReliqArts\Docweaver\Exception\InvalidDirectoryException;
 
 class Publish extends SingleProductCommand
 {
@@ -30,7 +30,7 @@ class Publish extends SingleProductCommand
     /**
      * Execute the console command.
      *
-     * @throws InvalidDirectory
+     * @throws InvalidDirectoryException
      */
     public function handle(): void
     {

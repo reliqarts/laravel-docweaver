@@ -6,6 +6,7 @@ namespace ReliqArts\Docweaver\Service;
 
 use ReliqArts\Docweaver\Contract\ProcessHelper;
 use ReliqArts\Docweaver\Contract\VcsCommandRunner;
+use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 final class GitCommandRunner implements VcsCommandRunner
@@ -19,6 +20,9 @@ final class GitCommandRunner implements VcsCommandRunner
         $this->processHelper = $processHelper;
     }
 
+    /**
+     * @throws ProcessFailedException|LogicException
+     */
     public function clone(string $source, string $branch, string $workingDirectory): void
     {
         $command = ['git', 'clone', '--branch', $branch, $source, $branch];
@@ -28,7 +32,7 @@ final class GitCommandRunner implements VcsCommandRunner
     }
 
     /**
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException|LogicException
      */
     public function listTags(string $workingDirectory): array
     {
@@ -45,7 +49,7 @@ final class GitCommandRunner implements VcsCommandRunner
     }
 
     /**
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException|LogicException
      */
     public function pull(string $workingDirectory): void
     {
@@ -54,7 +58,7 @@ final class GitCommandRunner implements VcsCommandRunner
     }
 
     /**
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException|LogicException
      */
     public function getRemoteUrl(string $workingDirectory, ?string $remoteName = null): string
     {
@@ -67,6 +71,9 @@ final class GitCommandRunner implements VcsCommandRunner
         return trim($getUrl->getOutput());
     }
 
+    /**
+     * @throws ProcessFailedException|LogicException
+     */
     private function fetch(string $workingDirectory): void
     {
         $pull = $this->processHelper->createProcess(['git', 'fetch'], $workingDirectory);

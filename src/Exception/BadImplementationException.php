@@ -7,6 +7,6 @@ namespace ReliqArts\Docweaver\Exception;
 /**
  * {@inheritdoc}
  */
-final class BadImplementation extends Exception
+final class BadImplementationException extends Exception
 {
 }

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ReliqArts\Docweaver\Exception\Product;
 
 use ReliqArts\Docweaver\Contract\Exception;
-use ReliqArts\Docweaver\Exception\InvalidDirectory;
+use ReliqArts\Docweaver\Exception\InvalidDirectoryException;
 
-final class InvalidAssetDirectory extends InvalidDirectory
+final class InvalidAssetDirectoryException extends InvalidDirectoryException
 {
     private const CODE = 4003;
 
