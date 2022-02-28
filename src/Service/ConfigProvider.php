@@ -56,7 +56,7 @@ final class ConfigProvider implements ConfigProviderContract
      *
      * @param bool $absolute whether to return full
      */
-    public function getDocumentationDirectory($absolute = false): string
+    public function getDocumentationDirectory(bool $absolute = false): string
     {
         $path = $this->get(self::KEY_STORAGE_DIRECTORY);
 

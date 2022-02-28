@@ -6,7 +6,7 @@ namespace ReliqArts\Docweaver\Contract\Documentation;
 
 use Illuminate\Console\Command;
 use ReliqArts\Docweaver\Contract\Publisher as BasePublisher;
-use ReliqArts\Docweaver\Exception\InvalidDirectory;
+use ReliqArts\Docweaver\Exception\InvalidDirectoryException;
 use ReliqArts\Docweaver\Result;
 
 interface Publisher extends BasePublisher
@@ -18,7 +18,7 @@ interface Publisher extends BasePublisher
      * @param string  $source         Git Repository
      * @param Command $callingCommand Calling Command
      *
-     * @throws InvalidDirectory
+     * @throws InvalidDirectoryException
      */
     public function publish(string $productName, string $source, Command &$callingCommand = null): Result;
 

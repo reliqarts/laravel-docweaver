@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ReliqArts\Docweaver\Tests\Feature;
 
+use Exception;
+
 /**
  * @coversDefaultClass \ReliqArts\Docweaver\Http\Controller\DocumentationController
  *
@@ -33,6 +35,7 @@ final class AvailabilityTest extends TestCase
      * @covers ::productIndex
      * @covers ::show
      * @small
+     * @throws Exception
      */
     public function testProjectAvailability(): void
     {

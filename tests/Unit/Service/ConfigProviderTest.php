@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ReliqArts\Docweaver\Tests\Unit\Service;
 
+use Exception;
 use Illuminate\Contracts\Config\Repository as Config;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -23,28 +24,29 @@ final class ConfigProviderTest extends TestCase
     private const ARBITRARY_CONFIG_ARRAY = ['key' => self::ARBITRARY_CONFIG_VALUE];
 
     /**
-     * @var Config|ObjectProphecy
+     * @throws Exception
      */
-    private $config;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->config = $this->prophesize(Config::class);
-        $this->config->get(Argument::type('string'), Argument::type('array'))
+        /** @var ObjectProphecy|Config $config */
+        $config = $this->prophesize(Config::class);
+        $config->get(Argument::type('string'), Argument::type('array'))
             ->willReturn(self::ARBITRARY_CONFIG_ARRAY);
-        $this->config->get(Argument::type('string'), Argument::type('bool'))
+        $config->get(Argument::type('string'), Argument::type('bool'))
             ->willReturn(true);
-        $this->config->get(Argument::type('string'), Argument::cetera())
+        $config->get(Argument::type('string'), Argument::cetera())
             ->willReturn(self::ARBITRARY_CONFIG_VALUE);
-        $this->configProvider = new ConfigProvider($this->config->reveal());
+        $this->configProvider = new ConfigProvider($config->reveal());
     }
 
     /**
      * @covers ::__construct
      * @covers ::get
      * @covers ::getDocumentationDirectory
+     *
+     * @throws Exception
      */
     public function testGetDocumentationDirectory(): void
     {
@@ -61,6 +63,7 @@ final class ConfigProviderTest extends TestCase
      * @covers ::__construct
      * @covers ::get
      * @covers ::getRouteConfig
+     * @throws Exception
      */
     public function testGetRouteConfig(): void
     {
@@ -74,6 +77,7 @@ final class ConfigProviderTest extends TestCase
      * @covers ::__construct
      * @covers ::get
      * @covers ::getRoutePrefix
+     * @throws Exception
      */
     public function testGetRoutePrefix(): void
     {
@@ -87,6 +91,7 @@ final class ConfigProviderTest extends TestCase
      * @covers ::__construct
      * @covers ::get
      * @covers ::getRouteGroupBindings
+     * @throws Exception
      */
     public function testGetRouteGroupBindings(): void
     {
@@ -101,6 +106,7 @@ final class ConfigProviderTest extends TestCase
      * @covers ::__construct
      * @covers ::get
      * @covers ::isDebug
+     * @throws Exception
      */
     public function testIsDebug(): void
     {
@@ -114,6 +120,7 @@ final class ConfigProviderTest extends TestCase
      * @covers ::__construct
      * @covers ::get
      * @covers ::isWordedDefaultVersionAllowed
+     * @throws Exception
      */
     public function testIsWordedDefaultVersionAllowed(): void
     {
@@ -127,6 +134,7 @@ final class ConfigProviderTest extends TestCase
      * @covers ::__construct
      * @covers ::get
      * @covers ::getIndexRouteName
+     * @throws Exception
      */
     public function testGetIndexRouteName(): void
     {
@@ -140,6 +148,7 @@ final class ConfigProviderTest extends TestCase
      * @covers ::__construct
      * @covers ::get
      * @covers ::getProductIndexRouteName
+     * @throws Exception
      */
     public function testGetProductIndexRouteName(): void
     {
@@ -153,6 +162,7 @@ final class ConfigProviderTest extends TestCase
      * @covers ::__construct
      * @covers ::get
      * @covers ::getProductPageRouteName
+     * @throws Exception
      */
     public function testGetProductPageRouteName(): void
     {
@@ -166,6 +176,7 @@ final class ConfigProviderTest extends TestCase
      * @covers ::__construct
      * @covers ::get
      * @covers ::getCacheKey
+     * @throws Exception
      */
     public function testGetCacheKey(): void
     {
@@ -179,6 +190,7 @@ final class ConfigProviderTest extends TestCase
      * @covers ::__construct
      * @covers ::get
      * @covers ::getContentIndexPageName
+     * @throws Exception
      */
     public function testGetContentIndexPageName(): void
     {
@@ -193,6 +205,7 @@ final class ConfigProviderTest extends TestCase
      * @covers ::get
      * @covers ::getTemplateConfig
      * @covers \ReliqArts\Docweaver\Model\TemplateConfig
+     * @throws Exception
      */
     public function testGetTemplateConfig(): void
     {

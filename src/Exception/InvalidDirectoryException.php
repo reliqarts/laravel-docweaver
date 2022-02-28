@@ -6,7 +6,7 @@ namespace ReliqArts\Docweaver\Exception;
 
 use ReliqArts\Docweaver\Contract\Exception as ExceptionContract;
 
-class InvalidDirectory extends Exception
+class InvalidDirectoryException extends Exception
 {
     protected const MESSAGE_TEMPLATE = 'Invalid directory: `%s`.';
 

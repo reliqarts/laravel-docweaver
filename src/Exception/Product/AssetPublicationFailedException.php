@@ -7,7 +7,7 @@ namespace ReliqArts\Docweaver\Exception\Product;
 use ReliqArts\Docweaver\Contract\Exception;
 use ReliqArts\Docweaver\Model\Product;
 
-final class AssetPublicationFailed extends PublicationFailed
+final class AssetPublicationFailedException extends PublicationFailedException
 {
     private const CODE = 8002;
 

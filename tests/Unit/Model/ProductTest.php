@@ -11,16 +11,17 @@ declare(strict_types=1);
 namespace ReliqArts\Docweaver\Tests\Unit\Model;
 
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Str;
 use JsonException;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use ReliqArts\Docweaver\Contract\Exception;
+use ReliqArts\Docweaver\Contract\Exception as ReliqArtsException;
 use ReliqArts\Docweaver\Contract\FileHelper;
 use ReliqArts\Docweaver\Contract\YamlHelper;
-use ReliqArts\Docweaver\Exception\ParsingFailed;
-use ReliqArts\Docweaver\Exception\Product\AssetPublicationFailed;
-use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory;
+use ReliqArts\Docweaver\Exception\ParsingFailedException;
+use ReliqArts\Docweaver\Exception\Product\AssetPublicationFailedException;
+use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectoryException;
 use ReliqArts\Docweaver\Model\Product;
 use ReliqArts\Docweaver\Tests\Unit\TestCase;
 use Symfony\Component\Yaml\Exception\ParseException;
@@ -64,6 +65,9 @@ final class ProductTest extends TestCase
     private string $routePrefix;
     private Product $subject;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -130,6 +134,7 @@ final class ProductTest extends TestCase
      * @small
      *
      * @throws Exception|JsonException
+     * @throws ReliqArtsException
      */
     public function testPopulateWithNoMeta(): void
     {
@@ -195,7 +200,7 @@ final class ProductTest extends TestCase
      * @medium
      * @preserveGlobalState      disabled
      * @runInSeparateProcess
-     * @throws Exception
+     * @throws ReliqArtsException|Exception
      * @noinspection             DisconnectedForeachInstructionInspection
      */
     public function testPopulateWithMeta(): void
@@ -263,17 +268,17 @@ final class ProductTest extends TestCase
      * @covers ::loadVersions
      * @covers ::populate
      * @covers                   \ReliqArts\Docweaver\Exception\Exception::withMessage
-     * @covers                   \ReliqArts\Docweaver\Exception\ParsingFailed
+     * @covers                   \ReliqArts\Docweaver\Exception\ParsingFailedException
      * @small
      * @preserveGlobalState      disabled
      * @runInSeparateProcess
      *
+     * @throws ReliqArtsException
      * @throws Exception
-     * @throws \Exception
      */
     public function testPopulateWhenMetaIsInvalid(): void
     {
-        $this->expectException(ParsingFailed::class);
+        $this->expectException(ParsingFailedException::class);
         $this->expectExceptionMessage(sprintf('Failed to parse meta file `%s`. foo', self::ARBITRARY_REAL_PATH));
 
         $this->yamlHelper->parse(Argument::cetera())
@@ -292,7 +297,7 @@ final class ProductTest extends TestCase
      * @covers ::publishAssets
      * @small
      *
-     * @throws Exception
+     * @throws ReliqArtsException
      */
     public function testPublishAssets(): void
     {
@@ -314,13 +319,13 @@ final class ProductTest extends TestCase
 
     /**
      * @covers ::publishAssets
-     * @covers                   \ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory
+     * @covers                   \ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectoryException
      * @small
-     * @throws Exception
+     * @throws ReliqArtsException
      */
     public function testPublishAssetsWhenImageDirectoryIsInvalid(): void
     {
-        $this->expectException(InvalidAssetDirectory::class);
+        $this->expectException(InvalidAssetDirectoryException::class);
         $this->expectExceptionMessage('Invalid asset directory:');
 
         $version = '1.0';
@@ -340,14 +345,14 @@ final class ProductTest extends TestCase
 
     /**
      * @covers ::publishAssets
-     * @covers                   \ReliqArts\Docweaver\Exception\Product\AssetPublicationFailed
+     * @covers                   \ReliqArts\Docweaver\Exception\Product\AssetPublicationFailedException
      * @small
      *
-     * @throws Exception
+     * @throws ReliqArtsException
      */
     public function testPublishAssetsWhenAssetPublicationFails(): void
     {
-        $this->expectException(AssetPublicationFailed::class);
+        $this->expectException(AssetPublicationFailedException::class);
         $this->expectExceptionMessage('Failed to publish image assets for product `Alpha`');
 
         $version = '1.0';

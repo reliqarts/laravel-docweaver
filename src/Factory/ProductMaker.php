@@ -10,7 +10,7 @@ use ReliqArts\Docweaver\Contract\FileHelper;
 use ReliqArts\Docweaver\Contract\Filesystem;
 use ReliqArts\Docweaver\Contract\Product\Maker;
 use ReliqArts\Docweaver\Contract\YamlHelper;
-use ReliqArts\Docweaver\Exception\InvalidDirectory;
+use ReliqArts\Docweaver\Exception\InvalidDirectoryException;
 use ReliqArts\Docweaver\Model\Product;
 
 final class ProductMaker implements Maker
@@ -41,7 +41,7 @@ final class ProductMaker implements Maker
     public function create(string $directory): Product
     {
         if (!$this->filesystem->isDirectory($directory)) {
-            throw InvalidDirectory::forDirectory($directory);
+            throw InvalidDirectoryException::forDirectory($directory);
         }
 
         $product = new Product(

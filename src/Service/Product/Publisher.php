@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace ReliqArts\Docweaver\Service\Product;
 
+use LogicException;
 use ReliqArts\Docweaver\Contract\Exception;
 use ReliqArts\Docweaver\Contract\Filesystem;
 use ReliqArts\Docweaver\Contract\Logger;
 use ReliqArts\Docweaver\Contract\Product\Publisher as PublisherContract;
 use ReliqArts\Docweaver\Contract\VcsCommandRunner;
-use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectory;
-use ReliqArts\Docweaver\Exception\Product\PublicationFailed;
+use ReliqArts\Docweaver\Exception\Product\InvalidAssetDirectoryException;
+use ReliqArts\Docweaver\Exception\Product\PublicationFailedException;
 use ReliqArts\Docweaver\Model\Product;
 use ReliqArts\Docweaver\Result;
 use ReliqArts\Docweaver\Service\Publisher as BasePublisher;
@@ -42,11 +43,11 @@ final class Publisher extends BasePublisher implements PublisherContract
     public function publish(Product $product, string $source): Result
     {
         $result = new Result();
-        $versions = [Product::VERSION_MASTER];
+        $versions = [Product::VERSION_MAIN];
         $versionsPublished = [];
         $versionsUpdated = [];
         $productDirectory = $product->getDirectory();
-        $masterDirectory = $product->getMasterDirectory();
+        $masterDirectory = $product->getMainDirectory();
 
         $this->setExecutionStartTime();
 
@@ -56,11 +57,11 @@ final class Publisher extends BasePublisher implements PublisherContract
         }
 
         if (!$this->filesystem->isDirectory($masterDirectory)) {
-            $this->publishVersion($product, $source, Product::VERSION_MASTER);
-            $versionsPublished[] = Product::VERSION_MASTER;
+            $this->publishVersion($product, $source, Product::VERSION_MAIN);
+            $versionsPublished[] = Product::VERSION_MAIN;
         } else {
-            $this->updateVersion($product, Product::VERSION_MASTER);
-            $versionsUpdated[] = Product::VERSION_MASTER;
+            $this->updateVersion($product, Product::VERSION_MAIN);
+            $versionsUpdated[] = Product::VERSION_MAIN;
         }
 
         $tagResult = $this->publishTags($product, $source);
@@ -70,17 +71,25 @@ final class Publisher extends BasePublisher implements PublisherContract
 
         if ($result->isSuccess()) {
             $result = $result->setMessage(sprintf('%s was successfully published.', $product->getName()))
-                ->setExtra((object)[
-                    'versions' => $versions,
-                    'versionsPublished' => $versionsPublished,
-                    'versionsUpdated' => $versionsUpdated,
-                    'executionTime' => $this->getExecutionTime(),
-                ]);
+                ->setExtra(
+                    (object)[
+                        'versions' => $versions,
+                        'versionsPublished' => $versionsPublished,
+                        'versionsUpdated' => $versionsUpdated,
+                        'executionTime' => $this->getExecutionTime(),
+                    ]
+                );
         }
 
         return $result;
     }
 
+    /**
+     * @param Product $product
+     *
+     * @return Result
+     * @throws ProcessFailedException|LogicException
+     */
     public function update(Product $product): Result
     {
         $result = new Result();
@@ -112,43 +121,41 @@ final class Publisher extends BasePublisher implements PublisherContract
             $result = $result->setMessage(sprintf('%s was successfully updated.', $product->getName()));
         }
 
-        return $result->setExtra((object)[
-            'versions' => $versions,
-            'versionsPublished' => $versionsPublished,
-            'versionsUpdated' => $versionsUpdated,
-        ]);
+        return $result->setExtra(
+            (object)[
+                'versions' => $versions,
+                'versionsPublished' => $versionsPublished,
+                'versionsUpdated' => $versionsUpdated,
+            ]
+        );
     }
 
     /**
      * @throws Exception
      */
-    private function publishVersion(Product $product, string $source, string $version): bool
+    private function publishVersion(Product $product, string $source, string $version): void
     {
         try {
             $this->vcsCommandRunner->clone($source, $version, $product->getDirectory());
+            $this->publishProductAssets($product, $version);
         } catch (ProcessFailedException $e) {
-            throw PublicationFailed::forProductVersion($product, $version);
+            throw PublicationFailedException::forProductVersion($product, $version, $e);
         }
-
-        $this->publishProductAssets($product, $version);
-
-        return true;
     }
 
     /**
      * @throws Exception
      */
-    private function updateVersion(Product $product, string $version): bool
+    private function updateVersion(Product $product, string $version): void
     {
         try {
             $this->vcsCommandRunner->pull(sprintf('%s/%s', $product->getDirectory(), $version));
+            $this->publishProductAssets($product, $version);
         } catch (ProcessFailedException $e) {
-            throw new PublicationFailed(sprintf('Failed to update version `%s` of product `%s`.', $version, $product->getName()));
+            throw new PublicationFailedException(
+                sprintf('Failed to update version `%s` of product `%s`.', $version, $product->getName())
+            );
         }
-
-        $this->publishProductAssets($product, $version);
-
-        return true;
     }
 
     private function publishTags(Product $product, string $source, array $tags = []): Result
@@ -171,16 +178,18 @@ final class Publisher extends BasePublisher implements PublisherContract
                     $result = $result->addMessage($message);
                 }
             }
-        } catch (Exception $e) {
+        } catch (Exception | ProcessFailedException | LogicException $e) {
             $errorMessage = $e->getMessage();
 
             return $result->setMessage($errorMessage)->setError($errorMessage);
         }
 
-        return $result->setExtra((object)[
-            'tags' => $tags,
-            'tagsPublished' => $tagsPublished,
-        ]);
+        return $result->setExtra(
+            (object)[
+                'tags' => $tags,
+                'tagsPublished' => $tagsPublished,
+            ]
+        );
     }
 
     private function publishProductAssets(Product $product, string $version): void
@@ -188,7 +197,7 @@ final class Publisher extends BasePublisher implements PublisherContract
         try {
             $product->publishAssets($version);
         } catch (Exception $exception) {
-            if ($exception instanceof InvalidAssetDirectory) {
+            if ($exception instanceof InvalidAssetDirectoryException) {
                 $this->logger->info($exception->getMessage());
             } else {
                 $this->logger->error($exception->getMessage());
@@ -197,18 +206,18 @@ final class Publisher extends BasePublisher implements PublisherContract
     }
 
     /**
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException|LogicException
      */
     private function listAvailableProductTags(Product $product): array
     {
-        return $this->vcsCommandRunner->listTags($product->getMasterDirectory());
+        return $this->vcsCommandRunner->listTags($product->getMainDirectory());
     }
 
     /**
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException|LogicException
      */
     private function getProductSource(Product $product): string
     {
-        return $this->vcsCommandRunner->getRemoteUrl($product->getMasterDirectory());
+        return $this->vcsCommandRunner->getRemoteUrl($product->getMainDirectory());
     }
 }

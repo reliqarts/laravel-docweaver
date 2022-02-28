@@ -7,8 +7,9 @@ namespace ReliqArts\Docweaver\Exception\Product;
 use ReliqArts\Docweaver\Contract\Exception as ExceptionContract;
 use ReliqArts\Docweaver\Exception\Exception;
 use ReliqArts\Docweaver\Model\Product;
+use Throwable;
 
-class PublicationFailed extends Exception
+class PublicationFailedException extends Exception
 {
     private const CODE = 8001;
 
@@ -20,9 +21,13 @@ class PublicationFailed extends Exception
     public static function forProductVersion(
         Product $product,
         string $version,
-        Exception $previous = null
+        Throwable $previous = null
     ): ExceptionContract {
         $message = sprintf('Failed to publish version `%s` of product `%s`.', $version, $product->getName());
+        if ($previous !== null) {
+            $message .= sprintf(' %s', $previous->getMessage());
+        }
+
         $self = new self($message, self::CODE, $previous);
         $self->product = $product;
 

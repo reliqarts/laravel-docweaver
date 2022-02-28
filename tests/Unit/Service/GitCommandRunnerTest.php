@@ -74,7 +74,7 @@ final class GitCommandRunnerTest extends TestCase
 
         $this->processHelper->createProcess(
             Argument::that(
-                fn (array $argument) => in_array($source, $argument, true)
+                static fn (array $argument) => in_array($source, $argument, true)
                     && in_array($branch, $argument, true)
             ),
             $this->workingDirectory
@@ -82,7 +82,8 @@ final class GitCommandRunnerTest extends TestCase
 
         $this->returnedProcess
             ->mustRun()
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(1)
+            ->willReturn($this->returnedProcess->reveal());
 
         $this->subject->clone($source, $branch, $this->workingDirectory);
 
@@ -98,12 +99,15 @@ final class GitCommandRunnerTest extends TestCase
      * @runInSeparateProcess
      *
      * @param mixed $tagList
+     *
+     * @throws Exception
      */
-    public function testGetTags($tagList): void
+    public function testListTags($tagList): void
     {
         $this->returnedProcess
             ->mustRun()
-            ->shouldBeCalledTimes(2);
+            ->shouldBeCalledTimes(2)
+            ->willReturn($this->returnedProcess->reveal());
 
         $this->returnedProcess
             ->getOutput()
@@ -130,7 +134,8 @@ final class GitCommandRunnerTest extends TestCase
     {
         $this->returnedProcess
             ->mustRun()
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(1)
+            ->willReturn($this->returnedProcess->reveal());
 
         $this->subject->pull($this->workingDirectory);
 
@@ -151,7 +156,8 @@ final class GitCommandRunnerTest extends TestCase
 
         $this->returnedProcess
             ->mustRun()
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(1)
+            ->willReturn($this->returnedProcess->reveal());
         $this->returnedProcess
             ->getOutput()
             ->shouldBeCalledTimes(1)

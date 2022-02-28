@@ -12,8 +12,8 @@ use ReliqArts\Docweaver\Contract\Filesystem;
 use ReliqArts\Docweaver\Contract\Logger;
 use ReliqArts\Docweaver\Contract\Product\Maker as ProductFactory;
 use ReliqArts\Docweaver\Contract\Product\Publisher as ProductPublisher;
-use ReliqArts\Docweaver\Exception\BadImplementation;
-use ReliqArts\Docweaver\Exception\DirectoryNotWritable;
+use ReliqArts\Docweaver\Exception\BadImplementationException;
+use ReliqArts\Docweaver\Exception\DirectoryNotWritableException;
 use ReliqArts\Docweaver\Model\Product;
 use ReliqArts\Docweaver\Result;
 use ReliqArts\Docweaver\Service\Publisher as BasePublisher;
@@ -43,7 +43,7 @@ final class Publisher extends BasePublisher implements PublisherContract
     /**
      * Create a new DocumentationPublisher.
      *
-     * @throws BadImplementation
+     * @throws BadImplementationException
      */
     public function __construct(
         Filesystem $filesystem,
@@ -60,7 +60,7 @@ final class Publisher extends BasePublisher implements PublisherContract
         $this->workingDirectory = base_path($documentationDirectory);
 
         if (!$this->readyResourceDirectory($this->workingDirectory)) {
-            throw new BadImplementation(sprintf('Could not ready document resource directory `%s`. Please ensure file system is writable.', $documentationDirectory));
+            throw new BadImplementationException(sprintf('Could not ready document resource directory `%s`. Please ensure file system is writable.', $documentationDirectory));
         }
     }
 
@@ -147,7 +147,7 @@ final class Publisher extends BasePublisher implements PublisherContract
         $productDirectory = sprintf('%s/%s', $this->workingDirectory, strtolower($productName));
 
         if (!$this->readyResourceDirectory($productDirectory)) {
-            throw DirectoryNotWritable::forDirectory($productDirectory);
+            throw DirectoryNotWritableException::forDirectory($productDirectory);
         }
 
         return $this->productFactory->create($productDirectory);

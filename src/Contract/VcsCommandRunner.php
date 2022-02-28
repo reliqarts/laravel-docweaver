@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ReliqArts\Docweaver\Contract;
 
+use LogicException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 interface VcsCommandRunner
@@ -16,12 +17,12 @@ interface VcsCommandRunner
     public function pull(string $workingDirectory): void;
 
     /**
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException|LogicException
      */
     public function listTags(string $workingDirectory): array;
 
     /**
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException|LogicException
      */
     public function getRemoteUrl(string $workingDirectory, ?string $remoteName = null): string;
 }

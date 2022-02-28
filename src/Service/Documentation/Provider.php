@@ -11,7 +11,7 @@ use ReliqArts\Docweaver\Contract\ConfigProvider;
 use ReliqArts\Docweaver\Contract\Documentation\Provider as ProviderContract;
 use ReliqArts\Docweaver\Contract\Filesystem;
 use ReliqArts\Docweaver\Contract\MarkdownParser;
-use ReliqArts\Docweaver\Exception\BadImplementation;
+use ReliqArts\Docweaver\Exception\BadImplementationException;
 use ReliqArts\Docweaver\Model\Product;
 
 final class Provider implements ProviderContract
@@ -53,7 +53,7 @@ final class Provider implements ProviderContract
     /**
      * Create a new documentation instance.
      *
-     * @throws BadImplementation
+     * @throws BadImplementationException
      */
     public function __construct(
         Filesystem $filesystem,
@@ -70,7 +70,7 @@ final class Provider implements ProviderContract
         $documentationDirectoryAbsolutePath = base_path($documentationDirectory);
 
         if (!$this->filesystem->isDirectory($documentationDirectoryAbsolutePath)) {
-            throw new BadImplementation(sprintf('Documentation resource directory `%s` does not exist.', $documentationDirectory));
+            throw new BadImplementationException(sprintf('Documentation resource directory `%s` does not exist.', $documentationDirectory));
         }
     }
 
