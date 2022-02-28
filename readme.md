@@ -78,7 +78,7 @@ DOCWEAVER_ROUTE_PREFIX=docs
 DOCWEAVER_DIR=resources/docs
 ```
 
-These variables, and more are explained within the [config](https://github.com/ReliqArts/laravel-docweaver/blob/master/src/config/config.php) file.
+These variables, and more are explained within the [config](https://github.com/ReliqArts/laravel-docweaver/blob/main/src/config/config.php) file.
 
 ### Documentation Directory
 
@@ -86,7 +86,7 @@ The documentation directory is the place where you put your project documentatio
 
 #### Structure
 
-Each project directory should contain seperate folders for each documented version. Each version must have at least two (2) markdown files, namely `documentation.md` and `installation.md`, which serve as the sidebar and initial documentation pages respectively.
+Each project directory should contain separate folders for each documented version. Each version must have at least two (2) markdown files, namely `documentation.md` and `installation.md`, which serve as the sidebar and initial documentation pages respectively.
 
 ```
 [doc dir]
