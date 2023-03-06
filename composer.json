@@ -20,9 +20,9 @@
     "require": {
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
-        "illuminate/support": "8 - 9",
+        "illuminate/support": "8 - 10",
         "league/commonmark": "^2.2",
-        "monolog/monolog": "1.24 - 2",
+        "monolog/monolog": "1.24 - 3",
         "nesbot/carbon": "^2.0",
         "reliqarts/laravel-common": ">=5.0",
         "symfony/browser-kit": ">=4.3",
@@ -30,7 +30,7 @@
         "symfony/yaml": ">=4.3"
     },
     "require-dev": {
-        "orchestra/testbench-browser-kit": "4 - 7",
+        "orchestra/testbench-browser-kit": "4 - 8",
         "phpunit/phpunit": "^9.3",
         "phpro/grumphp": "^1.0",
         "phpspec/prophecy-phpunit": "^2.0",
@@ -63,7 +63,10 @@
     },
     "config": {
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "phpro/grumphp": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
