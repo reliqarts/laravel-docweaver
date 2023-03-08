@@ -209,7 +209,7 @@ final class PublisherTest extends TestCase
             ->shouldNotBeCalled();
 
         $this->expectException(DirectoryNotWritableException::class);
-        $this->expectErrorMessage($expectedErrorMessage);
+        $this->expectExceptionMessage($expectedErrorMessage);
 
         $this->subject->publish($productName, $source);
     }
@@ -294,7 +294,7 @@ final class PublisherTest extends TestCase
             ->shouldNotBeCalled();
 
         $this->expectException(DirectoryNotWritableException::class);
-        $this->expectErrorMessage($expectedErrorMessage);
+        $this->expectExceptionMessage($expectedErrorMessage);
 
         $this->subject->update($productName);
     }
