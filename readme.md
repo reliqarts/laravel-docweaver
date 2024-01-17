@@ -8,6 +8,7 @@ Docweaver is suitable for product documentation and/or knowledge bases. Converts
 [![Build Status (all)](https://img.shields.io/travis/com/reliqarts/laravel-docweaver?style=flat-square)](https://travis-ci.com/reliqarts/laravel-docweaver)
 [![Scrutinizer](https://img.shields.io/scrutinizer/g/reliqarts/laravel-docweaver.svg?style=flat-square)](https://scrutinizer-ci.com/g/reliqarts/laravel-docweaver/)
 [![Codecov](https://img.shields.io/codecov/c/github/reliqarts/laravel-docweaver.svg?style=flat-square)](https://codecov.io/gh/reliqarts/laravel-docweaver)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9c4ff316977eba7256c6/maintainability)](https://codeclimate.com/github/reliqarts/laravel-docweaver/maintainability)
 [![License](https://poser.pugx.org/reliqarts/laravel-docweaver/license?format=flat-square)](https://packagist.org/packages/reliqarts/laravel-docweaver)
 [![Latest Stable Version](https://poser.pugx.org/reliqarts/laravel-docweaver/version?format=flat-square)](https://packagist.org/packages/reliqarts/laravel-docweaver)
 [![Latest Unstable Version](https://poser.pugx.org/reliqarts/laravel-docweaver/v/unstable?format=flat-square)](//packagist.org/packages/reliqarts/laravel-docweaver)
