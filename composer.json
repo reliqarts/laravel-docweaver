@@ -24,7 +24,7 @@
         "league/commonmark": "^2.2",
         "monolog/monolog": "1.24 - 3",
         "nesbot/carbon": "^2.0",
-        "reliqarts/laravel-common": ">=5.0",
+        "reliqarts/laravel-common": "5.0 - 6",
         "symfony/browser-kit": ">=4.3",
         "symfony/process": ">=4.0",
         "symfony/yaml": ">=4.3"
